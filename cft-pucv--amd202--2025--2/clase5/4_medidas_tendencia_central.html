@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medidas de Tendencia Central - Matemática</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2c3e50;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            display: none;
+            width: 90%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 40px;
+            text-align: center;
+            animation: slideIn 0.5s ease-out;
+            overflow-y: auto;
+            max-height: 85vh;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #1e3a8a;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #1e40af;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            color: #2563eb;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .definition {
+            background: #dbeafe;
+            border-left: 5px solid #3b82f6;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            text-align: left;
+        }
+
+        .formula {
+            background: #f0f9ff;
+            border: 2px solid #0ea5e9;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .example {
+            background: #f0fdf4;
+            border: 2px solid #22c55e;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .exercise {
+            background: #fef7ff;
+            border: 2px solid #a855f7;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .highlight {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .table th, .table td {
+            border: 1px solid #e5e7eb;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .table th {
+            background: #3b82f6;
+            color: white;
+            font-weight: bold;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: #1d4ed8;
+            transform: scale(1.05);
+        }
+
+        .nav-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(59, 130, 246, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: #3b82f6;
+            transition: width 0.3s ease;
+            z-index: 1001;
+        }
+
+        .list-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 5px;
+            text-align: left;
+        }
+
+        .math {
+            font-size: 1.3em;
+            color: #1e40af;
+            font-weight: bold;
+        }
+
+        .interpretation {
+            background: #fff7ed;
+            border-left: 4px solid #ea580c;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            text-align: left;
+        }
+
+        .steps {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .steps ol {
+            padding-left: 20px;
+        }
+
+        .steps li {
+            margin: 8px 0;
+            padding: 5px 0;
+        }
+
+        .keyboard-hint {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+     <script>
+        window.MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$','$$'], ['\\[','\\]']]
+        },
+        svg: { fontCache: 'global' }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="slide-counter" id="slideCounter">1 / 30</div>
+    <div class="keyboard-hint">Usa las flechas ← → del teclado para navegar</div>
+
+    <div class="presentation-container">
+
+        <!-- Slide 1: Título -->
+        <div class="slide active">
+            <h1>Medidas de Tendencia Central</h1>
+            <h2>Matemática - Educación Media</h2>
+            <p style="font-size: 1.5em; color: #1e40af; margin-top: 40px;">Profesor Nicolás González M.</p>
+            <p style="font-size: 1.2em; color: #6b7280;">Preparación para Examen</p>
+        </div>
+
+        <!-- Slide 2: Objetivos -->
+        <div class="slide">
+            <h2>Objetivos de Aprendizaje</h2>
+            <div class="definition">
+                <h3>Al finalizar esta revisión serás capaz de:</h3>
+                <div class="list-item">1. <strong>Calcular</strong> la media aritmética, mediana y moda de un conjunto de datos</div>
+                <div class="list-item">2. <strong>Interpretar</strong> el significado de cada medida en contextos reales</div>
+                <div class="list-item">3. <strong>Resolver</strong> problemas aplicando medidas de tendencia central</div>
+                <div class="list-item">4. <strong>Analizar</strong> datos presentados en tablas de frecuencias</div>
+                <div class="list-item">5. <strong>Decidir</strong> qué medida es más apropiada según el contexto</div>
+            </div>
+            <div class="interpretation">
+                <strong>¿Por qué es importante?</strong><br>
+                Las medidas de tendencia central te ayudan a resumir información, tomar decisiones y comprender mejor el mundo que te rodea.
+            </div>
+        </div>
+
+        <!-- Slide 3: Introducción -->
+        <div class="slide">
+            <h2>¿Qué son las Medidas de Tendencia Central?</h2>
+            <div class="definition">
+                <strong>Definición:</strong><br>
+                Las <strong>medidas de tendencia central</strong> son valores que representan el "centro" o valor típico de un conjunto de datos.
+            </div>
+            <div class="steps">
+                <h3>¿Para qué las usamos?</h3>
+                <ul>
+                    <li>Resumir información de muchos datos</li>
+                    <li>Comparar diferentes grupos</li>
+                    <li>Tomar decisiones basadas en datos</li>
+                    <li>Entender patrones y tendencias</li>
+                </ul>
+            </div>
+            <div class="example">
+                <strong>En tu vida diaria:</strong><br>
+                Promedio de notas, temperatura promedio, precio típico de productos, etc.
+            </div>
+        </div>
+
+        <!-- Slide 4: Media Aritmética - Concepto -->
+        <div class="slide">
+            <h2>Media Aritmética - Concepto</h2>
+            <div class="definition">
+                <strong>Definición:</strong><br>
+                La <strong>media aritmética</strong> (o promedio) es la suma de todos los valores dividida por la cantidad total de datos.
+            </div>
+            <div class="formula">
+                <span class="math">x̄ = (x₁ + x₂ + x₃ + ... + xₙ)/n = Σxᵢ/n</span>
+            </div>
+            <div class="steps">
+                <h3>Características importantes:</h3>
+                <ul>
+                    <li>Se ve afectada por valores extremos (muy altos o muy bajos)</li>
+                    <li>Es la medida más utilizada en estadística</li>
+                    <li>Puede no coincidir con ningún valor del conjunto original</li>
+                    <li>Se usa para datos cuantitativos (números)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: Ejemplo 1 Media -->
+        <div class="slide">
+            <h2>Ejemplo 1: Notas de Matemática</h2>
+            <div class="example">
+                <strong>Situación:</strong> Las notas de Pedro en matemática durante el semestre fueron:<br>
+                <span class="math">5.8, 6.2, 5.5, 6.8, 5.9, 6.1, 5.7</span>
+            </div>
+            <div class="steps">
+                <h3>Paso 1:</h3> Sumar todos los valores<br>
+                <span class="math">5.8 + 6.2 + 5.5 + 6.8 + 5.9 + 6.1 + 5.7 = 42.0</span>
+                
+                <h3>Paso 2:</h3> Dividir por la cantidad de datos (n = 7)<br>
+                <span class="math">x̄ = 42.0/7 = 6.0</span>
+            </div>
+            <div class="interpretation">
+                <strong>Interpretación:</strong><br>
+                El promedio de notas de Pedro es 6.0, lo que significa que en promedio tiene un rendimiento de 6.0 en matemática.
+            </div>
+        </div>
+
+        <!-- Slide 6: Ejemplo 2 Media -->
+        <div class="slide">
+            <h2>Ejemplo 2: Tiempo de Traslado</h2>
+            <div class="example">
+                <strong>Situación:</strong> María registró el tiempo (en minutos) que demora en llegar al colegio durante una semana:<br>
+                <span class="math">35, 42, 38, 45, 40, 36, 44</span>
+            </div>
+            <div class="steps">
+                <h3>Cálculo:</h3>
+                <span class="math">x̄ = (35 + 42 + 38 + 45 + 40 + 36 + 44)/7 = 280/7 = 40 minutos</span>
+            </div>
+            <div class="interpretation">
+                <strong>Interpretación:</strong><br>
+                En promedio, María demora 40 minutos en llegar al colegio. Puede usar esta información para planificar mejor su horario.
+            </div>
+        </div>
+
+        <!-- Slide 7: Ejemplo 3 Media -->
+        <div class="slide">
+            <h2>Ejemplo 3: Gasto en Colación</h2>
+            <div class="example">
+                <strong>Situación:</strong> Los gastos diarios en colación de un estudiante (en pesos chilenos):<br>
+                <span class="math">2500, 3200, 2800, 3500, 2600, 3100, 2900</span>
+            </div>
+            <div class="steps">
+                <h3>Cálculo:</h3>
+                <span class="math">x̄ = (2500 + 3200 + 2800 + 3500 + 2600 + 3100 + 2900)/7 = 20600/7 = $2943</span>
+            </div>
+            <div class="interpretation">
+                <strong>Interpretación:</strong><br>
+                El gasto promedio diario es aproximadamente $2943. Esto ayuda a planificar el presupuesto semanal: $2943 × 5 = $14715 por semana.
+            </div>
+        </div>
+
+        <!-- Slide 8: Ejemplo 4 Media -->
+        <div class="slide">
+            <h2>Ejemplo 4: Estatura de Estudiantes</h2>
+            <div class="example">
+                <strong>Situación:</strong> Estaturas de estudiantes de 2° medio (en centímetros):<br>
+                <span class="math">165, 170, 162, 175, 168, 172, 166, 169</span>
+            </div>
+            <div class="steps">
+                <h3>Cálculo:</h3>
+                <span class="math">x̄ = (165 + 170 + 162 + 175 + 168 + 172 + 166 + 169)/8 = 1347/8 = 168.4 cm</span>
+            </div>
+            <div class="interpretation">
+                <strong>Interpretación:</strong><br>
+                La estatura promedio del grupo es 168.4 cm, lo que puede ser útil para diseñar uniformes o equipamiento deportivo.
+            </div>
+        </div>
+
+        <!-- Slide 9: Mediana - Concepto -->
+        <div class="slide">
+            <h2>Mediana - Concepto</h2>
+            <div class="definition">
+                <strong>Definición:</strong><br>
+                La <strong>mediana</strong> es el valor que divide al conjunto de datos ordenados en dos partes iguales.
+            </div>
+            <div class="steps">
+                <h3>Procedimiento:</h3>
+                <ol>
+                    <li>Ordenar los datos de menor a mayor</li>
+                    <li>Si n es impar: mediana = valor central</li>
+                    <li>Si n es par: mediana = promedio de los dos valores centrales</li>
+                </ol>
+            </div>
+            <div class="steps">
+                <h3>Características importantes:</h3>
+                <ul>
+                    <li><strong>NO</strong> se ve afectada por valores extremos</li>
+                    <li>Siempre existe y es única</li>
+                    <li>Divide los datos exactamente por la mitad</li>
+                    <li>Es muy útil cuando hay datos atípicos</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 10: Ejemplo 1 Mediana -->
+        <div class="slide">
+            <h2>Ejemplo 1: Edad de Estudiantes</h2>
+            <div class="example">
+                <strong>Situación:</strong> Edades de estudiantes en un curso:<br>
+                <span class="math">16, 15, 17, 16, 15, 18, 16</span>
+            </div>
+            <div class="steps">
+                <h3>Paso 1:</h3> Ordenar los datos<br>
+                <span class="math">15, 15, 16, <span class="highlight">16</span>, 16, 17, 18</span>
+                
+                <h3>Paso 2:</h3> Como n = 7 (impar), la mediana es el valor central (posición 4)<br>
+                <span class="math">Me = 16 años</span>
+            </div>
+            <div class="interpretation">
+                <strong>Interpretación:</strong><br>
+                La mitad de los estudiantes tiene 16 años o menos, y la otra mitad tiene 16 años o más.
+            </div>
+        </div>
+
+        <!-- Slide 11: Ejemplo 2 Mediana -->
+        <div class="slide">
+            <h2>Ejemplo 2: Puntajes PSU</h2>
+            <div class="example">
+                <strong>Situación:</strong> Puntajes PSU Matemática de 6 estudiantes:<br>
+                <span class="math">650, 720, 580, 690, 640, 710</span>
+            </div>
+            <div class="steps">
+                <h3>Paso 1:</h3> Ordenar los datos<br>
+                <span class="math">580, 640, <span class="highlight">650, 690</span>, 710, 720</span>
+                
+                <h3>Paso 2:</h3> Como n = 6 (par), promediamos los valores centrales (posiciones 3 y 4)<br>
+                <span class="math">Me = (650 + 690)/2 = 670 puntos</span>
+            </div>
+            <div class="interpretation">
+                <strong>Interpretación:</strong><br>
+                La mitad de los estudiantes obtuvo 670 puntos o menos en la PSU.
+            </div>
+        </div>
+
+        <!-- Slide 12: Ejemplo 3 Mediana -->
+        <div class="slide">
+            <h2>Ejemplo 3: Precio de Libros</h2>
+            <div class="example">
+                <strong>Situación:</strong> Precios de libros universitarios (en pesos chilenos):<br>
+                <span class="math">15000, 25000, 18000, 12000, 22000, 16000, 14000, 20000, 13000</span>
+            </div>
+            <div class="steps">
+                <h3>Paso 1:</h3> Ordenar los datos<br>
+                <span class="math">12000, 13000, 14000, 15000, <span class="highlight">16000</span>, 18000, 20000, 22000, 25000</span>
+                
+                <h3>Paso 2:</h3> Como n = 9 (impar), la mediana es el valor central (posición 5)<br>
+                <span class="math">Me = $16000</span>
+            </div>
+            <div class="interpretation">
+                <strong>Interpretación:</strong><br>
+                El precio mediano es $16000. La mitad de los libros cuesta $16000 o menos.
+            </div>
+        </div>
+
+        <!-- Slide 13: Ejemplo 4 Mediana -->
+        <div class="slide">
+            <h2>Ejemplo 4: Número de Hermanos</h2>
+            <div class="example">
+                <strong>Situación:</strong> Número de hermanos de estudiantes en un curso:<br>
+                <span class="math">0, 2, 1, 3, 1, 2, 0, 1</span>
+            </div>
+            <div class="steps">
+                <h3>Paso 1:</h3> Ordenar los datos<br>
+                <span class="math">0, 0, 1, <span class="highlight">1, 2</span>, 2, 2, 3</span>
+                
+                <h3>Paso 2:</h3> Como n = 8 (par), promediamos los valores centrales (posiciones 4 y 5)<br>
+                <span class="math">Me = (1 + 2)/2 = 1.5 hermanos</span>
+            </div>
+            <div class="interpretation">
+                <strong>Interpretación:</strong><br>
+                La mediana es 1.5 hermanos. Aunque nadie tiene exactamente 1.5 hermanos, este valor indica que la mitad tiene 1 hermano o menos.
+            </div>
+        </div>
+
+        <!-- Slide 14: Moda - Concepto -->
+        <div class="slide">
+            <h2>Moda - Concepto</h2>
+            <div class="definition">
+                <strong>Definición:</strong><br>
+                La <strong>moda</strong> es el valor que aparece con mayor frecuencia en un conjunto de datos.
+            </div>
+            <div class="steps">
+                <h3>Tipos de distribuciones:</h3>
+                <ul>
+                    <li><strong>Unimodal:</strong> Una sola moda</li>
+                    <li><strong>Bimodal:</strong> Dos modas</li>
+                    <li><strong>Multimodal:</strong> Más de dos modas</li>
+                    <li><strong>Amodal:</strong> Sin moda (todos los valores aparecen igual número de veces)</li>
+                </ul>
+            </div>
+            <div class="steps">
+                <h3>Características importantes:</h3>
+                <ul>
+                    <li>Es la única medida que se puede usar con datos cualitativos</li>
+                    <li>Puede no existir o pueden existir varias modas</li>
+                    <li>Es fácil de identificar visualmente</li>
+                    <li>Muy útil para conocer preferencias o valores más comunes</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 15: Ejemplo 1 Moda -->
+        <div class="slide">
+            <h2>Ejemplo 1: Deporte Favorito</h2>
+            <div class="example">
+                <strong>Situación:</strong> Deporte favorito de estudiantes de 3° medio:<br>
+                <span class="math">Fútbol, Básquet, Fútbol, Tenis, Fútbol, Básquet, Fútbol, Voleibol</span>
+            </div>
+            <div class="steps">
+                <h3>Conteo de frecuencias:</h3>
+                <table class="table">
+                    <tr><th>Deporte</th><th>Frecuencia</th></tr>
+                    <tr><td>Fútbol</td><td>4</td></tr>
+                    <tr><td>Básquet</td><td>2</td></tr>
+                    <tr><td>Tenis</td><td>1</td></tr>
+                    <tr><td>Voleibol</td><td>1</td></tr>
+                </table>
+                <br><span class="math">Mo = <span class="highlight">Fútbol</span></span>
+            </div>
+            <div class="interpretation">
+                <strong>Interpretación:</strong><br>
+                El fútbol es el deporte favorito más frecuente. Es una distribución unimodal.
+            </div>
+        </div>
+
+        <!-- Slide 16: Ejemplo 2 Moda -->
+        <div class="slide">
+            <h2>Ejemplo 2: Talla de Poleras</h2>
+            <div class="example">
+                <strong>Situación:</strong> Tallas de poleras vendidas en una tienda:<br>
+                <span class="math">M, S, L, M, S, M, L, M, S, XL, M</span>
+            </div>
+            <div class="steps">
+                <h3>Conteo de frecuencias:</h3>
+                <table class="table">
+                    <tr><th>Talla</th><th>Frecuencia</th></tr>
+                    <tr><td>M</td><td>5</td></tr>
+                    <tr><td>S</td><td>3</td></tr>
+                    <tr><td>L</td><td>2</td></tr>
+                    <tr><td>XL</td><td>1</td></tr>
+                </table>
+                <br><span class="math">Mo = <span class="highlight">M</span></span>
+            </div>
+            <div class="interpretation">
+                <strong>Interpretación:</strong><br>
+                La talla M es la más vendida. Esta información es útil para planificar inventarios.
+            </div>
+        </div>
+
+        <!-- Slide 17: Ejemplo 3 Moda -->
+        <div class="slide">
+            <h2>Ejemplo 3: Número de Mascotas</h2>
+            <div class="example">
+                <strong>Situación:</strong> Número de mascotas por familia:<br>
+                <span class="math">1, 0, 2, 1, 0, 1, 3, 1, 0, 2, 1</span>
+            </div>
+            <div class="steps">
+                <h3>Conteo de frecuencias:</h3>
+                <table class="table">
+                    <tr><th>N° Mascotas</th><th>Frecuencia</th></tr>
+                    <tr><td>0</td><td>3</td></tr>
+                    <tr><td>1</td><td>5</td></tr>
+                    <tr><td>2</td><td>2</td></tr>
+                    <tr><td>3</td><td>1</td></tr>
+                </table>
+                <br><span class="math">Mo = <span class="highlight">1</span></span>
+            </div>
+            <div class="interpretation">
+                <strong>Interpretación:</strong><br>
+                La mayoría de las familias encuestadas tiene 1 mascota.
+            </div>
+        </div>
+
+        <!-- Slide 18: Ejemplo 4 Moda -->
+        <div class="slide">
+            <h2>Ejemplo 4: Calificaciones (Distribución Bimodal)</h2>
+            <div class="example">
+                <strong>Situación:</strong> Calificaciones en una prueba:<br>
+                <span class="math">6.0, 5.5, 6.0, 4.5, 5.5, 6.0, 5.5, 4.0, 6.0, 5.5</span>
+            </div>
+            <div class="steps">
+                <h3>Conteo de frecuencias:</h3>
+                <table class="table">
+                    <tr><th>Calificación</th><th>Frecuencia</th></tr>
+                    <tr><td>4.0</td><td>1</td></tr>
+                    <tr><td>4.5</td><td>1</td></tr>
+                    <tr><td>5.5</td><td>4</td></tr>
+                    <tr><td>6.0</td><td>4</td></tr>
+                </table>
+                <br><span class="math">Mo = <span class="highlight">5.5 y 6.0</span></span>
+            </div>
+            <div class="interpretation">
+                <strong>Interpretación:</strong><br>
+                Hay dos modas: 5.5 y 6.0. Es una distribución bimodal, lo que sugiere dos grupos de rendimiento.
+            </div>
+        </div>
+
+        <!-- Slide 19: Ejercicio 1 -->
+        <div class="slide">
+            <h2>Ejercicio 1: Gastos en Transporte</h2>
+            <div class="exercise">
+                <strong>Situación:</strong> Un estudiante registró sus gastos diarios en transporte público durante 2 semanas (en pesos chilenos):<br><br>
+                <span class="math">1200, 1500, 1200, 1800, 1200, 1600, 1400,<br>
+                1500, 1200, 1300, 1700, 1200, 1500, 1400</span>
+            </div>
+            <div class="steps">
+                <h3>Calcula:</h3>
+                <ol>
+                    <li>La media aritmética del gasto diario</li>
+                    <li>La mediana de los gastos</li>
+                    <li>La moda de los gastos</li>
+                </ol>
+            </div>
+            <div class="interpretation">
+                <strong>Reflexiona:</strong> ¿Qué medida le recomendarías usar para planificar su presupuesto mensual de transporte?
+            </div>
+        </div>
+
+        <!-- Slide 20: Ejercicio 2 -->
+        <div class="slide">
+            <h2>Ejercicio 2: Horas de Estudio</h2>
+            <div class="exercise">
+                <strong>Situación:</strong> Horas semanales de estudio de estudiantes de 4° medio preparando la PDT:<br><br>
+                <span class="math">15, 20, 18, 25, 12, 22, 16, 30, 14, 28, 19</span>
+            </div>
+            <div class="steps">
+                <h3>Determina:</h3>
+                <ol>
+                    <li>El promedio de horas de estudio semanal</li>
+                    <li>Las horas de estudio medianas</li>
+                    <li>Las horas de estudio más frecuentes (si existen)</li>
+                </ol>
+            </div>
+            <div class="interpretation">
+                <strong>Analiza:</strong> ¿Hay estudiantes que estudian significativamente más o menos que el resto? ¿Cómo lo sabes?
+            </div>
+        </div>
+
+        <!-- Slide 21: Tablas de Frecuencias -->
+        <div class="slide">
+            <h2>Medidas de Tendencia Central en Tablas de Frecuencias</h2>
+            <div class="definition">
+                <strong>Fórmulas para Tablas de Frecuencias:</strong><br><br>
+                <strong>Media Aritmética:</strong> <span class="math">x̄ = Σ(xᵢ × fᵢ) / Σfᵢ</span><br><br>
+                <strong>Mediana:</strong> Valor que deja n/2 datos por debajo<br><br>
+                <strong>Moda:</strong> Valor con mayor frecuencia absoluta
+            </div>
+            <div class="steps">
+                <h3>Procedimiento:</h3>
+                <ol>
+                    <li>Para la media: multiplica cada valor por su frecuencia, suma todo y divide por el total</li>
+                    <li>Para la mediana: encuentra la posición central y determina el valor correspondiente</li>
+                    <li>Para la moda: identifica el valor con mayor frecuencia</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Slide 22: Ejercicio con Tablas 1 -->
+        <div class="slide">
+            <h2>Ejercicio con Tablas 1: Número de Hermanos</h2>
+            <div class="exercise">
+                <strong>Situación:</strong> Encuesta sobre número de hermanos en un curso de 30 estudiantes:
+            </div>
+            <table class="table">
+                <tr><th>N° Hermanos</th><th>Frecuencia</th></tr>
+                <tr><td>0</td><td>5</td></tr>
+                <tr><td>1</td><td>12</td></tr>
+                <tr><td>2</td><td>8</td></tr>
+                <tr><td>3</td><td>3</td></tr>
+                <tr><td>4</td><td>2</td></tr>
+                <tr><th>Total</th><th>30</th></tr>
+            </table>
+            <div class="steps">
+                <h3>Calcula:</h3>
+                <ol>
+                    <li>La media aritmética del número de hermanos</li>
+                    <li>La mediana del número de hermanos</li>
+                    <li>La moda del número de hermanos</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Slide 23: Ejercicio con Tablas 2 -->
+        <div class="slide">
+            <h2>Ejercicio con Tablas 2: Calificaciones en Matemática</h2>
+            <div class="exercise">
+                <strong>Situación:</strong> Distribución de calificaciones en una prueba de matemática (40 estudiantes):
+            </div>
+            <table class="table">
+                <tr><th>Calificación</th><th>Frecuencia</th></tr>
+                <tr><td>4.0</td><td>3</td></tr>
+                <tr><td>4.5</td><td>5</td></tr>
+                <tr><td>5.0</td><td>8</td></tr>
+                <tr><td>5.5</td><td>12</td></tr>
+                <tr><td>6.0</td><td>7</td></tr>
+                <tr><td>6.5</td><td>3</td></tr>
+                <tr><td>7.0</td><td>2</td></tr>
+                <tr><th>Total</th><th>40</th></tr>
+            </table>
+            <div class="steps">
+                <h3>Determina:</h3>
+                <ol>
+                    <li>El promedio de calificaciones del curso</li>
+                    <li>La calificación mediana</li>
+                    <li>La calificación modal</li>
+                    <li>¿Qué porcentaje del curso aprobó (nota ≥ 4.0)?</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Slide 24: Ejercicio con Tablas 3 -->
+        <div class="slide">
+            <h2>Ejercicio con Tablas 3: Edad de Estudiantes</h2>
+            <div class="exercise">
+                <strong>Situación:</strong> Distribución de edades en un curso de 2° medio (35 estudiantes):
+            </div>
+            <table class="table">
+                <tr><th>Edad (años)</th><th>Frecuencia</th></tr>
+                <tr><td>15</td><td>8</td></tr>
+                <tr><td>16</td><td>18</td></tr>
+                <tr><td>17</td><td>7</td></tr>
+                <tr><td>18</td><td>2</td></tr>
+                <tr><th>Total</th><th>35</th></tr>
+            </table>
+            <div class="steps">
+                <h3>Calcula:</h3>
+                <ol>
+                    <li>La edad promedio del curso</li>
+                    <li>La edad mediana</li>
+                    <li>La edad modal</li>
+                    <li>¿Cuál es el rango de edades del curso?</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Slide 25: Ejercicio con Tablas 4 -->
+        <div class="slide">
+            <h2>Ejercicio con Tablas 4: Horas de Sueño</h2>
+            <div class="exercise">
+                <strong>Situación:</strong> Horas de sueño diarias de estudiantes de 4° medio (25 estudiantes):
+            </div>
+            <table class="table">
+                <tr><th>Horas de Sueño</th><th>Frecuencia</th></tr>
+                <tr><td>5</td><td>2</td></tr>
+                <tr><td>6</td><td>6</td></tr>
+                <tr><td>7</td><td>10</td></tr>
+                <tr><td>8</td><td>5</td></tr>
+                <tr><td>9</td><td>2</td></tr>
+                <tr><th>Total</th><th>25</th></tr>
+            </table>
+            <div class="steps">
+                <h3>Encuentra:</h3>
+                <ol>
+                    <li>El promedio de horas de sueño</li>
+                    <li>Las horas de sueño medianas</li>
+                    <li>Las horas de sueño modales</li>
+                    <li>¿Cuántos estudiantes duermen menos de 7 horas? ¿Es esto saludable?</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Slide 26: Ejercicio con Tablas 5 -->
+        <div class="slide">
+            <h2>Ejercicio con Tablas 5: Gasto en Almuerzo</h2>
+            <div class="exercise">
+                <strong>Situación:</strong> Gasto diario en almuerzo de estudiantes universitarios (50 estudiantes):
+            </div>
+            <table class="table">
+                <tr><th>Gasto (pesos)</th><th>Frecuencia</th></tr>
+                <tr><td>2000</td><td>5</td></tr>
+                <tr><td>2500</td><td>12</td></tr>
+                <tr><td>3000</td><td>18</td></tr>
+                <tr><td>3500</td><td>10</td></tr>
+                <tr><td>4000</td><td>3</td></tr>
+                <tr><td>4500</td><td>2</td></tr>
+                <tr><th>Total</th><th>50</th></tr>
+            </table>
+            <div class="steps">
+                <h3>Determina:</h3>
+                <ol>
+                    <li>El gasto promedio en almuerzo</li>
+                    <li>El gasto mediano</li>
+                    <li>El gasto modal</li>
+                    <li>Si un estudiante va 20 días al mes, ¿cuánto gastará basándose en la media?</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Slide 27: ¿Cuándo usar cada medida? -->
+        <div class="slide">
+            <h2>¿Cuándo Usar Cada Medida?</h2>
+            <div class="example">
+                <h3>Media Aritmética</h3>
+                <strong>Usar cuando:</strong>
+                <ul>
+                    <li>Los datos no tienen valores extremos</li>
+                    <li>Necesitas el valor más "representativo" matemáticamente</li>
+                    <li>Quieres realizar cálculos posteriores</li>
+                </ul>
+                <strong>Ejemplo:</strong> Promedio de notas, temperatura promedio
+            </div>
+            <div class="exercise">
+                <h3>Mediana</h3>
+                <strong>Usar cuando:</strong>
+                <ul>
+                    <li>Hay valores extremos que distorsionan la media</li>
+                    <li>Quieres dividir el grupo en dos mitades iguales</li>
+                    <li>Los datos están muy dispersos</li>
+                </ul>
+                <strong>Ejemplo:</strong> Ingresos familiares, precios de viviendas
+            </div>
+        </div>
+
+        <!-- Slide 28: ¿Cuándo usar cada medida? (continuación) -->
+        <div class="slide">
+            <h2>¿Cuándo Usar Cada Medida? (continuación)</h2>
+            <div class="example">
+                <h3>Moda</h3>
+                <strong>Usar cuando:</strong>
+                <ul>
+                    <li>Trabajas con datos categóricos (colores, marcas, etc.)</li>
+                    <li>Necesitas saber qué es lo más frecuente o popular</li>
+                    <li>Quieres identificar preferencias o tendencias</li>
+                </ul>
+                <strong>Ejemplo:</strong> Deporte favorito, talla más vendida, marca preferida
+            </div>
+            <div class="interpretation">
+                <strong>Consejo Importante:</strong><br>
+                En la práctica, es recomendable calcular las tres medidas y analizarlas en conjunto para obtener una imagen completa de los datos.
+            </div>
+        </div>
+
+        <!-- Slide 29: Resumen de Fórmulas -->
+        <div class="slide">
+            <h2>Resumen de Fórmulas</h2>
+            <div class="definition">
+                <h3>Fórmulas Principales</h3>
+                <div class="formula">
+                    <strong>Media Aritmética:</strong><br>
+                    <div class="row">
+                        <div class="col">
+                            <p class="mb-1">Datos no agrupados:</p>
+                            <p class="fs-4">$$\bar{x}=\frac{\sum_{i=1}^{n} x_i}{n}$$</p>
+                        </div>
+                        <div class="col">
+                            <p class="mb-1">Datos agrupados (con frecuencias):</p>
+                            <p class="fs-4">$$\bar{x}=\frac{\sum_{i=1}^{k} x_i\, f_i}{\sum_{i=1}^{k} f_i}$$</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="formula">
+                    <strong>Mediana:</strong><br>
+                    <div class="row">
+                        <div class="col">
+                            <p class="mb-1">Si $n$ es impar:</p>
+                            <p class="fs-4">$$\mathrm{Me}=x_{\,\frac{n+1}{2}}$$</p>
+                        </div>
+                        <div class="col">
+                            <p class="mb-1">Si $n$ es par:</p>
+                            <p class="fs-4">$$\mathrm{Me}=\frac{x_{\,\frac{n}{2}}+x_{\,\frac{n}{2}+1}}{2}$$</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="formula">
+                    <strong>Moda:</strong> Valor con mayor frecuencia
+                </div>
+            </div>
+            <div class="steps">
+                <h3>Pasos para resolver ejercicios</h3>
+                <ol>
+                    <li>Identifica qué medida te piden</li>
+                    <li>Organiza los datos (ordena si es necesario)</li>
+                    <li>Aplica la fórmula correspondiente</li>
+                    <li>Interpreta el resultado en contexto</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Slide 30: Autoevaluación -->
+        <div class="slide">
+            <h2>Autoevaluación</h2>
+            <div class="definition">
+                <h3>Verifica tu comprensión</h3>
+                <div class="list-item">1. ¿Sabes calcular la media, mediana y moda de cualquier conjunto de datos?</div>
+                <div class="list-item">2. ¿Puedes decidir cuál medida es más apropiada según el contexto?</div>
+                <div class="list-item">3. ¿Entiendes cómo los valores extremos afectan cada medida?</div>
+                <div class="list-item">4. ¿Puedes interpretar el significado de cada medida en situaciones reales?</div>
+                <div class="list-item">5. ¿Sabes trabajar con tablas de frecuencias?</div>
+            </div>
+            <div class="interpretation">
+                <strong>Si respondiste "sí" a todas las preguntas, ¡felicitaciones! Estás listo para aplicar las medidas de tendencia central en cualquier contexto.</strong><br><br>
+                <strong>Si tienes dudas en algún punto, revisa los ejemplos y ejercicios correspondientes.</strong>
+            </div>
+            <div style="margin-top: 30px; font-size: 1.5em; color: #1e40af;">
+                <strong>¡Éxito en tu Examen!</strong>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← Anterior</button>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Siguiente →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = n;
+            
+            if (currentSlide >= totalSlides) {
+                currentSlide = 0;
+            }
+            if (currentSlide < 0) {
+                currentSlide = totalSlides - 1;
+            }
+            
+            slides[currentSlide].classList.add('active');
+            updateNavigation();
+            updateProgress();
+            
+            // Re-render MathJax for the new slide
+            if (window.MathJax) {
+                MathJax.typesetPromise([slides[currentSlide]]).catch(function (err) {
+                    console.log('MathJax typeset failed: ' + err.message);
+                });
+            }
+        }
+
+        function changeSlide(direction) {
+            showSlide(currentSlide + direction);
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const slideCounter = document.getElementById('slideCounter');
+            
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+            slideCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+        }
+
+        function updateProgress() {
+            const progressBar = document.getElementById('progressBar');
+            const progress = ((currentSlide + 1) / totalSlides) * 100;
+            progressBar.style.width = progress + '%';
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (event.key === 'ArrowRight') {
+                changeSlide(1);
+            } else if (event.key === 'Home') {
+                showSlide(0);
+            } else if (event.key === 'End') {
+                showSlide(totalSlides - 1);
+            }
+        });
+
+        // Initialize
+        updateNavigation();
+        updateProgress();
+
+        // Touch support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', function(event) {
+            touchStartX = event.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', function(event) {
+            touchEndX = event.changedTouches[0].screenX;
+            handleGesture();
+        });
+
+        function handleGesture() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    changeSlide(1); // Swipe left, go to next slide
+                } else {
+                    changeSlide(-1); // Swipe right, go to previous slide
+                }
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

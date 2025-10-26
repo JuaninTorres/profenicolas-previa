@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gráficos Estadísticos — Presentación HTML COMPLETA (Chart.js) v2</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root{
+      --azulchile:#003366;
+      --rojochile:#ff3333;
+      --verdechile:#00994c;
+      --naranjaclaro:#ffa500;
+      --violeta:#9b59b6;
+      --texto:#2c3e50;
+    }
+    html,body{height:100%;background:#fff;color:var(--texto);font-size:1.15rem;line-height:1.6}
+    body{overflow:hidden}
+    .slide{display:none;height:100%;padding-bottom:120px}
+    .slide.active{display:block}
+    .frame{max-width:95%;margin:0 auto;padding:2.5rem 2rem 4rem}
+    header.topbar{
+      position:fixed;top:0;left:0;right:0;z-index:1000;
+      background:var(--azulchile);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.15);
+    }
+    header .brand{font-weight:800;letter-spacing:.3px;font-size:1.25rem}
+    header .subtitle{opacity:.9;font-size:.95rem}
+    .footbar{position:fixed;left:0;right:0;bottom:0;z-index:1000;background:#f8f9fa;border-top:1px solid #e5e7eb}
+    .btn-nav{font-weight:600;font-size:1rem}
+    h1,.display-5{color:var(--azulchile);font-size:3rem}
+    h2{color:var(--azulchile);font-size:2.25rem}
+    h3{color:var(--azulchile);font-size:1.8rem}
+    .callout{border-left:6px solid var(--azulchile);background:#eef4fb;padding:1rem;margin:1rem 0;border-radius:.5rem;font-size:1.05rem}
+    .callout.alert{border-left-color:var(--rojochile);background:#fff1f1}
+    .callout.success{border-left-color:var(--verdechile);background:#effaf3}
+    .pill{display:inline-block;padding:.35rem .75rem;border-radius:999px;background:#e9ecef;margin:.2rem .25rem;font-size:1rem}
+    .kbd{border:1px solid #cbd5e1;padding:.1rem .35rem;border-radius:.25rem;background:#fff}
+    .toc-list button{border:none;background:transparent;width:100%;text-align:left;padding:.6rem .4rem;border-radius:.5rem;font-size:1rem}
+    .toc-list button:hover{background:#f1f5f9}
+    table.table th, table.table td { vertical-align: middle; }
+    .canvas-box{border:1px dashed #cbd5e1;border-radius:1rem;padding:1rem;background:#f8fafc;margin-top:.5rem}
+    .canvas-wrap{width:100%;overflow:visible}
+    /* Explicit canvas size so Chart.js renders even in hidden slides */
+    canvas.chart{width:640px;height:300px}
+    canvas.chart.sm{width:560px;height:260px}
+    /* Responsive downscaling to ensure charts fit within the page */
+    @media (max-width: 1400px){
+      canvas.chart{width:600px;height:280px}
+      canvas.chart.sm{width:520px;height:240px}
+    }
+    canvas.chart.sm{width:560px;height:260px}
+    
+    @media (max-width: 1200px){
+      canvas.chart{width:560px;height:260px}
+      canvas.chart.sm{width:500px;height:230px}
+    }
+    canvas.chart.sm{width:560px;height:260px}
+    
+    @media (max-width: 992px){
+      canvas.chart{width:520px;height:240px}
+      canvas.chart.sm{width:460px;height:220px}
+    }
+    canvas.chart.sm{width:560px;height:260px}
+    
+    @media (max-width: 768px){
+      canvas.chart{width:480px;height:230px}
+      canvas.chart.sm{width:420px;height:210px}
+    }
+    canvas.chart.sm{width:560px;height:260px}
+    
+    @media (max-width: 576px){
+      canvas.chart{width:420px;height:210px}
+      canvas.chart.sm{width:380px;height:190px}
+    }
+    canvas.chart.sm{width:560px;height:260px}
+    
+    .ans{font-weight:700}
+    .ans.red{color:var(--rojochile)}
+    .ans.blue{color:var(--azulchile)}
+    .ans.green{color:var(--verdechile)}
+    .ans.orange{color:var(--naranjaclaro)}
+    .ans.violet{color:var(--violeta)}
+  
+    /* Force charts to the RIGHT when not using two-column rows */
+    .frame.has-chart-right > .canvas-box{ float:right; max-width:48%; margin-left:1rem }
+    .frame.has-chart-right > .table-responsive{ max-width:50% }
+    .frame.has-chart-right::after{ content:""; display:block; clear:both }
+
+
+    /* Extra small size for dense slides (double bars & histograms) */
+    canvas.chart.xs{width:520px;height:240px}
+    @media (max-width: 1400px){
+      canvas.chart.xs{width:500px;height:230px}
+    }
+    @media (max-width: 1200px){
+      canvas.chart.xs{width:480px;height:220px}
+    }
+    @media (max-width: 992px){
+      canvas.chart.xs{width:460px;height:210px}
+    }
+    @media (max-width: 768px){
+      canvas.chart.xs{width:440px;height:200px}
+    }
+    @media (max-width: 576px){
+      canvas.chart.xs{width:400px;height:190px}
+    }
+    /* Helper to align table + chart on the same row when auto-wrapped by JS */
+    .fix-row .table-responsive{
+
+    }
+    .fix-row .canvas-box{
+      
+    }
+
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container-fluid px-3 py-2 d-flex align-items-center justify-content-between">
+      <div>
+        <div class="brand">Gráficos Estadísticos</div>
+        <div class="subtitle small">Representación Visual de Datos • Conversión completa de Beamer con Chart.js</div>
+      </div>
+      <div class="d-flex gap-2">
+        <button id="btnTOC" class="btn btn-light btn-sm" title="Tabla de contenidos"><span class="me-1">☰</span> Contenidos</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="slides" class="pt-5 mt-3">
+    <!-- Portada -->
+    <section class="slide active" data-title="Portada">
+      <div class="frame d-flex flex-column justify-content-center" style="min-height:calc(100vh - 140px)">
+        <div class="text-center">
+          <h1 class="display-5 fw-bold">Gráficos Estadísticos</h1>
+          <p class="lead mb-2">Representación Visual de Datos</p>
+          <p class="mb-3"><span class="pill">Matemática - Enseñanza Media</span></p>
+          <span class="pill">Profesor de Matemática</span>
+          <span class="pill">CFT PUCV</span>
+          <div class="mt-3 text-muted">Fecha: <span id="today"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Índice -->
+    <section class="slide" data-title="Contenidos de la Clase">
+      <div class="frame">
+        <h2>Contenidos de la Clase</h2>
+        <ol>
+          <li>Introducción</li>
+          <li>Gráficos de Barras Simples</li>
+          <li>Gráficos de Barras Dobles</li>
+          <li>Gráficos de Líneas</li>
+          <li>Gráficos Circulares</li>
+          <li>Histogramas</li>
+          <li>Ejercicios de Análisis</li>
+          <li>Síntesis y Aplicaciones</li>
+        </ol>
+        <div class="callout">Este índice corresponde a tu tabla de contenidos Beamer.</div>
+      </div>
+    </section>
+
+    <!-- Introducción -->
+    <section class="slide" data-title="¿Qué son los Gráficos Estadísticos?">
+      <div class="frame">
+        <h2>¿Qué son los Gráficos Estadísticos?</h2>
+        <div class="callout"><strong>Definición:</strong> Los <strong>gráficos estadísticos</strong> son representaciones visuales de datos que permiten comunicar información de manera clara, comprensible y atractiva.</div>
+        <div class="callout success">
+          <strong>¿Por qué son importantes?</strong>
+          <ul class="mb-0">
+            <li>Facilitan la comprensión de grandes cantidades de datos</li>
+            <li>Permiten identificar patrones, tendencias y relaciones</li>
+            <li>Comunican información de forma rápida y efectiva</li>
+            <li>Ayudan en la toma de decisiones basada en evidencia</li>
+            <li>Son herramientas universales de comunicación</li>
+          </ul>
+        </div>
+        <div class="callout alert"><strong>En tu vida cotidiana:</strong> noticias, redes sociales, informes escolares, estudios científicos y análisis deportivos.</div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="¿Cuándo usar cada tipo de gráfico?">
+      <div class="frame">
+        <h2>¿Cuándo usar cada tipo de gráfico?</h2>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light"><tr><th>Tipo de Gráfico</th><th>Tipo de Datos</th><th>Propósito Principal</th></tr></thead>
+            <tbody>
+              <tr><td>Barras Simples</td><td>Categóricos</td><td>Comparar diferentes categorías</td></tr>
+              <tr><td>Barras Dobles</td><td>Categóricos (2 grupos)</td><td>Comparar entre dos grupos</td></tr>
+              <tr><td>Líneas</td><td>Temporales/secuenciales</td><td>Mostrar cambios en el tiempo</td></tr>
+              <tr><td>Circulares</td><td>Categóricos</td><td>Mostrar proporciones del total</td></tr>
+              <tr><td>Histogramas</td><td>Continuos agrupados</td><td>Mostrar distribución de frecuencias</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout alert"><strong>Clave del Éxito:</strong> Elegir el gráfico correcto es fundamental para comunicar efectivamente la información.</div>
+      </div>
+    </section>
+
+    <!-- BARRAS SIMPLES -->
+    <section class="slide" data-title="Barras Simples - Definición">
+      <div class="frame">
+        <h2>Gráficos de Barras Simples — Definición</h2>
+        <div class="callout"><strong>Definición:</strong> Un <strong>gráfico de barras simples</strong> representa datos categóricos mediante barras rectangulares <strong>separadas</strong>, donde la altura o longitud es proporcional al valor.</div>
+        <div class="callout success">
+          <strong>Características principales:</strong>
+          <ul class="mb-0">
+            <li>Barras separadas con espacios</li>
+            <li>Una barra por categoría</li>
+            <li>Comparación visual directa</li>
+            <li>Horizontal o vertical</li>
+            <li>Escalas claras y títulos descriptivos</li>
+          </ul>
+        </div>
+        <div class="callout alert"><strong>¿Cuándo usarlo?</strong> Ideal para comparar cantidades entre categorías sin orden específico.</div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Barras Simples — Ejemplo 1">
+      <div class="frame">
+        <h2>Ejemplo 1: Carreras Universitarias Preferidas</h2>
+        <p><strong>Situación:</strong> Encuesta a 300 estudiantes de 4° medio sobre sus carreras preferidas.</p>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead class="table-light"><tr><th>Carrera</th><th>Estudiantes</th><th>%</th></tr></thead>
+                <tbody>
+                  <tr><td>Ingeniería</td><td>90</td><td>30%</td></tr>
+                  <tr><td>Medicina</td><td>75</td><td>25%</td></tr>
+                  <tr><td>Pedagogía</td><td>45</td><td>15%</td></tr>
+                  <tr><td>Derecho</td><td>42</td><td>14%</td></tr>
+                  <tr><td>Psicología</td><td>30</td><td>10%</td></tr>
+                  <tr><td>Otras</td><td>18</td><td>6%</td></tr>
+                  <tr class="table-secondary"><th>Total</th><th>300</th><th>100%</th></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartCarreras" class="chart sm sm"></canvas></div></div>
+            <div class="callout mt-3">
+              <strong>Preguntas:</strong>
+              <ol class="mb-0">
+                <li>¿Cuál es la carrera más popular? <span class="ans red">→ Ingeniería</span></li>
+                <li>¿Qué porcentaje prefiere carreras de salud? <span class="ans blue">→ 35% (Medicina + Psicología)</span></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Barras Simples — Ejemplo 2">
+      <div class="frame">
+        <h2>Ejemplo 2: Géneros Musicales Favoritos</h2>
+        <p><strong>Situación:</strong> Preferencias musicales de 250 jóvenes chilenos entre 15–18 años.</p>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead class="table-light"><tr><th>Género Musical</th><th>Votos</th></tr></thead>
+                <tbody>
+                  <tr><td>Reggaeton</td><td>80</td></tr>
+                  <tr><td>Pop</td><td>65</td></tr>
+                  <tr><td>Rock</td><td>50</td></tr>
+                  <tr><td>Hip-Hop</td><td>25</td></tr>
+                  <tr><td>Cumbia</td><td>20</td></tr>
+                  <tr><td>Folclor</td><td>10</td></tr>
+                  <tr class="table-secondary"><th>Total</th><th>250</th></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartMusica" class="chart sm sm"></canvas></div></div>
+            <div class="callout mt-3">
+              <strong>Preguntas:</strong>
+              <ol class="mb-0">
+                <li>¿Cuántas veces más popular es el reggaeton que el folclor? <span class="ans green">→ 8 veces</span></li>
+                <li>¿Qué géneros representan más del 20% cada uno? <span class="ans red">→ Reggaeton, Pop y Rock</span></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Barras Simples — Ejemplo 3">
+      <div class="frame">
+        <h2>Ejemplo 3: Actividades de Tiempo Libre</h2>
+        <p><strong>Situación:</strong> ¿Cómo pasan su tiempo libre 200 estudiantes de enseñanza media?</p>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead class="table-light"><tr><th>Actividad</th><th>Estudiantes</th></tr></thead>
+                <tbody>
+                  <tr><td>Redes Sociales</td><td>85</td></tr>
+                  <tr><td>Videojuegos</td><td>45</td></tr>
+                  <tr><td>Deportes</td><td>35</td></tr>
+                  <tr><td>Leer</td><td>20</td></tr>
+                  <tr><td>Ver TV/Series</td><td>15</td></tr>
+                  <tr class="table-secondary"><th>Total</th><th>200</th></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartTiempoLibre" class="chart sm sm"></canvas></div></div>
+            <div class="callout mt-3">
+              <strong>Preguntas:</strong>
+              <ol class="mb-0">
+                <li>¿Qué actividad domina el tiempo libre? <span class="ans blue">→ Redes Sociales (42.5%)</span></li>
+                <li>¿Cuántos prefieren actividades físicas vs. digitales? <span class="ans green">→ 35 vs. 130</span></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Barras Simples — Ejemplo 4">
+      <div class="frame">
+        <h2>Ejemplo 4: Métodos de Pago Preferidos</h2>
+        <p><strong>Situación:</strong> Formas de pago preferidas por 180 jóvenes al comprar.</p>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead class="table-light"><tr><th>Método de Pago</th><th>Preferencias</th></tr></thead>
+                <tbody>
+                  <tr><td>Tarjeta de Débito</td><td>70</td></tr>
+                  <tr><td>Efectivo</td><td>45</td></tr>
+                  <tr><td>Transferencia</td><td>35</td></tr>
+                  <tr><td>Tarjeta de Crédito</td><td>20</td></tr>
+                  <tr><td>App Móvil</td><td>10</td></tr>
+                  <tr class="table-secondary"><th>Total</th><th>180</th></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartPagos" class="chart sm sm"></canvas></div></div>
+            <div class="callout mt-3">
+              <strong>Preguntas:</strong>
+              <ol class="mb-0">
+                <li>¿Qué porcentaje prefiere métodos digitales? <span class="ans red">→ 75% (débito + transferencia + crédito + app)</span></li>
+                <li>¿Cuál es la diferencia entre el más y menos popular? <span class="ans blue">→ 60 personas</span></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Barras Simples — Ejemplo 5">
+      <div class="frame">
+        <h2>Ejemplo 5: Asignaturas con Mayor Dificultad</h2>
+        <p><strong>Situación:</strong> 320 estudiantes califican las asignaturas más difíciles.</p>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead class="table-light"><tr><th>Asignatura</th><th>Menciones</th></tr></thead>
+                <tbody>
+                  <tr><td>Matemática</td><td>120</td></tr>
+                  <tr><td>Física</td><td>85</td></tr>
+                  <tr><td>Química</td><td>60</td></tr>
+                  <tr><td>Historia</td><td>35</td></tr>
+                  <tr><td>Biología</td><td>20</td></tr>
+                  <tr class="table-secondary"><th>Total</th><th>320</th></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartAsignaturas" class="chart sm sm"></canvas></div></div>
+            <div class="callout mt-3">
+              <strong>Preguntas:</strong>
+              <ol class="mb-0">
+                <li>¿Qué porcentaje considera Matemática como la más difícil? <span class="ans green">→ 37.5%</span></li>
+                <li>¿Las ciencias naturales superan a las humanidades? <span class="ans blue">→ Sí, 165 vs. 35</span></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BARRAS DOBLES -->
+    <section class="slide" data-title="Barras Dobles - Definición">
+      <div class="frame">
+        <h2>Gráficos de Barras Dobles — Definición</h2>
+        <div class="callout"><strong>Definición:</strong> Un <strong>gráfico de barras dobles</strong> permite comparar dos series de datos categóricos en el mismo gráfico, mostrando las barras lado a lado para facilitar la comparación directa.</div>
+        <div class="callout success">
+          <strong>Características principales:</strong>
+          <ul class="mb-0">
+            <li>Dos colores diferentes para distinguir las series</li>
+            <li>Barras agrupadas por categoría</li>
+            <li>Permite comparación simultánea de dos grupos</li>
+            <li>Incluye leyenda para identificar las series</li>
+            <li>Misma escala para ambas series</li>
+          </ul>
+        </div>
+        <div class="callout alert"><strong>¿Cuándo usarlo?</strong> Perfecto para comparar el mismo tipo de datos entre dos grupos: hombres vs. mujeres, 2023 vs. 2024, etc.</div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Barras Dobles — Ejemplo 1">
+      <div class="frame">
+        <h2>Ejemplo 1: Uso de Redes Sociales por Género</h2>
+        <p><strong>Situación:</strong> Horas semanales en redes sociales por 200 estudiantes.</p>
+        <div class="table-responsive mb-3">
+          <table class="table table-bordered">
+            <thead class="table-light"><tr><th>Red Social</th><th>Hombres</th><th>Mujeres</th></tr></thead>
+            <tbody>
+              <tr><td>Instagram</td><td>25</td><td>45</td></tr>
+              <tr><td>TikTok</td><td>20</td><td>40</td></tr>
+              <tr><td>WhatsApp</td><td>35</td><td>35</td></tr>
+              <tr><td>YouTube</td><td>40</td><td>25</td></tr>
+              <tr><td>Facebook</td><td>10</td><td>15</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartRRSSGenero" class="chart sm"></canvas></div></div>
+        <div class="callout mt-3">
+          <strong>Preguntas:</strong> Mujeres superan en <em>Instagram</em>, <em>TikTok</em> y <em>Facebook</em>; mayor diferencia en <em>Instagram</em> (<span class="ans blue">20</span>).
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Barras Dobles — Ejemplo 2">
+      <div class="frame">
+        <h2>Ejemplo 2: Rendimiento Académico 2023 vs 2024</h2>
+        <p><strong>Situación:</strong> Promedio de notas por asignatura en un liceo.</p>
+        <div class="table-responsive mb-3">
+          <table class="table table-bordered">
+            <thead class="table-light"><tr><th>Asignatura</th><th>2023</th><th>2024</th></tr></thead>
+            <tbody>
+              <tr><td>Matemática</td><td>5.2</td><td>5.6</td></tr>
+              <tr><td>Lenguaje</td><td>5.8</td><td>6.0</td></tr>
+              <tr><td>Historia</td><td>5.5</td><td>5.9</td></tr>
+              <tr><td>Ciencias</td><td>5.3</td><td>5.7</td></tr>
+              <tr><td>Inglés</td><td>5.0</td><td>5.4</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartRendimiento" class="chart sm"></canvas></div></div>
+        <div class="callout mt-3">
+          <strong>Preguntas:</strong> Mayor mejora: <span class="ans green">Matemática e Inglés (+0.4)</span>. ¿Todas mejoran? <span class="ans blue">Sí</span>.
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Barras Dobles — Ejemplo 3">
+      <div class="frame">
+        <h2>Ejemplo 3: Participación Deportiva por Edad</h2>
+        <p><strong>Situación:</strong> Participación semanal en deportes por 150 estudiantes.</p>
+        <div class="table-responsive mb-3">
+          <table class="table table-bordered">
+            <thead class="table-light"><tr><th>Deporte</th><th>14–16 años</th><th>17–18 años</th></tr></thead>
+            <tbody>
+              <tr><td>Fútbol</td><td>45</td><td>30</td></tr>
+              <tr><td>Básquetbol</td><td>25</td><td>20</td></tr>
+              <tr><td>Volleyball</td><td>20</td><td>15</td></tr>
+              <tr><td>Atletismo</td><td>15</td><td>10</td></tr>
+              <tr><td>Natación</td><td>10</td><td>5</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartDeporteEdad" class="chart sm"></canvas></div></div>
+        <div class="callout mt-3">
+          <strong>Preguntas:</strong> Más activos: <span class="ans red">14–16 (115 vs 80)</span>. Mayor diferencia: <span class="ans blue">Fútbol (15)</span>.
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Barras Dobles — Ejemplo 4">
+      <div class="frame">
+        <h2>Ejemplo 4: Preferencias de Estudio — Rural vs Urbano</h2>
+        <p><strong>Situación:</strong> Lugares preferidos para estudiar según zona.</p>
+        <div class="table-responsive mb-3">
+          <table class="table table-bordered">
+            <thead class="table-light"><tr><th>Lugar</th><th>Rural</th><th>Urbano</th></tr></thead>
+            <tbody>
+              <tr><td>Casa</td><td>60</td><td>40</td></tr>
+              <tr><td>Biblioteca</td><td>15</td><td>35</td></tr>
+              <tr><td>Colegio</td><td>20</td><td>30</td></tr>
+              <tr><td>Parque/Aire libre</td><td>25</td><td>10</td></tr>
+              <tr><td>Café/Local</td><td>5</td><td>25</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartEstudioZona" class="chart sm"></canvas></div></div>
+        <div class="callout mt-3">
+          <strong>Preguntas:</strong> Rurales prefieren <span class="ans green">casa</span> (60 vs 40); más equilibrio en <span class="ans blue">colegio</span>.
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Barras Dobles — Ejemplo 5">
+      <div class="frame">
+        <h2>Ejemplo 5: Consumo de Medios — Semana vs Fin de Semana</h2>
+        <p><strong>Situación:</strong> Horas diarias de consumo de medios por 180 jóvenes.</p>
+        <div class="table-responsive mb-3">
+          <table class="table table-bordered">
+            <thead class="table-light"><tr><th>Medio</th><th>Semana</th><th>Fin de Semana</th></tr></thead>
+            <tbody>
+              <tr><td>Streaming</td><td>2.5</td><td>4.5</td></tr>
+              <tr><td>Redes Sociales</td><td>3.0</td><td>5.0</td></tr>
+              <tr><td>Videojuegos</td><td>1.5</td><td>3.5</td></tr>
+              <tr><td>TV Tradicional</td><td>1.0</td><td>2.0</td></tr>
+              <tr><td>Radio/Música</td><td>2.0</td><td>3.0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartMedios" class="chart sm"></canvas></div></div>
+        <div class="callout mt-3">
+          <strong>Preguntas:</strong> Mayor aumento: <span class="ans red">Videojuegos (+2.0)</span>. Más consumido en finde: <span class="ans blue">RRSS (5.0)</span>.
+        </div>
+      </div>
+    </section>
+
+    <!-- LÍNEAS -->
+    <section class="slide" data-title="Líneas - Definición">
+      <div class="frame">
+        <h2>Gráficos de Líneas — Definición</h2>
+        <div class="callout"><strong>Definición:</strong> Un <strong>gráfico de líneas</strong> conecta puntos de datos mediante líneas para mostrar cambios, tendencias o evolución en el tiempo o en una secuencia ordenada.</div>
+        <div class="callout success">
+          <strong>Características principales:</strong>
+          <ul class="mb-0">
+            <li>Puntos conectados por líneas continuas</li>
+            <li>Ideal para cambios temporales</li>
+            <li>Permite identificar tendencias y patrones</li>
+            <li>Puede comparar múltiples series</li>
+            <li>El eje X generalmente representa tiempo</li>
+          </ul>
+        </div>
+        <div class="callout alert"><strong>¿Cuándo usarlo?</strong> Perfecto para mostrar cómo cambia algo a lo largo del tiempo o para identificar tendencias.</div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Líneas — Ejemplo 1">
+      <div class="frame">
+        <h2>Ejemplo 1: Evolución de Notas Semestrales</h2>
+        <p><strong>Situación:</strong> Promedio mensual de notas de un curso de 3° medio.</p>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead class="table-light"><tr><th>Mes</th><th>Promedio</th></tr></thead>
+                <tbody>
+                  <tr><td>Marzo</td><td>5.2</td></tr>
+                  <tr><td>Abril</td><td>5.4</td></tr>
+                  <tr><td>Mayo</td><td>5.1</td></tr>
+                  <tr><td>Junio</td><td>5.6</td></tr>
+                  <tr><td>Julio</td><td>5.8</td></tr>
+                  <tr><td>Agosto</td><td>6.0</td></tr>
+                  <tr><td>Septiembre</td><td>5.9</td></tr>
+                  <tr><td>Octubre</td><td>6.2</td></tr>
+                  <tr><td>Noviembre</td><td>6.1</td></tr>
+                  <tr><td>Diciembre</td><td>6.3</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartNotas" class="chart sm sm"></canvas></div></div>
+            <div class="callout mt-3">
+              <strong>Preguntas:</strong> Tendencia general <span class="ans green">ascendente</span>; mayor baja <span class="ans blue">entre abril y mayo (-0.3)</span>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Líneas — Ejemplo 2">
+      <div class="frame">
+        <h2>Ejemplo 2: Asistencia Escolar Durante el Año</h2>
+        <p><strong>Situación:</strong> Porcentaje de asistencia mensual en un liceo de 800 estudiantes.</p>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead class="table-light"><tr><th>Mes</th><th>Asistencia (%)</th></tr></thead>
+                <tbody>
+                  <tr><td>Marzo</td><td>95</td></tr>
+                  <tr><td>Abril</td><td>93</td></tr>
+                  <tr><td>Mayo</td><td>91</td></tr>
+                  <tr><td>Junio</td><td>89</td></tr>
+                  <tr><td>Julio</td><td>94</td></tr>
+                  <tr><td>Agosto</td><td>92</td></tr>
+                  <tr><td>Septiembre</td><td>90</td></tr>
+                  <tr><td>Octubre</td><td>88</td></tr>
+                  <tr><td>Noviembre</td><td>85</td></tr>
+                  <tr><td>Diciembre</td><td>82</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartAsistencia" class="chart sm sm"></canvas></div></div>
+            <div class="callout mt-3">
+              <strong>Preguntas:</strong> Mejora notable en <span class="ans red">julio (+5%)</span>; tendencia final <span class="ans blue">descendente</span>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Líneas — Ejemplo 3 ">
+      <div class="frame">
+        <h2>Ejemplo 3: Uso de Biblioteca Escolar</h2>
+        <p><strong>Situación:</strong> Número de usuarios semanales de la biblioteca durante un semestre.</p>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead class="table-light"><tr><th>Semana</th><th>Usuarios</th></tr></thead>
+                <tbody>
+                  <tr><td>Semana 1</td><td>120</td></tr>
+                  <tr><td>Semana 2</td><td>135</td></tr>
+                  <tr><td>Semana 3</td><td>150</td></tr>
+                  <tr><td>Semana 4</td><td>145</td></tr>
+                  <tr><td>Semana 5</td><td>160</td></tr>
+                  <tr><td>Semana 6</td><td>180</td></tr>
+                  <tr><td>Semana 7</td><td>175</td></tr>
+                  <tr><td>Semana 8</td><td>190</td></tr>
+                  <tr><td>Semana 9</td><td>185</td></tr>
+                  <tr><td>Semana 10</td><td>200</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartBiblioteca" class="chart sm sm"></canvas></div></div>
+            <div class="callout mt-3">
+              <strong>Preguntas:</strong> Aumento de <span class="ans green">+80</span> (S1→S10); descensos en <span class="ans blue">S4, S7 y S9</span>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Líneas — Ejemplo 4">
+      <div class="frame">
+        <h2>Ejemplo 4: Temperatura Promedio por Estación</h2>
+        <p><strong>Situación:</strong> Temperaturas máximas promedio en Valparaíso durante el año.</p>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead class="table-light"><tr><th>Estación</th><th>Temp. (°C)</th></tr></thead>
+                <tbody>
+                  <tr><td>Verano</td><td>22</td></tr>
+                  <tr><td>Otoño</td><td>18</td></tr>
+                  <tr><td>Invierno</td><td>15</td></tr>
+                  <tr><td>Primavera</td><td>19</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartTemperatura" class="chart sm sm"></canvas></div></div>
+            <div class="callout mt-3">
+              <strong>Preguntas:</strong> Diferencia máx–mín <span class="ans red">7°C</span>; patrón <span class="ans blue">típico del hemisferio sur</span>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Líneas — Ejemplo 5">
+      <div class="frame">
+        <h2>Ejemplo 5: Crecimiento de Seguidores en Redes</h2>
+        <p><strong>Situación:</strong> Evolución mensual de seguidores en la cuenta Instagram del colegio.</p>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead class="table-light"><tr><th>Mes</th><th>Seguidores</th></tr></thead>
+                <tbody>
+                  <tr><td>Enero</td><td>500</td></tr>
+                  <tr><td>Febrero</td><td>650</td></tr>
+                  <tr><td>Marzo</td><td>800</td></tr>
+                  <tr><td>Abril</td><td>920</td></tr>
+                  <tr><td>Mayo</td><td>1100</td></tr>
+                  <tr><td>Junio</td><td>1250</td></tr>
+                  <tr><td>Julio</td><td>1180</td></tr>
+                  <tr><td>Agosto</td><td>1400</td></tr>
+                  <tr><td>Septiembre</td><td>1550</td></tr>
+                  <tr><td>Octubre</td><td>1720</td></tr>
+                  <tr><td>Noviembre</td><td>1850</td></tr>
+                  <tr><td>Diciembre</td><td>2000</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartSeguidores" class="chart sm sm"></canvas></div></div>
+            <div class="callout mt-3">
+              <strong>Preguntas:</strong> Se cuadruplica en <span class="ans green">diciembre</span>; única disminución en <span class="ans blue">julio (-70)</span>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CIRCULARES -->
+    <section class="slide" data-title="Circulares - Definición">
+      <div class="frame">
+        <h2>Gráficos Circulares — Definición</h2>
+        <div class="callout"><strong>Definición:</strong> El círculo completo representa el <strong>100%</strong>; cada sector es proporcional a su porcentaje. <em>Grados = (Porcentaje/100) × 360°</em>.</div>
+        <div class="callout success">
+          <strong>Características principales:</strong>
+          <ul class="mb-0">
+            <li>El círculo completo = 100% de los datos</li>
+            <li>Cada sector representa una categoría</li>
+            <li>Tamaño proporcional al valor</li>
+            <li>Recomendado con ≤ 6–7 categorías</li>
+          </ul>
+        </div>
+        <div class="callout alert"><strong>¿Cuándo usarlo?</strong> Ideal para mostrar proporciones del total cuando hay pocas categorías.</div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Circulares — Ejemplo 1">
+      <div class="frame">
+        <h2>Ejemplo 1: Distribución del Presupuesto Familiar</h2>
+        <p><strong>Situación:</strong> 100 familias chilenas.</p>
+        <div class="row g-4">
+          <div class="col-md-7">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead class="table-light"><tr><th>Categoría</th><th>Familias</th><th>%</th><th>Grados</th></tr></thead>
+                <tbody>
+                  <tr><td>Alimentación</td><td>35</td><td>35%</td><td>126°</td></tr>
+                  <tr><td>Vivienda</td><td>25</td><td>25%</td><td>90°</td></tr>
+                  <tr><td>Transporte</td><td>20</td><td>20%</td><td>72°</td></tr>
+                  <tr><td>Educación</td><td>12</td><td>12%</td><td>43°</td></tr>
+                  <tr><td>Salud</td><td>8</td><td>8%</td><td>29°</td></tr>
+                  <tr class="table-secondary"><th>Total</th><th>100</th><th>100%</th><th>360°</th></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartPresupuesto" class="chart sm sm"></canvas></div></div>
+            <div class="callout mt-3">
+              <strong>Preguntas:</strong> Alimentación = <span class="ans red">126°</span>; básicas (Alim+Viv) = <span class="ans blue">60%</span>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Circulares — Ejemplo 2">
+      <div class="frame">
+        <h2>Ejemplo 2: Tipos de Establecimientos Educacionales</h2>
+        <p><strong>Situación:</strong> 120 estudiantes según colegio de procedencia.</p>
+        <div class="row g-4">
+          <div class="col-md-7">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead class="table-light"><tr><th>Tipo</th><th>Estudiantes</th><th>%</th></tr></thead>
+                <tbody>
+                  <tr><td>Municipal</td><td>48</td><td>40%</td></tr>
+                  <tr><td>Part. Subvencionado</td><td>42</td><td>35%</td></tr>
+                  <tr><td>Particular Pagado</td><td>24</td><td>20%</td></tr>
+                  <tr><td>Técnico Profesional</td><td>6</td><td>5%</td></tr>
+                  <tr class="table-secondary"><th>Total</th><th>120</th><th>100%</th></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartEstablecimientos" class="chart sm sm"></canvas></div></div>
+            <div class="callout mt-3">
+              <strong>Preguntas:</strong> Educación pública (solo municipal): <span class="ans green">40%</span>; diferencia municipal vs particular pagado = <span class="ans blue">24</span>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Circulares — Ejemplo 3">
+      <div class="frame">
+        <h2>Ejemplo 3: Planes Después de 4° Medio</h2>
+        <p><strong>Situación:</strong> Proyecciones de 200 estudiantes para el próximo año.</p>
+        <div class="row g-4">
+          <div class="col-md-7">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead class="table-light"><tr><th>Plan</th><th>Estudiantes</th><th>%</th></tr></thead>
+                <tbody>
+                  <tr><td>Universidad</td><td>100</td><td>50%</td></tr>
+                  <tr><td>CFT/IP</td><td>60</td><td>30%</td></tr>
+                  <tr><td>Trabajar</td><td>25</td><td>12.5%</td></tr>
+                  <tr><td>Preuniversitario</td><td>15</td><td>7.5%</td></tr>
+                  <tr class="table-secondary"><th>Total</th><th>200</th><th>100%</th></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartPlanes" class="chart sm sm"></canvas></div></div>
+            <div class="callout mt-3">
+              <strong>Preguntas:</strong> ¿Qué porcentaje continuará estudiando? <span class="ans red">87.5%</span>. Opción minoritaria: <span class="ans blue">Preuniversitario (7.5%)</span>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Circulares — Ejemplo 4">
+      <div class="frame">
+        <h2>Ejemplo 4: Uso del Tiempo Libre en Pandemia</h2>
+        <p><strong>Situación:</strong> Actividades principales de 150 jóvenes durante 2022.</p>
+        <div class="row g-4">
+          <div class="col-md-7">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead class="table-light"><tr><th>Actividad</th><th>Jóvenes</th><th>%</th></tr></thead>
+                <tbody>
+                  <tr><td>Streaming/TV</td><td>60</td><td>40%</td></tr>
+                  <tr><td>Redes Sociales</td><td>45</td><td>30%</td></tr>
+                  <tr><td>Videojuegos</td><td>30</td><td>20%</td></tr>
+                  <tr><td>Leer</td><td>10</td><td>6.7%</td></tr>
+                  <tr><td>Ejercicio</td><td>5</td><td>3.3%</td></tr>
+                  <tr class="table-secondary"><th>Total</th><th>150</th><th>100%</th></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartPandemia" class="chart sm sm"></canvas></div></div>
+            <div class="callout mt-3">
+              <strong>Preguntas:</strong> Actividades digitales dominan <span class="ans green">90%</span>; diferencia streaming vs ejercicio = <span class="ans blue">55</span>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Circulares — Ejemplo 5">
+      <div class="frame">
+        <h2>Ejemplo 5: Origen de Información para Tareas</h2>
+        <p><strong>Situación:</strong> Fuentes que usan 180 estudiantes para tareas.</p>
+        <div class="row g-4">
+          <div class="col-md-7">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead class="table-light"><tr><th>Fuente</th><th>Estudiantes</th><th>%</th></tr></thead>
+                <tbody>
+                  <tr><td>Internet/Google</td><td>90</td><td>50%</td></tr>
+                  <tr><td>Libros de Texto</td><td>36</td><td>20%</td></tr>
+                  <tr><td>Wikipedia</td><td>27</td><td>15%</td></tr>
+                  <tr><td>Videos/YouTube</td><td>18</td><td>10%</td></tr>
+                  <tr><td>Biblioteca</td><td>9</td><td>5%</td></tr>
+                  <tr class="table-secondary"><th>Total</th><th>180</th><th>100%</th></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartFuentes" class="chart sm sm"></canvas></div></div>
+            <div class="callout mt-3">
+              <strong>Preguntas:</strong> Fuentes digitales: <span class="ans red">75%</span>; Google vs biblioteca: <span class="ans blue">10×</span>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HISTOGRAMAS -->
+    <section class="slide" data-title="Histogramas - Definición">
+      <div class="frame">
+        <h2>Histogramas — Definición</h2>
+        <div class="callout"><strong>Definición:</strong> Gráfico de barras con <strong>barras contiguas</strong> que muestra la distribución de frecuencias de datos cuantitativos continuos agrupados en intervalos.</div>
+        <div class="callout success">
+          <strong>Características principales:</strong>
+          <ul class="mb-0">
+            <li>Barras pegadas (sin espacios)</li>
+            <li>Eje X con intervalos (clases)</li>
+            <li>Eje Y con frecuencias</li>
+            <li>Exclusivo para datos continuos</li>
+            <li>Permite visualizar la forma de la distribución</li>
+          </ul>
+        </div>
+        <div class="callout alert"><strong>Diferencia clave:</strong> <strong>Histograma</strong> (continuos, barras pegadas) vs <strong>Gráfico de barras</strong> (categóricos, barras separadas).</div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Histogramas — Ejemplo 1">
+      <div class="frame">
+        <h2>Ejemplo 1: Estaturas de Estudiantes de 1° Medio</h2>
+        <p><strong>Situación:</strong> 50 estudiantes de 1° medio (Santiago).</p>
+        <div class="table-responsive mb-2">
+          <table class="table table-bordered">
+            <thead class="table-light"><tr><th>Estatura (cm)</th><th>Estudiantes</th><th>%</th></tr></thead>
+            <tbody>
+              <tr><td>[150–154]</td><td>5</td><td>10%</td></tr>
+              <tr><td>[155–159]</td><td>12</td><td>24%</td></tr>
+              <tr><td>[160–164]</td><td>18</td><td>36%</td></tr>
+              <tr><td>[165–169]</td><td>10</td><td>20%</td></tr>
+              <tr><td>[170–174]</td><td>5</td><td>10%</td></tr>
+              <tr class="table-secondary"><th>Total</th><th>50</th><th>100%</th></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartHistoEstatura" class="chart sm sm"></canvas></div></div>
+        <div class="callout mt-3">
+          <strong>Preguntas:</strong> Intervalo modal <span class="ans green">160–164</span>; &lt;160 cm = <span class="ans blue">34%</span>.
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Histogramas — Ejemplo 2 ">
+      <div class="frame">
+        <h2>Ejemplo 2: Tiempo de Traslado Casa–Colegio</h2>
+        <p><strong>Situación:</strong> Tiempo diario de traslado de 60 estudiantes (Valparaíso).</p>
+        <div class="table-responsive mb-2">
+          <table class="table table-bordered">
+            <thead class="table-light"><tr><th>Tiempo (min)</th><th>Estudiantes</th><th>%</th></tr></thead>
+            <tbody>
+              <tr><td>[10–19]</td><td>8</td><td>13.3%</td></tr>
+              <tr><td>[20–29]</td><td>22</td><td>36.7%</td></tr>
+              <tr><td>[30–39]</td><td>20</td><td>33.3%</td></tr>
+              <tr><td>[40–49]</td><td>7</td><td>11.7%</td></tr>
+              <tr><td>[50–59]</td><td>3</td><td>5%</td></tr>
+              <tr class="table-secondary"><th>Total</th><th>60</th><th>100%</th></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartHistoTraslado" class="chart sm sm"></canvas></div></div>
+        <div class="callout mt-3">
+          <strong>Preguntas:</strong> &lt;30 min = <span class="ans red">50%</span>; forma ~ <span class="ans blue">normal</span>, concentración central.
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Histogramas — Ejemplo 3">
+      <div class="frame">
+        <h2>Ejemplo 3: Pesos de Estudiantes de 3° Medio</h2>
+        <p><strong>Situación:</strong> Distribución de pesos de 40 estudiantes (kg).</p>
+        <div class="table-responsive mb-2">
+          <table class="table table-bordered">
+            <thead class="table-light"><tr><th>Peso (kg)</th><th>Estudiantes</th><th>%</th></tr></thead>
+            <tbody>
+              <tr><td>[45–49]</td><td>3</td><td>7.5%</td></tr>
+              <tr><td>[50–54]</td><td>8</td><td>20%</td></tr>
+              <tr><td>[55–59]</td><td>15</td><td>37.5%</td></tr>
+              <tr><td>[60–64]</td><td>10</td><td>25%</td></tr>
+              <tr><td>[65–69]</td><td>4</td><td>10%</td></tr>
+              <tr class="table-secondary"><th>Total</th><th>40</th><th>100%</th></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartHistoPeso" class="chart sm sm"></canvas></div></div>
+        <div class="callout mt-3">
+          <strong>Preguntas:</strong> Mayor concentración <span class="ans green">55–59</span>; ≥60 kg = <span class="ans blue">35%</span>.
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Histogramas — Ejemplo 4">
+      <div class="frame">
+        <h2>Ejemplo 4: Calificaciones en Prueba de Matemática</h2>
+        <p><strong>Situación:</strong> Notas de 45 estudiantes (escala 1.0 a 7.0).</p>
+        <div class="table-responsive mb-2">
+          <table class="table table-bordered">
+            <thead class="table-light"><tr><th>Nota</th><th>Estudiantes</th><th>%</th></tr></thead>
+            <tbody>
+              <tr><td>[2.0–3.4]</td><td>4</td><td>8.9%</td></tr>
+              <tr><td>[3.5–4.9]</td><td>12</td><td>26.7%</td></tr>
+              <tr><td>[5.0–6.4]</td><td>22</td><td>48.9%</td></tr>
+              <tr><td>[6.5–7.0]</td><td>7</td><td>15.5%</td></tr>
+              <tr class="table-secondary"><th>Total</th><th>45</th><th>100%</th></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartHistoNotas" class="chart sm sm"></canvas></div></div>
+        <div class="callout mt-3">
+          <strong>Preguntas:</strong> % aprobados (≥4.0) ≈ <span class="ans red">64.4%</span>; nota ≥ 6.0 = <span class="ans blue">7</span> estudiantes.
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Histogramas — Ejemplo 5">
+      <div class="frame">
+        <h2>Ejemplo 5: Edades de Usuarios de Redes Sociales</h2>
+        <p><strong>Situación:</strong> 80 usuarios activos de TikTok (Chile).</p>
+        <div class="table-responsive mb-2">
+          <table class="table table-bordered">
+            <thead class="table-light"><tr><th>Edad (años)</th><th>Usuarios</th><th>%</th></tr></thead>
+            <tbody>
+              <tr><td>[13–15]</td><td>25</td><td>31.25%</td></tr>
+              <tr><td>[16–18]</td><td>35</td><td>43.75%</td></tr>
+              <tr><td>[19–21]</td><td>15</td><td>18.75%</td></tr>
+              <tr><td>[22–24]</td><td>5</td><td>6.25%</td></tr>
+              <tr class="table-secondary"><th>Total</th><th>80</th><th>100%</th></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="canvas-box"><div class="canvas-wrap"><canvas id="chartHistoEdad" class="chart sm sm"></canvas></div></div>
+        <div class="callout mt-3">
+          <strong>Preguntas:</strong> Rango dominante <span class="ans green">16–18</span>; menores de edad = <span class="ans blue">75%</span>.
+        </div>
+      </div>
+    </section>
+
+    <!-- EJERCICIOS -->
+    <section class="slide" data-title="Ejercicio 1: Barras">
+      <div class="frame">
+        <h2>Ejercicio 1: Análisis de Gráfico de Barras</h2>
+        <p><strong>Situación:</strong> Especialidades técnicas más elegidas en un CFT.</p>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light"><tr><th>Especialidad</th><th>Estudiantes</th></tr></thead>
+            <tbody>
+              <tr><td>Informática</td><td>150</td></tr>
+              <tr><td>Electrónica</td><td>120</td></tr>
+              <tr><td>Construcción</td><td>90</td></tr>
+              <tr><td>Gastronomía</td><td>75</td></tr>
+              <tr><td>Enfermería</td><td>60</td></tr>
+              <tr><td>Mecánica</td><td>45</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <strong>Preguntas de análisis:</strong>
+          <ol class="mb-0">
+            <li>Total de estudiantes encuestados</li>
+            <li>% de la especialidad más popular</li>
+            <li>¿Cuántas veces más: Informática vs Mecánica?</li>
+            <li>Especialidades que superan 100 estudiantes</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Ejercicio 2: Barras Dobles">
+      <div class="frame">
+        <h2>Ejercicio 2: Comparación de Gráficos de Doble Barras</h2>
+        <p><strong>Situación:</strong> Rendimiento en matemática: Primer vs Segundo semestre.</p>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light"><tr><th>Curso</th><th>1er Semestre</th><th>2do Semestre</th></tr></thead>
+            <tbody>
+              <tr><td>1° Medio A</td><td>5.8</td><td>6.2</td></tr>
+              <tr><td>1° Medio B</td><td>5.5</td><td>5.9</td></tr>
+              <tr><td>2° Medio A</td><td>6.0</td><td>6.1</td></tr>
+              <tr><td>2° Medio B</td><td>5.3</td><td>5.8</td></tr>
+              <tr><td>3° Medio A</td><td>5.9</td><td>6.3</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <strong>Preguntas de análisis:</strong>
+          <ol class="mb-0">
+            <li>Curso con mayor mejora</li>
+            <li>¿Todos mejoran?</li>
+            <li>Promedio general de mejora</li>
+            <li>Mejor rendimiento final</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Ejercicio 3: Líneas ">
+      <div class="frame">
+        <h2>Ejercicio 3: Interpretación de Gráfico de Líneas</h2>
+        <p><strong>Situación:</strong> Evolución de la matrícula escolar en una comuna durante 8 años.</p>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr><th>Año</th><th>2017</th><th>2018</th><th>2019</th><th>2020</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th></tr>
+            </thead>
+            <tbody>
+              <tr><th>Matrícula</th><td>3200</td><td>3350</td><td>3100</td><td>2950</td><td>3000</td><td>3150</td><td>3300</td><td>3450</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <strong>Preguntas de análisis:</strong>
+          <ol class="mb-0">
+            <li>Años con descenso</li>
+            <li>Mayor caída interanual</li>
+            <li>Tendencia desde 2021</li>
+            <li>Aumento 2017 → 2024</li>
+            <li>Factores que expliquen la caída 2019–2020</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Ejercicio 4: Circular ">
+      <div class="frame">
+        <h2>Ejercicio 4: Análisis de Gráfico Circular</h2>
+        <p><strong>Situación:</strong> Distribución del tiempo de estudio semanal (240 estudiantes).</p>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light"><tr><th>Horas Semanales</th><th>Estudiantes</th><th>Porcentaje</th></tr></thead>
+            <tbody>
+              <tr><td>0–5 horas</td><td>60</td><td>25%</td></tr>
+              <tr><td>6–10 horas</td><td>96</td><td>40%</td></tr>
+              <tr><td>11–15 horas</td><td>48</td><td>20%</td></tr>
+              <tr><td>16–20 horas</td><td>24</td><td>10%</td></tr>
+              <tr><td>Más de 20 horas</td><td>12</td><td>5%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <strong>Preguntas de análisis:</strong>
+          <ol class="mb-0">
+            <li>Grados del sector "6–10 horas"</li>
+            <li>% que estudia menos de 11 horas</li>
+            <li>¿Cuántos estudian más de 15 horas?</li>
+            <li>¿Es apropiado un gráfico circular aquí? Justifica.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Ejercicio 5: Histograma ">
+      <div class="frame">
+        <h2>Ejercicio 5: Interpretación de Histograma</h2>
+        <p><strong>Situación:</strong> Puntajes PDT Matemática en un colegio (180 estudiantes).</p>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light"><tr><th>Puntaje</th><th>Estudiantes</th><th>Porcentaje</th></tr></thead>
+            <tbody>
+              <tr><td>[400–499]</td><td>27</td><td>15%</td></tr>
+              <tr><td>[500–599]</td><td>54</td><td>30%</td></tr>
+              <tr><td>[600–699]</td><td>63</td><td>35%</td></tr>
+              <tr><td>[700–800]</td><td>36</td><td>20%</td></tr>
+              <tr class="table-secondary"><th>Total</th><th>180</th><th>100%</th></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <strong>Preguntas de análisis:</strong>
+          <ol class="mb-0">
+            <li>Forma de la distribución</li>
+            <li>¿Cuántos con ≥700?</li>
+            <li>% con &lt;600</li>
+            <li>¿Por qué barras pegadas?</li>
+            <li>Intervalo modal</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Ejercicio 6: Selección de Gráfico ">
+      <div class="frame">
+        <h2>Ejercicio 6: Selección del Gráfico Apropiado</h2>
+        <ol>
+          <li>Evolución del precio del dólar durante 2024 — <span class="ans blue">Gráfico de líneas (datos temporales)</span></li>
+          <li>Preferencias de carreras universitarias por género — <span class="ans red">Gráfico de barras dobles (comparar dos grupos)</span></li>
+          <li>Distribución del presupuesto escolar anual — <span class="ans green">Gráfico circular (partes de un todo)</span></li>
+          <li>Tiempo que tardan en llegar al colegio — <span class="ans orange">Histograma (datos continuos agrupados)</span></li>
+          <li>Número de estudiantes por especialidad técnica — <span class="ans violet">Gráfico de barras simples (categorías)</span></li>
+        </ol>
+        <div class="callout alert"><strong>Reflexión:</strong> La elección correcta del gráfico es fundamental para comunicar efectivamente.</div>
+      </div>
+    </section>
+
+    <!-- SÍNTESIS Y CIERRE -->
+    <section class="slide" data-title="Resumen de Tipos de Gráficos">
+      <div class="frame">
+        <h2>Resumen de Tipos de Gráficos</h2>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light"><tr><th>Gráfico</th><th>Tipo de Datos</th><th>Uso Principal</th><th>Característica Visual</th></tr></thead>
+            <tbody>
+              <tr><td>Barras Simples</td><td>Categóricos</td><td>Comparar categorías</td><td>Barras separadas</td></tr>
+              <tr><td>Barras Dobles</td><td>Categóricos (2 grupos)</td><td>Comparar entre grupos</td><td>Barras agrupadas con leyenda</td></tr>
+              <tr><td>Líneas</td><td>Temporales/secuenciales</td><td>Mostrar tendencias</td><td>Puntos conectados</td></tr>
+              <tr><td>Circulares</td><td>Categóricos</td><td>Proporciones del total</td><td>Sectores de un círculo</td></tr>
+              <tr><td>Histogramas</td><td>Continuos agrupados</td><td>Distribuciones</td><td>Barras contiguas</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout success">
+          <strong>Criterios de selección:</strong> Tipo de datos, propósito, audiencia y cantidad de categorías.
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Consejos y Errores Comunes">
+      <div class="frame">
+        <h2>Consejos para Crear Buenos Gráficos</h2>
+        <div class="callout success">
+          <ul class="mb-0">
+            <li><strong>Título descriptivo</strong> y claro</li>
+            <li><strong>Ejes</strong> etiquetados con unidades</li>
+            <li><strong>Leyenda</strong> clara para múltiples series</li>
+            <li><strong>Escalas</strong> apropiadas y honestas</li>
+            <li><strong>Colores</strong> consistentes y distinguibles</li>
+          </ul>
+        </div>
+        <div class="callout alert">
+          <strong>Errores comunes:</strong> tipo de gráfico incorrecto; escalas que no parten en cero (cuando corresponde); demasiadas categorías en circulares; falta de títulos/etiquetas; colores confusos.
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Cierre">
+      <div class="frame d-flex flex-column justify-content-center" style="min-height:calc(100vh - 140px)">
+        <div class="text-center">
+          <h2 class="mb-3">¡Excelente Trabajo!</h2>
+          <p class="lead">Ahora sabes elegir, construir y analizar distintos gráficos estadísticos.</p>
+          <p class="text-muted">¿Preguntas o comentarios?</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="footbar py-2">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-2">
+        <button id="prevBtn" class="btn btn-outline-secondary btn-sm btn-nav">⟵ Anterior</button>
+        <button id="nextBtn" class="btn btn-primary btn-sm btn-nav">Siguiente ⟶</button>
+      </div>
+      <div class="text-muted small">
+        Diapositiva <span id="slideNum">1</span>/<span id="slideTotal">X</span> • Navega con ← → o usa el menú
+      </div>
+    </div>
+  </div>
+
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="tocCanvas" aria-labelledby="tocLabel">
+    <div class="offcanvas-header">
+      <h5 id="tocLabel">Contenidos</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div id="tocList" class="toc-list"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function(){
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const slideNum = document.getElementById('slideNum');
+      const slideTotal = document.getElementById('slideTotal');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const btnTOC = document.getElementById('btnTOC');
+      const today = document.getElementById('today');
+
+      // Fecha local
+      const d = new Date();
+      if(today) today.textContent = d.toLocaleDateString('es-CL', {year:'numeric', month:'long', day:'numeric'});
+
+      let idx = 0;
+      slideTotal.textContent = slides.length;
+
+      // ===== Layout fix: place table (left) and chart (right) side-by-side =====
+      function fixSideBySideFor(selector){
+        document.querySelectorAll(selector).forEach(section=>{
+          const frame = section.querySelector('.frame');
+          if(!frame) return;
+          // direct children only
+          const tableDiv = frame.querySelector(':scope > .table-responsive');
+          const canvasDiv = frame.querySelector(':scope > .canvas-box');
+          if(tableDiv && canvasDiv){
+            const row = document.createElement('div');
+            row.className = 'row g-4 fix-row';
+            const colL = document.createElement('div');
+            colL.className = 'col-md-6';
+            const colR = document.createElement('div');
+            colR.className = 'col-md-6';
+            // Insert row before table, then move nodes in
+            frame.insertBefore(row, tableDiv);
+            colL.appendChild(tableDiv);
+            colR.appendChild(canvasDiv);
+            // Force extra small chart size for these dense slides
+            const cv = colR.querySelector('canvas');
+            if(cv){ cv.classList.add('xs'); }
+            row.appendChild(colL);
+            row.appendChild(colR);
+          }
+        });
+      }
+      // Apply to all "Barras Dobles — Ejemplo *" and "Histogramas — Ejemplo *" slides
+      fixSideBySideFor('section.slide[data-title^=\"Barras Dobles — Ejemplo\"]');
+      fixSideBySideFor('section.slide[data-title^=\"Histogramas — Ejemplo\"]');
+
+
+      // Mark frames where canvas-box is a direct child to keep charts at RIGHT
+      document.querySelectorAll('.frame').forEach(f=>{
+        const hasRight = Array.from(f.children).some(ch=>ch.classList && ch.classList.contains('canvas-box'));
+        if(hasRight){ f.classList.add('has-chart-right'); }
+      });
+
+
+      function show(i){
+        idx = (i+slides.length)%slides.length;
+        slides.forEach((s,k)=>s.classList.toggle('active', k===idx));
+        slideNum.textContent = idx+1;
+        window.scrollTo({top:0, behavior:'instant'});
+      }
+      prevBtn.addEventListener('click', ()=>show(idx-1));
+      nextBtn.addEventListener('click', ()=>show(idx+1));
+      document.addEventListener('keydown', (e)=>{
+        if(e.key==='ArrowRight') show(idx+1);
+        if(e.key==='ArrowLeft') show(idx-1);
+        if(e.key.toLowerCase()==='h') show(0);
+        if(e.key.toLowerCase()==='e') show(slides.length-1);
+      });
+
+      // TOC
+      const tocCanvas = new bootstrap.Offcanvas('#tocCanvas');
+      btnTOC.addEventListener('click', ()=> tocCanvas.toggle());
+      const tocList = document.getElementById('tocList');
+      slides.forEach((s, k)=>{
+        const t = s.getAttribute('data-title') || ('Diapositiva '+(k+1));
+        const btn = document.createElement('button');
+        btn.className='w-100 text-truncate';
+        btn.textContent = (k+1)+'. '+t;
+        btn.addEventListener('click', ()=>{ tocCanvas.hide(); show(k); });
+        const item = document.createElement('div');
+        item.appendChild(btn);
+        tocList.appendChild(item);
+      });
+
+      // Helpers Chart.js: tamaños fijos para render en slides ocultas
+      function mkBar(ctx, labels, data, title){
+        return new Chart(ctx, {
+          type: 'bar',
+          data: { labels, datasets: [{ label: title, data }] },
+          options: {
+            responsive:false, maintainAspectRatio:false,
+            layout:{ padding:6 },
+            plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, font:{ size:11 } } } },
+            scales:{
+              x:{ ticks:{ font:{ size:11 }, maxRotation:0, autoSkip:true, maxTicksLimit:8 } },
+              y:{ beginAtZero:true, ticks:{ font:{ size:11 } } }
+            }
+          }
+        });
+      }
+      function mkGroupedBar(ctx, labels, ds, names){
+        return new Chart(ctx, {
+          type:'bar',
+          data:{ labels, datasets: ds.map((d,i)=>({ label:names[i], data:d })) },
+          options:{
+            responsive:false, maintainAspectRatio:false,
+            layout:{ padding:6 },
+            plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, font:{ size:11 } } } },
+            scales:{
+              x:{ ticks:{ font:{ size:11 }, maxRotation:0, autoSkip:true, maxTicksLimit:8 } },
+              y:{ beginAtZero:true, ticks:{ font:{ size:11 } } }
+            }
+          }
+        });
+      }
+      function mkLine(ctx, labels, data, title){
+        return new Chart(ctx, {
+          type:'line',
+          data:{ labels, datasets:[{ label:title, data, tension:0.25, pointRadius:2 }] },
+          options:{
+            responsive:false, maintainAspectRatio:false,
+            layout:{ padding:6 },
+            plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, font:{ size:11 } } } },
+            scales:{
+              x:{ ticks:{ font:{ size:11 }, maxRotation:0, autoSkip:true, maxTicksLimit:10 } },
+              y:{ ticks:{ font:{ size:11 } }, beginAtZero:false }
+            }
+          }
+        });
+      }
+      function mkPie(ctx, labels, data, title){
+        return new Chart(ctx, {
+          type:'pie',
+          data:{ labels, datasets:[{ label:title, data }] },
+          options:{
+            responsive:false, maintainAspectRatio:false,
+            layout:{ padding:6 },
+            plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, font:{ size:11 } } } }
+          }
+        });
+      }
+      function mkHisto(ctx, labels, data, title){
+        return new Chart(ctx, {
+          type:'bar',
+          data:{ labels, datasets:[{ label:title, data, categoryPercentage:0.92, barPercentage:0.92 }] },
+          options:{
+            responsive:false, maintainAspectRatio:false,
+            layout:{ padding:6 },
+            plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, font:{ size:11 } } } },
+            scales:{
+              x:{ ticks:{ font:{ size:11 } } },
+              y:{ beginAtZero:true, ticks:{ font:{ size:11 } } }
+            }
+          }
+        });
+      }
+
+      // === Inicialización de TODOS los gráficos (25) ===
+
+      // Barras simples (5)
+      mkBar(document.getElementById('chartCarreras'),
+        ['Ingeniería','Medicina','Pedagogía','Derecho','Psicología','Otras'],
+        [90,75,45,42,30,18],'Estudiantes');
+      mkBar(document.getElementById('chartMusica'),
+        ['Reggaeton','Pop','Rock','Hip-Hop','Cumbia','Folclor'],
+        [80,65,50,25,20,10],'Votos');
+      mkBar(document.getElementById('chartTiempoLibre'),
+        ['Redes Sociales','Videojuegos','Deportes','Leer','Ver TV/Series'],
+        [85,45,35,20,15],'Estudiantes');
+      mkBar(document.getElementById('chartPagos'),
+        ['Débito','Efectivo','Transferencia','Crédito','App Móvil'],
+        [70,45,35,20,10],'Preferencias');
+      mkBar(document.getElementById('chartAsignaturas'),
+        ['Matemática','Física','Química','Historia','Biología'],
+        [120,85,60,35,20],'Menciones');
+
+      // Barras dobles (5)
+      mkGroupedBar(document.getElementById('chartRRSSGenero'),
+        ['Instagram','TikTok','WhatsApp','YouTube','Facebook'],
+        [[25,20,35,40,10],[45,40,35,25,15]],
+        ['Hombres','Mujeres']);
+      mkGroupedBar(document.getElementById('chartRendimiento'),
+        ['Mat','Leng','Hist','Cien','Ingl'],
+        [[5.2,5.8,5.5,5.3,5.0],[5.6,6.0,5.9,5.7,5.4]],
+        ['2023','2024']);
+      mkGroupedBar(document.getElementById('chartDeporteEdad'),
+        ['Fútbol','Básquetbol','Volleyball','Atletismo','Natación'],
+        [[45,25,20,15,10],[30,20,15,10,5]],
+        ['14–16 años','17–18 años']);
+      mkGroupedBar(document.getElementById('chartEstudioZona'),
+        ['Casa','Biblioteca','Colegio','Parque/Aire libre','Café/Local'],
+        [[60,15,20,25,5],[40,35,30,10,25]],
+        ['Rural','Urbano']);
+      mkGroupedBar(document.getElementById('chartMedios'),
+        ['Streaming','RRSS','Videojuegos','TV','Radio'],
+        [[2.5,3.0,1.5,1.0,2.0],[4.5,5.0,3.5,2.0,3.0]],
+        ['Semana','Fin de Semana']);
+
+      // Líneas (5)
+      mkLine(document.getElementById('chartNotas'),
+        ['Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+        [5.2,5.4,5.1,5.6,5.8,6.0,5.9,6.2,6.1,6.3],'Promedio');
+      mkLine(document.getElementById('chartAsistencia'),
+        ['Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+        [95,93,91,89,94,92,90,88,85,82],'% Asistencia');
+      mkLine(document.getElementById('chartBiblioteca'),
+        ['S1','S2','S3','S4','S5','S6','S7','S8','S9','S10'],
+        [120,135,150,145,160,180,175,190,185,200],'Usuarios');
+      mkLine(document.getElementById('chartTemperatura'),
+        ['Verano','Otoño','Invierno','Primavera'],
+        [22,18,15,19],'Temp (°C)');
+      mkLine(document.getElementById('chartSeguidores'),
+        ['E','F','M','A','M','J','J','A','S','O','N','D'],
+        [500,650,800,920,1100,1250,1180,1400,1550,1720,1850,2000],'Seguidores');
+
+      // Circulares (5)
+      mkPie(document.getElementById('chartPresupuesto'),
+        ['Alimentación 35%','Vivienda 25%','Transporte 20%','Educación 12%','Salud 8%'],
+        [35,25,20,12,8],'Presupuesto');
+      mkPie(document.getElementById('chartEstablecimientos'),
+        ['Municipal 40%','Part. Subvencionado 35%','Particular Pagado 20%','Técnico Profesional 5%'],
+        [40,35,20,5],'Colegio');
+      mkPie(document.getElementById('chartPlanes'),
+        ['Universidad 50%','CFT/IP 30%','Trabajar 12.5%','Preuniversitario 7.5%'],
+        [50,30,12.5,7.5],'Planes');
+      mkPie(document.getElementById('chartPandemia'),
+        ['Streaming/TV 40%','Redes Sociales 30%','Videojuegos 20%','Leer 6.7%','Ejercicio 3.3%'],
+        [40,30,20,6.7,3.3],'Tiempo libre 2022');
+      mkPie(document.getElementById('chartFuentes'),
+        ['Internet/Google 50%','Libros 20%','Wikipedia 15%','Videos/YouTube 10%','Biblioteca 5%'],
+        [50,20,15,10,5],'Fuentes');
+
+      // Histogramas (5)
+      mkHisto(document.getElementById('chartHistoEstatura'),
+        ['[150–154]','[155–159]','[160–164]','[165–169]','[170–174]'],
+        [5,12,18,10,5],'Estudiantes');
+      mkHisto(document.getElementById('chartHistoTraslado'),
+        ['[10–19]','[20–29]','[30–39]','[40–49]','[50–59]'],
+        [8,22,20,7,3],'Estudiantes');
+      mkHisto(document.getElementById('chartHistoPeso'),
+        ['[45–49]','[50–54]','[55–59]','[60–64]','[65–69]'],
+        [3,8,15,10,4],'Estudiantes');
+      mkHisto(document.getElementById('chartHistoNotas'),
+        ['[2.0–3.4]','[3.5–4.9]','[5.0–6.4]','[6.5–7.0]'],
+        [4,12,22,7],'Estudiantes');
+      mkHisto(document.getElementById('chartHistoEdad'),
+        ['[13–15]','[16–18]','[19–21]','[22–24]'],
+        [25,35,15,5],'Usuarios');
+
+      // Mostrar primera
+      show(0);
+    })();
+  </script>
+</body>
+</html>

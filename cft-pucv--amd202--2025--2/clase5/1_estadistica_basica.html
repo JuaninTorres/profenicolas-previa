@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Conceptos Básicos de Estadística — Presentación HTML (Mejorada)</title>
+  <!-- Bootstrap 5.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root{
+      --azulchile:#003366;
+      --rojochile:#ff3333;
+      --verdechile:#00994c;
+      --naranjaclaro:#ffa500;
+      --violeta:#9b59b6;
+      --texto:#2c3e50;
+    }
+    html,body{
+      height:100%;
+      background:#fff;
+      color:var(--texto);
+      font-size:1.15rem;  /* aumentado para mejor legibilidad */
+      line-height:1.6;
+    }
+    body{overflow:hidden}
+    .slide{
+      display:none;
+      height:100%;
+      padding-bottom:120px; /* espacio para la barra inferior */
+    }
+    .slide.active{display:block}
+    .frame{
+      max-width:95%;     /* aprovechar más el ancho */
+      margin:0 auto;
+      padding:2.5rem 2rem 4rem;
+    }
+    header.topbar{
+      position:fixed;top:0;left:0;right:0;z-index:1000;
+      background:var(--azulchile);color:#fff;
+      box-shadow:0 2px 8px rgba(0,0,0,.15);
+    }
+    header .brand{font-weight:800;letter-spacing:.3px;font-size:1.3rem}
+    header .subtitle{opacity:.9;font-size:.95rem}
+    .footbar{
+      position:fixed;left:0;right:0;bottom:0;z-index:1000;
+      background:#f8f9fa;border-top:1px solid #e5e7eb;
+    }
+    .btn-nav{font-weight:600;font-size:1rem}
+    h1,.display-5{color:var(--azulchile);font-size:3rem}
+    h2{color:var(--azulchile);font-size:2.25rem}
+    h3{color:var(--azulchile);font-size:1.8rem}
+    .badge-topic{background:var(--verdechile)}
+    .callout{
+      border-left:6px solid var(--azulchile);
+      background:#eef4fb;
+      padding:1rem 1rem;margin:1rem 0;border-radius:.5rem;
+      font-size:1.05rem;
+    }
+    .callout.alert{border-left-color:var(--rojochile);background:#fff1f1}
+    .callout.success{border-left-color:var(--verdechile);background:#effaf3}
+    .key{font-weight:700;color:var(--azulchile)}
+    .kbd{border:1px solid #cbd5e1;padding:.1rem .35rem;border-radius:.25rem;background:#fff}
+    .toc-list button{border:none;background:transparent;width:100%;text-align:left;padding:.6rem .4rem;border-radius:.5rem;font-size:1rem}
+    .toc-list button:hover{background:#f1f5f9}
+    .pill{display:inline-block;padding:.35rem .75rem;border-radius:999px;background:#e9ecef;margin:.2rem .25rem;font-size:1rem}
+    .big{font-size:1.3rem}
+    .diagram{
+      background:#f6f9ff;border:1px solid #dbeafe;border-radius:1rem;
+      padding:1.2rem; text-align:center; color:#1e40af;
+      font-size:1.1rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="container-fluid px-3 py-2 d-flex align-items-center justify-content-between">
+      <div>
+        <div class="brand">Conceptos Básicos de Estadística</div>
+        <div class="subtitle small">Introducción al Mundo de los Datos • CFT 2025</div>
+      </div>
+      <div class="d-flex gap-2">
+        <button id="btnTOC" class="btn btn-light btn-sm" title="Tabla de contenidos">
+          <span class="me-1">☰</span> Contenidos
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Slides -->
+  <main id="slides" class="pt-5 mt-3">
+    <!-- 0. Portada -->
+    <section class="slide active" data-title="Portada">
+      <div class="frame d-flex flex-column justify-content-center" style="min-height:calc(100vh - 140px)">
+        <div class="text-center">
+          <h1 class="display-5 fw-bold">Conceptos Básicos de Estadística</h1>
+          <p class="lead mb-3">Introducción al Mundo de los Datos</p>
+          <span class="pill">Profesor de Matemática</span>
+          <span class="pill">CFT PUCV</span>
+          <div class="mt-3 text-muted">Fecha: <span id="today"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1. Contenidos -->
+    <section class="slide" data-title="Contenidos de la Clase">
+      <div class="frame">
+        <h2>Contenidos de la Clase</h2>
+        <ol class="big">
+          <li>¿Qué es la Estadística?</li>
+          <li>Población y Muestra</li>
+          <li>Variables Estadísticas (Cualitativas y Cuantitativas)</li>
+          <li>Ejercicios Teóricos</li>
+          <li>Síntesis</li>
+        </ol>
+        <div class="callout">
+          Esta tabla de contenidos también está disponible en el menú <span class="kbd">☰</span> (arriba derecha).
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. ¿Qué es la Estadística? -->
+    <section class="slide" data-title="¿Qué es la Estadística?">
+      <div class="frame">
+        <h2>¿Qué es la Estadística?</h2>
+        <div class="callout success">
+          <span class="key">Definición:</span> Ciencia que <strong>recopila, organiza, analiza e interpreta datos</strong> para obtener información útil y tomar decisiones informadas.
+        </div>
+        <div class="diagram my-4">
+          <div class="fw-bold">Proceso Estadístico</div>
+          <div class="mt-1">Datos → Organización → Análisis → Conclusiones</div>
+        </div>
+        <div class="callout">
+          <strong>¿Por qué es importante?</strong> Nos ayuda a entender el mundo que nos rodea y a tomar mejores decisiones basadas en evidencia.
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. La Estadística en tu Vida Cotidiana -->
+    <section class="slide" data-title="La Estadística en tu Vida Cotidiana">
+      <div class="frame">
+        <h2>La Estadística en tu Vida Cotidiana</h2>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <h5 class="text-primary fw-bold">En el colegio</h5>
+            <ul>
+              <li>Promedio de notas</li>
+              <li>Resultados SIMCE</li>
+              <li>Asistencia a clases</li>
+              <li>Encuestas de satisfacción</li>
+              <li>Rendimiento por asignatura</li>
+            </ul>
+          </div>
+          <div class="col-md-6">
+            <h5 class="text-success fw-bold">En Chile</h5>
+            <ul>
+              <li>Censo de población</li>
+              <li>Encuestas de empleo</li>
+              <li>Estadísticas de salud</li>
+              <li>Datos económicos</li>
+              <li>Estudios de opinión</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout alert">
+          <strong>Reflexiona:</strong> ¿Qué otros ejemplos de estadística conoces en tu vida diaria?
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Población -->
+    <section class="slide" data-title="Población">
+      <div class="frame">
+        <h2>Población</h2>
+        <div class="callout">
+          <span class="key">Definición:</span> Conjunto completo de todos los elementos, personas, objetos o situaciones que queremos estudiar.
+        </div>
+        <h6 class="mt-3 text-primary">Características</h6>
+        <ul>
+          <li>Es el grupo total de interés</li>
+          <li>A menudo es muy grande para estudiar completamente</li>
+          <li>Se define claramente antes del estudio</li>
+          <li>Puede ser finita o infinita</li>
+        </ul>
+        <div class="callout alert"> <strong>Problema:</strong> Estudiar toda la población puede ser costoso, lento o imposible.</div>
+      </div>
+    </section>
+
+    <!-- 5. Ejemplos de Población -->
+    <section class="slide" data-title="Ejemplos de Población">
+      <div class="frame">
+        <h2>Ejemplos de Población</h2>
+        <ol>
+          <li><strong>Estudiantes de enseñanza media en Chile</strong> — 1° a 4° medio (≈ 800.000 estudiantes)</li>
+          <li><strong>Familias de la Región Metropolitana</strong> — (≈ 2.5 millones de familias)</li>
+          <li><strong>Colegios municipales de Chile</strong> — (≈ 5.200 colegios)</li>
+          <li><strong>Trabajadores del sector salud en Chile</strong></li>
+          <li><strong>Empresas del rubro tecnológico en Santiago</strong></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 6. Muestra -->
+    <section class="slide" data-title="Muestra">
+      <div class="frame">
+        <h2>Muestra</h2>
+        <div class="callout">
+          <span class="key">Definición:</span> Parte o subconjunto <strong>representativo</strong> de la población que seleccionamos para estudiar.
+        </div>
+        <h6 class="mt-3 text-success">Características</h6>
+        <ul>
+          <li>Más pequeña que la población</li>
+          <li>Debe ser representativa</li>
+          <li>Es práctica y económica de estudiar</li>
+          <li>Sus resultados se generalizan a la población</li>
+        </ul>
+        <div class="callout success"><strong>Ventaja:</strong> Entrega información confiable con menos tiempo, dinero y recursos.</div>
+      </div>
+    </section>
+
+    <!-- 7. Ejemplos de Muestra -->
+    <section class="slide" data-title="Ejemplos de Muestra">
+      <div class="frame">
+        <h2>Ejemplos de Muestra</h2>
+        <ol>
+          <li>200 estudiantes de 2° medio de diferentes colegios de Santiago</li>
+          <li>500 familias de 5 comunas de la RM</li>
+          <li>100 colegios municipales seleccionados aleatoriamente</li>
+          <li>300 trabajadores de salud de hospitales públicos</li>
+          <li>50 empresas tecnológicas de Santiago</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 8. Relación Población-Muestra -->
+    <section class="slide" data-title="Relación Población-Muestra">
+      <div class="frame">
+        <h2>Relación Población–Muestra</h2>
+        <div class="diagram">
+          <div class="fw-bold">POBLACIÓN</div>
+          <div>Todos los elementos de interés</div>
+          <hr>
+          <div class="fw-bold text-danger">MUESTRA</div>
+          <div>Subconjunto representativo</div>
+          <div class="mt-2">➡️ <strong class="text-success">Inferencia</strong></div>
+        </div>
+        <p class="mt-3"><strong>Objetivo:</strong> A partir de los resultados de la muestra, hacer conclusiones sobre toda la población.</p>
+      </div>
+    </section>
+
+    <!-- 9. Variables Estadísticas -->
+    <section class="slide" data-title="Variables Estadísticas">
+      <div class="frame">
+        <h2>Variables Estadísticas</h2>
+        <div class="callout">
+          <span class="key">Definición:</span> Característica que puede tomar diferentes valores en los elementos de la población o muestra.
+        </div>
+        <div class="diagram mt-3">
+          <div class="fw-bold">VARIABLES ESTADÍSTICAS</div>
+          <div class="row mt-2">
+            <div class="col-md-6"><span class="pill">Cualitativas (Categóricas)</span></div>
+            <div class="col-md-6"><span class="pill">Cuantitativas (Numéricas)</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. Variables Cualitativas -->
+    <section class="slide" data-title="Variables Cualitativas">
+      <div class="frame">
+        <h2>Variables Cualitativas</h2>
+        <div class="callout">
+          <span class="key">Definición:</span> Expresan <strong>cualidades</strong>, atributos o categorías (no numéricas).
+        </div>
+        <h6 class="mt-3 text-success">Características</h6>
+        <ul>
+          <li>Representan categorías o etiquetas</li>
+          <li>No tienen orden natural (generalmente)</li>
+          <li>Se pueden contar, pero no sumar</li>
+          <li>También llamadas <em>categóricas</em></li>
+        </ul>
+        <div class="callout">Aunque a veces usemos números (como 1° medio, 2° medio), si representan categorías, <strong>siguen siendo cualitativas</strong>.</div>
+      </div>
+    </section>
+
+    <!-- 11. Ejemplos Cualitativas -->
+    <section class="slide" data-title="Ejemplos de Variables Cualitativas">
+      <div class="frame">
+        <h2>Ejemplos de Variables Cualitativas</h2>
+        <ol>
+          <li>Región donde vives</li>
+          <li>Tipo de establecimiento educacional</li>
+          <li>Asignatura favorita</li>
+          <li>Medio de transporte al colegio</li>
+          <li>Color de ojos</li>
+        </ol>
+        <p class="mt-3 text-primary fw-semibold">¿Puedes pensar en más ejemplos?</p>
+      </div>
+    </section>
+
+    <!-- 12. Variables Cuantitativas -->
+    <section class="slide" data-title="Variables Cuantitativas">
+      <div class="frame">
+        <h2>Variables Cuantitativas</h2>
+        <div class="callout">
+          <span class="key">Definición:</span> Expresan <strong>cantidades numéricas</strong>. Se pueden medir y operar (sumar, promediar, etc.).
+        </div>
+        <div class="diagram mt-3">
+          <div class="fw-bold">CUANTITATIVAS</div>
+          <div class="row mt-2">
+            <div class="col-md-6"><span class="pill">Discretas</span></div>
+            <div class="col-md-6"><span class="pill">Continuas</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13. Cuantitativas Discretas -->
+    <section class="slide" data-title="Variables Cuantitativas Discretas">
+      <div class="frame">
+        <h2>Variables Cuantitativas Discretas</h2>
+        <div class="callout">
+          <span class="key">Definición:</span> Toman <strong>valores enteros contables</strong>; suelen resultar de <strong>contar</strong>.
+        </div>
+        <h6 class="mt-3">Características</h6>
+        <ul>
+          <li>Valores enteros (0, 1, 2, ...)</li>
+          <li>Resultado de contar objetos/eventos</li>
+          <li>Sin valores intermedios entre consecutivos</li>
+          <li>Son “separadas” o “aisladas”</li>
+        </ul>
+        <div class="callout">Si puedes contarla de uno en uno, probablemente <strong>es discreta</strong>.</div>
+      </div>
+    </section>
+
+    <!-- 14. Ejemplos Discretas -->
+    <section class="slide" data-title="Ejemplos de Variables Discretas">
+      <div class="frame">
+        <h2>Ejemplos de Variables Discretas</h2>
+        <ol>
+          <li>Número de hermanos</li>
+          <li>Cantidad de asignaturas reprobadas</li>
+          <li>Número de estudiantes por curso</li>
+          <li>Cantidad de mascotas en el hogar</li>
+          <li>Número de goles en un partido de fútbol</li>
+        </ol>
+        <p class="mt-3 text-primary fw-semibold">Patrón: todas son resultado de <strong>contar</strong>.</p>
+      </div>
+    </section>
+
+    <!-- 15. Cuantitativas Continuas -->
+    <section class="slide" data-title="Variables Cuantitativas Continuas">
+      <div class="frame">
+        <h2>Variables Cuantitativas Continuas</h2>
+        <div class="callout">
+          <span class="key">Definición:</span> Pueden tomar <strong>cualquier valor de un rango</strong> (incluyendo decimales); suelen resultar de <strong>medir</strong>.
+        </div>
+        <h6 class="mt-3">Características</h6>
+        <ul>
+          <li>Valores en un intervalo</li>
+          <li>Resultado de medir (no de contar)</li>
+          <li>Infinitos intermedios entre dos valores</li>
+          <li>Precisión depende del instrumento</li>
+        </ul>
+        <div class="callout">Si puedes medirla y tiene decimales, probablemente <strong>es continua</strong>.</div>
+      </div>
+    </section>
+
+    <!-- 16. Ejemplos Continuas -->
+    <section class="slide" data-title="Ejemplos de Variables Continuas">
+      <div class="frame">
+        <h2>Ejemplos de Variables Continuas</h2>
+        <ol>
+          <li>Estatura de una persona</li>
+          <li>Peso corporal</li>
+          <li>Tiempo en completar una prueba</li>
+          <li>Temperatura ambiental</li>
+          <li>Distancia desde casa al colegio</li>
+        </ol>
+        <p class="mt-3 text-primary fw-semibold">Patrón: todas resultan de <strong>medir</strong>.</p>
+      </div>
+    </section>
+
+    <!-- 17. Ejercicio 1 -->
+    <section class="slide" data-title="Ejercicio 1: Identificar Tipo de Variable">
+      <div class="frame">
+        <h2>Ejercicio 1: Identificar Tipo de Variable</h2>
+        <p><strong>Clasifica</strong> cada variable como Cualitativa, Cuantitativa Discreta o Cuantitativa Continua.</p>
+        <ol>
+          <li>Marca de celular que usas — <em class="text-success">Cualitativa</em></li>
+          <li>Número de Me Gusta en Instagram — <em class="text-primary">Discreta</em></li>
+          <li>Tiempo para llegar al colegio — <em class="text-warning">Continua</em></li>
+          <li>Nivel de enseñanza (básica, media) — <em class="text-success">Cualitativa</em></li>
+          <li>Cantidad de páginas de un libro — <em class="text-primary">Discreta</em></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 18. Ejercicio 2 -->
+    <section class="slide" data-title="Ejercicio 2: Más Clasificación de Variables">
+      <div class="frame">
+        <h2>Ejercicio 2: Más Clasificación de Variables</h2>
+        <ol start="6">
+          <li>Velocidad de conexión a internet (Mbps) — <em class="text-warning">Continua</em></li>
+          <li>Deporte favorito — <em class="text-success">Cualitativa</em></li>
+          <li>Número de faltas en el semestre — <em class="text-primary">Discreta</em></li>
+          <li>Promedio de notas (ej: 6.2) — <em class="text-warning">Continua</em></li>
+          <li>Estado civil de los padres — <em class="text-success">Cualitativa</em></li>
+        </ol>
+        <div class="callout alert"><strong>Reflexión:</strong> ¿Hubo alguna variable que te costó clasificar? ¿Por qué?</div>
+      </div>
+    </section>
+
+    <!-- 19. Ejercicio 3 -->
+    <section class="slide" data-title="Ejercicio 3: Población vs Muestra">
+      <div class="frame">
+        <h2>Ejercicio 3: Población vs Muestra</h2>
+        <p><strong>Situación:</strong> El Liceo (1.200 estudiantes) encuestará a 120 estudiantes (30 por nivel).</p>
+        <ol>
+          <li><strong>Población:</strong> Los 1.200 estudiantes del liceo.</li>
+          <li><strong>Muestra:</strong> Los 120 estudiantes encuestados.</li>
+          <li><strong>Porcentaje:</strong> 10% (120 / 1.200 = 0.1).</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 20. Ejercicio 4 -->
+    <section class="slide" data-title="Ejercicio 4: Relacionar Conceptos">
+      <div class="frame">
+        <h2>Ejercicio 4: Relacionar Conceptos</h2>
+        <div class="row">
+          <div class="col-md-7">
+            <h6>Definiciones</h6>
+            <ol type="A">
+              <li>Conjunto completo de elementos a estudiar</li>
+              <li>Variable que resulta de contar elementos</li>
+              <li>Variable que expresa categorías</li>
+              <li>Subconjunto representativo de la población</li>
+              <li>Variable que resulta de medir y puede tener decimales</li>
+            </ol>
+          </div>
+          <div class="col-md-5">
+            <h6>Conceptos</h6>
+            <ol>
+              <li>Muestra</li>
+              <li>Variable Continua</li>
+              <li>Población</li>
+              <li>Variable Discreta</li>
+              <li>Variable Cualitativa</li>
+            </ol>
+          </div>
+        </div>
+        <div class="callout success">Respuestas: A-3, B-4, C-5, D-1, E-2.</div>
+      </div>
+    </section>
+
+    <!-- 21. Ejercicio 5 -->
+    <section class="slide" data-title="Ejercicio 5: Caso Práctico">
+      <div class="frame">
+        <h2>Ejercicio 5: Caso Práctico</h2>
+        <p><strong>Situación:</strong> Empresa de delivery (2.000 entregas/mes) selecciona 200 al azar y registra: tiempo, comuna, día, calificación.</p>
+        <ol>
+          <li><strong>Población:</strong> Las 2.000 entregas mensuales.</li>
+          <li><strong>Muestra:</strong> Las 200 entregas seleccionadas.</li>
+          <li><strong>Variable cualitativa:</strong> Comuna, día de la semana.</li>
+          <li><strong>Variable discreta:</strong> Calificación del cliente (1–5).</li>
+          <li><strong>Variable continua:</strong> Tiempo de entrega.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 22. Ejercicio 6 -->
+    <section class="slide" data-title="Ejercicio 6: Crear Ejemplos">
+      <div class="frame">
+        <h2>Ejercicio 6: Crear Ejemplos</h2>
+        <p><strong>Desafío:</strong> Crea UN ejemplo original para cada tipo de variable relacionado con tu colegio.</p>
+        <ul>
+          <li><strong>Variable Cualitativa:</strong> ___________________________</li>
+          <li><strong>Variable Cuantitativa Discreta:</strong> ___________________________</li>
+          <li><strong>Variable Cuantitativa Continua:</strong> ___________________________</li>
+        </ul>
+        <div class="callout alert">Para reflexionar: ¿Qué variables serían más útiles para estudiar el rendimiento académico de tu curso?</div>
+      </div>
+    </section>
+
+    <!-- 23. Síntesis -->
+    <section class="slide" data-title="Síntesis">
+      <div class="frame">
+        <h2>Resumen de Conceptos</h2>
+        <ul>
+          <li><strong>Estadística:</strong> Ciencia que estudia datos para tomar decisiones.</li>
+          <li><strong>Población:</strong> Conjunto completo de elementos a estudiar.</li>
+          <li><strong>Muestra:</strong> Subconjunto representativo de la población.</li>
+          <li><strong>Variables Cualitativas:</strong> Expresan categorías o cualidades.</li>
+          <li><strong>Variables Discretas:</strong> Números enteros; resultado de contar.</li>
+          <li><strong>Variables Continuas:</strong> Pueden tener decimales; resultado de medir.</li>
+        </ul>
+        <div class="callout">Pregunta final: ¿Cómo aplicarías estos conceptos para estudiar algo que te interese de tu colegio o comunidad?</div>
+      </div>
+    </section>
+
+    <!-- 24. Cierre -->
+    <section class="slide" data-title="Cierre">
+      <div class="frame d-flex flex-column justify-content-center" style="min-height:calc(100vh - 140px)">
+        <div class="text-center">
+          <h2 class="mb-3">¡Gracias por su atención!</h2>
+          <p class="lead">¿Preguntas o dudas?</p>
+          <p class="text-muted">La estadística nos ayuda a entender mejor nuestro mundo.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer / Nav bar -->
+  <div class="footbar py-2">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-2">
+        <button id="prevBtn" class="btn btn-outline-secondary btn-sm btn-nav">⟵ Anterior</button>
+        <button id="nextBtn" class="btn btn-primary btn-sm btn-nav">Siguiente ⟶</button>
+      </div>
+      <div class="text-muted small">
+        Diapositiva <span id="slideNum">1</span>/<span id="slideTotal">24</span>
+        • Navega con ← → o clic en botones
+      </div>
+    </div>
+  </div>
+
+  <!-- TOC Offcanvas -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="tocCanvas" aria-labelledby="tocLabel">
+    <div class="offcanvas-header">
+      <h5 id="tocLabel">Contenidos</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div id="tocList" class="toc-list"></div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS + Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function(){
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const slideNum = document.getElementById('slideNum');
+      const slideTotal = document.getElementById('slideTotal');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const btnTOC = document.getElementById('btnTOC');
+      const today = document.getElementById('today');
+
+      // Fecha de hoy (local Chile)
+      const d = new Date();
+      today && (today.textContent = d.toLocaleDateString('es-CL', {year:'numeric', month:'long', day:'numeric'}));
+
+      let idx = 0;
+      slideTotal.textContent = slides.length;
+
+      function show(i){
+        idx = (i+slides.length)%slides.length;
+        slides.forEach((s,k)=>s.classList.toggle('active', k===idx));
+        slideNum.textContent = idx+1;
+        window.scrollTo({top:0, behavior:'instant'});
+      }
+
+      prevBtn.addEventListener('click', ()=>show(idx-1));
+      nextBtn.addEventListener('click', ()=>show(idx+1));
+
+      document.addEventListener('keydown', (e)=>{
+        if(e.key==='ArrowRight') show(idx+1);
+        if(e.key==='ArrowLeft') show(idx-1);
+        if(e.key.toLowerCase()==='h') show(0);
+        if(e.key.toLowerCase()==='e') show(slides.length-1);
+      });
+
+      // TOC
+      const tocCanvas = new bootstrap.Offcanvas('#tocCanvas');
+      btnTOC.addEventListener('click', ()=> tocCanvas.toggle());
+      const tocList = document.getElementById('tocList');
+      slides.forEach((s, k)=>{
+        const t = s.getAttribute('data-title') || ('Diapositiva '+(k+1));
+        const btn = document.createElement('button');
+        btn.className='w-100 text-truncate';
+        btn.textContent = (k+1)+'. '+t;
+        btn.addEventListener('click', ()=>{ tocCanvas.hide(); show(k); });
+        const item = document.createElement('div');
+        item.appendChild(btn);
+        tocList.appendChild(item);
+      });
+
+
+      // Mostrar la primera
+      show(0);
+    })();
+  </script>
+</body>
+</html>

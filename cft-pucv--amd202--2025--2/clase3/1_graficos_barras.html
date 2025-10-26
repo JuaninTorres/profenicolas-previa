@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tipos de Gráficos Estadísticos - Representación Visual de Datos</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --azul-chile: #003366;
+            --rojo-chile: #FF3333;
+            --verde-chile: #009944;
+            --naranja-claro: #FFA500;
+            --violeta: #9B59B6;
+            --gris-claro: #f8f9fa;
+            --gris-oscuro: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--gris-oscuro);
+            background: linear-gradient(135deg, var(--gris-claro) 0%, #e8f4f8 100%);
+        }
+
+        .presentation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .slide {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            min-height: 500px;
+            display: none;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .slide-header {
+            background: linear-gradient(135deg, var(--azul-chile), var(--violeta));
+            color: white;
+            padding: 30px 40px;
+            border-radius: 15px;
+            margin: -40px -40px 30px -40px;
+            text-align: center;
+        }
+
+        .slide-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .slide-header h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .slide-header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .objectives-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .objective-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid var(--azul-chile);
+            transition: transform 0.3s ease;
+        }
+
+        .objective-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .objective-card h3 {
+            color: var(--azul-chile);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .chart-container {
+            background: var(--gris-claro);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .chart-canvas {
+            max-height: 300px;
+            margin: 20px 0;
+        }
+
+        .data-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+
+        .data-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: var(--azul-chile);
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, var(--verde-chile), #27ae60);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, var(--rojo-chile), #e74c3c);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, var(--naranja-claro), #f39c12);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: var(--azul-chile);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,51,102,0.3);
+        }
+
+        .nav-btn:hover {
+            background: var(--violeta);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(155,89,182,0.4);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(0,51,102,0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: var(--azul-chile);
+            transition: width 0.3s ease;
+            z-index: 1001;
+        }
+
+        .step-list {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .step-list li {
+            counter-increment: step-counter;
+            margin: 15px 0;
+            padding: 15px 15px 15px 60px;
+            background: var(--gris-claro);
+            border-radius: 8px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--azul-chile);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .step-list li:hover {
+            background: #e3f2fd;
+            transform: translateX(10px);
+        }
+
+        .interactive-section {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .interactive-btn {
+            background: var(--verde-chile);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .interactive-btn:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .formula {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2em;
+            text-align: center;
+            margin: 20px 0;
+            border-left: 4px solid var(--azul-chile);
+        }
+
+        @media (max-width: 768px) {
+            .presentation-container {
+                padding: 10px;
+            }
+            
+            .slide {
+                padding: 20px;
+                margin: 10px 0;
+            }
+            
+            .content-grid,
+            .objectives-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .navigation {
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .nav-btn {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="slide-counter" id="slideCounter">1 / 20</div>
+
+    <div class="presentation-container">
+        <!-- Slide 1: Título -->
+        <div class="slide active">
+            <div class="slide-header">
+                <h1>Tipos de Gráficos Estadísticos</h1>
+                <h2>Representación Visual de Datos</h2>
+                <p>Módulo ADM 202 - Profesor Nicolás González M.</p>
+                <p>CFT PUCV - 2025</p>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <div style="font-size: 1.5em; color: var(--azul-chile); margin-bottom: 20px;">
+                    📊 ¡Bienvenidos al mundo de la visualización de datos! 📊
+                </div>
+                <p style="font-size: 1.2em; color: var(--gris-oscuro);">
+                    Hoy aprenderemos a construir e interpretar gráficos de barras para representar datos categóricos de manera efectiva.
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Objetivos -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Objetivos de Aprendizaje</h2>
+            </div>
+            <div class="objectives-grid">
+                <div class="objective-card fade-in">
+                    <h3>🎯 Objetivo General</h3>
+                    <p><strong>Construir e interpretar</strong> gráficos de barras de situaciones reales <strong>para representar</strong> y comparar datos categóricos de manera clara y efectiva.</p>
+                </div>
+                <div class="objective-card fade-in">
+                    <h3>📝 Objetivos Específicos</h3>
+                    <p>Al final de esta clase podrás:</p>
+                    <ul style="margin-top: 15px; padding-left: 20px;">
+                        <li>✅ Identificar cuándo usar gráficos de barras</li>
+                        <li>✅ Distinguir entre gráficos verticales y horizontales</li>
+                        <li>✅ Construir gráficos de barras paso a paso</li>
+                        <li>✅ Interpretar y comparar información categórica</li>
+                        <li>✅ Analizar datos de situaciones chilenas reales</li>
+                        <li>✅ Comunicar conclusiones basadas en gráficos</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Definición -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>¿Qué son los Gráficos de Barras?</h2>
+            </div>
+            <div class="highlight-box">
+                <h3>Definición</h3>
+                <p>Un <strong>gráfico de barras</strong> es una representación visual que utiliza barras rectangulares para mostrar y <strong>comparar datos categóricos</strong>, donde la altura o longitud de cada barra es proporcional al valor que representa.</p>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <h3 style="color: var(--azul-chile); margin-bottom: 20px;">📋 Características Principales</h3>
+                    <ul class="step-list">
+                        <li>Barras <strong>separadas</strong> (no contiguas)</li>
+                        <li>Una barra por <strong>categoría</strong></li>
+                        <li>Altura/longitud proporcional al <strong>valor</strong></li>
+                        <li>Fácil <strong>comparación</strong> visual</li>
+                        <li>Escalas claras en ambos ejes</li>
+                    </ul>
+                </div>
+                
+                <div class="chart-container">
+                    <h4>Ejemplo Básico</h4>
+                    <canvas id="basicChart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Tipos -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Tipos de Gráficos de Barras</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <div class="info-box">
+                        <h3>📊 Barras Verticales</h3>
+                        <ul>
+                            <li>Categorías en el <strong>eje X</strong></li>
+                            <li>Valores en el <strong>eje Y</strong></li>
+                            <li>Más común y <strong>fácil de leer</strong></li>
+                            <li>Ideal para <strong>pocas categorías</strong></li>
+                        </ul>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="verticalChart" class="chart-canvas"></canvas>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="info-box">
+                        <h3>📈 Barras Horizontales</h3>
+                        <ul>
+                            <li>Categorías en el <strong>eje Y</strong></li>
+                            <li>Valores en el <strong>eje X</strong></li>
+                            <li>Útil para <strong>nombres largos</strong></li>
+                            <li>Mejor para <strong>muchas categorías</strong></li>
+                        </ul>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="horizontalChart" class="chart-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Cuándo usar -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>¿Cuándo Usar Gráficos de Barras?</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <div class="highlight-box">
+                        <h3>✅ Úsalo cuando...</h3>
+                        <ul style="text-align: left; padding-left: 20px;">
+                            <li>Los datos son <strong>categóricos</strong> (cualitativos)</li>
+                            <li>Quieres <strong>comparar</strong> diferentes categorías</li>
+                            <li>Tienes <strong>datos discretos</strong></li>
+                            <li>Las categorías son <strong>independientes</strong></li>
+                            <li>Necesitas mostrar <strong>diferencias</strong> claramente</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #e8f5e8; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                        <h4 style="color: var(--verde-chile);">🎯 Ejemplos Apropiados</h4>
+                        <ul>
+                            <li>Deportes favoritos</li>
+                            <li>Medios de transporte</li>
+                            <li>Profesiones preferidas</li>
+                            <li>Colores favoritos</li>
+                            <li>Regiones del país</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="warning-box">
+                        <h3>❌ No lo uses cuando...</h3>
+                        <ul style="text-align: left; padding-left: 20px;">
+                            <li>Los datos son <strong>continuos</strong></li>
+                            <li>Quieres mostrar <strong>cambios en el tiempo</strong></li>
+                            <li>Necesitas mostrar <strong>proporciones</strong> del total</li>
+                            <li>Los datos son <strong>intervalos numéricos</strong></li>
+                            <li>Hay <strong>relaciones</strong> entre variables</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin-top: 20px; color: #856404;">
+                        <h4>🔄 Alternativas</h4>
+                        <ul>
+                            <li><strong>Histograma</strong> → datos continuos</li>
+                            <li><strong>Gráfico de líneas</strong> → series temporales</li>
+                            <li><strong>Gráfico circular</strong> → proporciones</li>
+                            <li><strong>Dispersión</strong> → relaciones entre variables</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Ejemplo Deportes -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Ejemplo 1: Deportes Favoritos de Estudiantes Chilenos</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <p><strong>Situación:</strong> Una encuesta a 500 estudiantes de educación media en Chile sobre sus deportes favoritos.</p>
+                    
+                    <div class="data-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Deporte</th>
+                                    <th>Estudiantes</th>
+                                    <th>%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Fútbol</td><td>180</td><td>36%</td></tr>
+                                <tr><td>Básquetbol</td><td>85</td><td>17%</td></tr>
+                                <tr><td>Voleibol</td><td>70</td><td>14%</td></tr>
+                                <tr><td>Tenis</td><td>60</td><td>12%</td></tr>
+                                <tr><td>Natación</td><td>55</td><td>11%</td></tr>
+                                <tr><td>Atletismo</td><td>35</td><td>7%</td></tr>
+                                <tr><td>Otros</td><td>15</td><td>3%</td></tr>
+                                <tr style="font-weight: bold; background: var(--azul-chile); color: white;">
+                                    <td>Total</td><td>500</td><td>100%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h4>Deportes Favoritos - Estudiantes Chilenos</h4>
+                    <canvas id="deportesChart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+            
+            <div class="warning-box">
+                <h3>🤔 Preguntas de Análisis</h3>
+                <p>¿Cuál es el deporte más popular? ¿Cuántas veces más popular es el fútbol que el atletismo? ¿Qué porcentaje representan los deportes acuáticos?</p>
+            </div>
+        </div>
+
+        <!-- Slide 7: Ejemplo Regiones -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Ejemplo 2: Población por Regiones de Chile (2023)</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <p><strong>Situación:</strong> Distribución de la población chilena según las principales regiones del país.</p>
+                    
+                    <div class="data-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Región</th>
+                                    <th>Población (miles)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Metropolitana</td><td>7,952</td></tr>
+                                <tr><td>Valparaíso</td><td>1,965</td></tr>
+                                <tr><td>Biobío</td><td>2,037</td></tr>
+                                <tr><td>Maule</td><td>1,131</td></tr>
+                                <tr><td>La Araucanía</td><td>957</td></tr>
+                                <tr><td>O'Higgins</td><td>991</td></tr>
+                                <tr><td>Antofagasta</td><td>691</td></tr>
+                                <tr><td>Los Lagos</td><td>891</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h4>Población por Región - Chile 2023</h4>
+                    <canvas id="regionesChart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <h3>🏛️ Reflexión Demográfica</h3>
+                <p>¿Por qué la RM tiene tanta más población? ¿Cuáles son las 3 regiones más pobladas? ¿Qué factores influyen en esta distribución?</p>
+            </div>
+        </div>
+
+        <!-- Slide 8: Ejemplo Transporte -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Ejemplo 3: Medios de Transporte al Colegio</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <p><strong>Situación:</strong> 320 estudiantes de colegios de Santiago respondieron sobre cómo llegan al establecimiento.</p>
+                    
+                    <div class="data-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Transporte</th>
+                                    <th>Estudiantes</th>
+                                    <th>%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Metro/Micro</td><td>128</td><td>40%</td></tr>
+                                <tr><td>Auto familiar</td><td>80</td><td>25%</td></tr>
+                                <tr><td>Caminando</td><td>64</td><td>20%</td></tr>
+                                <tr><td>Bicicleta</td><td>32</td><td>10%</td></tr>
+                                <tr><td>Colectivo</td><td>16</td><td>5%</td></tr>
+                                <tr style="font-weight: bold; background: var(--azul-chile); color: white;">
+                                    <td>Total</td><td>320</td><td>100%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h4>Medios de Transporte - Colegios Santiago</h4>
+                    <canvas id="transporteChart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+            
+            <div class="highlight-box">
+                <h3>🚌 Análisis de Movilidad</h3>
+                <p>¿Qué medio es más usado? ¿Cuál es el transporte más ecológico y cuántos lo usan? ¿Qué políticas podrían fomentar el transporte sustentable?</p>
+            </div>
+        </div>
+
+        <!-- Slide 9: Ejemplo Comida -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Ejemplo 4: Platos Típicos Favoritos de Chile</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <p><strong>Situación:</strong> Una encuesta gastronómica consultó a 400 chilenos sobre su plato típico nacional favorito.</p>
+                    
+                    <div class="data-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Plato Típico</th>
+                                    <th>Personas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Empanadas</td><td>140</td></tr>
+                                <tr><td>Asado</td><td>100</td></tr>
+                                <tr><td>Cazuela</td><td>80</td></tr>
+                                <tr><td>Pastel de Choclo</td><td>60</td></tr>
+                                <tr><td>Completo Italiano</td><td>20</td></tr>
+                                <tr style="font-weight: bold; background: var(--azul-chile); color: white;">
+                                    <td>Total</td><td>400</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h4>Platos Típicos Favoritos de Chile</h4>
+                    <canvas id="comidaChart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+            
+            <div class="warning-box">
+                <h3>🍽️ Identidad Culinaria</h3>
+                <p>¿Por qué las empanadas son tan populares? ¿Cuántas veces más preferida es la empanada que el completo? ¿Qué representa esto sobre nuestra identidad?</p>
+            </div>
+        </div>
+
+        <!-- Slide 10: Ejemplo Asignaturas -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Ejemplo 5: Asignaturas Favoritas en Educación Media</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <p><strong>Situación:</strong> 280 estudiantes de 3° medio respondieron cuál es su asignatura favorita del currículum nacional.</p>
+                    
+                    <div class="data-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Asignatura</th>
+                                    <th>Estudiantes</th>
+                                    <th>%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Educación Física</td><td>70</td><td>25%</td></tr>
+                                <tr><td>Matemática</td><td>56</td><td>20%</td></tr>
+                                <tr><td>Historia</td><td>42</td><td>15%</td></tr>
+                                <tr><td>Lenguaje</td><td>42</td><td>15%</td></tr>
+                                <tr><td>Biología</td><td>35</td><td>12.5%</td></tr>
+                                <tr><td>Inglés</td><td>28</td><td>10%</td></tr>
+                                <tr><td>Química</td><td>7</td><td>2.5%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h4>Asignaturas Favoritas - 3° Medio</h4>
+                    <canvas id="asignaturasChart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <h3>📚 Reflexión Educativa</h3>
+                <p>¿Por qué Ed. Física es la más popular? ¿Matemática está bien posicionada? ¿Qué estrategias podrían hacer más atractivas las ciencias?</p>
+            </div>
+        </div>
+
+        <!-- Slide 11: Construcción -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Construyendo un Gráfico de Barras</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <h3 style="color: var(--azul-chile);">📝 Paso 1: Organizar los Datos</h3>
+                    <ul class="step-list">
+                        <li>Identificar las <strong>categorías</strong></li>
+                        <li>Recopilar los <strong>valores</strong></li>
+                        <li>Ordenar de mayor a menor (opcional)</li>
+                        <li>Verificar que sean <strong>datos categóricos</strong></li>
+                    </ul>
+                    
+                    <h3 style="color: var(--azul-chile); margin-top: 30px;">📐 Paso 2: Preparar los Ejes</h3>
+                    <ul class="step-list">
+                        <li>Eje X: Nombres de las categorías</li>
+                        <li>Eje Y: Escala numérica</li>
+                        <li>Determinar el <strong>valor máximo</strong></li>
+                        <li>Espaciado uniforme</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 style="color: var(--azul-chile);">📊 Paso 3: Dibujar las Barras</h3>
+                    <ul class="step-list">
+                        <li>Barras de <strong>igual ancho</strong></li>
+                        <li>Altura proporcional al valor</li>
+                        <li><strong>Separar</strong> las barras uniformemente</li>
+                        <li>Usar colores <strong>contrastantes</strong></li>
+                    </ul>
+                    
+                    <h3 style="color: var(--azul-chile); margin-top: 30px;">✨ Paso 4: Elementos Finales</h3>
+                    <ul class="step-list">
+                        <li><strong>Título</strong> descriptivo y claro</li>
+                        <li><strong>Etiquetas</strong> en ambos ejes</li>
+                        <li><strong>Fuente</strong> de los datos</li>
+                        <li>Verificar <strong>proporcionalidad</strong> visual</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="highlight-box">
+                <h3>💡 Consejo de Diseño</h3>
+                <p><strong>Regla 3-2-1:</strong> Máximo 3 colores, 2 tipos de letra, 1 mensaje principal por gráfico.</p>
+            </div>
+        </div>
+
+        <!-- Slide 12: Actividad Práctica -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>¡Tu Turno! - Actividad Práctica</h2>
+            </div>
+            
+            <div class="warning-box">
+                <h3>📋 Situación Problemática</h3>
+                <p>Una encuesta sobre <strong>carreras universitarias</strong> consultó a 350 estudiantes de 4° medio sobre sus preferencias vocacionales:</p>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <h4 style="color: var(--azul-chile);">📊 Área de Estudio:</h4>
+                    <ul>
+                        <li><strong>Ingeniería:</strong> 105 estudiantes</li>
+                        <li><strong>Salud (Medicina, Enfermería):</strong> 84 estudiantes</li>
+                        <li><strong>Educación:</strong> 49 estudiantes</li>
+                        <li><strong>Ciencias Sociales:</strong> 63 estudiantes</li>
+                        <li><strong>Arte y Humanidades:</strong> 35 estudiantes</li>
+                        <li><strong>Ciencias:</strong> 14 estudiantes</li>
+                    </ul>
+                </div>
+                
+                <div class="interactive-section">
+                    <h4>🚀 Desafíos Interactivos</h4>
+                    <button class="interactive-btn" onclick="showCarrerasChart()">
+                        📈 Ver Gráfico
+                    </button>
+                    <div id="carrerasChartContainer" class="chart-container" style="display: none; margin-top: 20px;">
+                        <canvas id="carrerasChart" class="chart-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <h3>🎯 Preguntas de Análisis</h3>
+                <ol>
+                    <li>¿Cuál es la carrera más popular? ¿Y la menos popular?</li>
+                    <li>¿Qué porcentaje representa el área de salud?</li>
+                    <li>¿Cuántas veces más popular es Ingeniería que Ciencias?</li>
+                    <li>¿Qué conclusiones sacas sobre las preferencias vocacionales?</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Slide 13: Interpretación -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Cómo Interpretar Gráficos de Barras</h2>
+            </div>
+            
+            <div class="highlight-box">
+                <h3>🔍 Elementos a Analizar</h3>
+                <ol style="text-align: left; padding-left: 30px;">
+                    <li><strong>Categoría dominante:</strong> ¿Cuál tiene la barra más alta?</li>
+                    <li><strong>Categoría menor:</strong> ¿Cuál tiene la barra más baja?</li>
+                    <li><strong>Diferencias:</strong> ¿Qué tan grandes son las diferencias?</li>
+                    <li><strong>Patrones:</strong> ¿Hay tendencias o agrupaciones?</li>
+                    <li><strong>Proporciones:</strong> ¿Cómo se relacionan entre sí?</li>
+                </ol>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <div style="background: #e8f5e8; padding: 20px; border-radius: 10px;">
+                        <h4 style="color: var(--verde-chile);">❓ Preguntas Clave</h4>
+                        <ul>
+                            <li>¿Cuál es el valor más alto/bajo?</li>
+                            <li>¿Hay categorías similares?</li>
+                            <li>¿Qué diferencia hay entre la mayor y menor?</li>
+                            <li>¿Los resultados eran esperados?</li>
+                            <li>¿Qué factores explican estos datos?</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div>
+                    <div style="background: #fff3cd; padding: 20px; border-radius: 10px; color: #856404;">
+                        <h4>🧮 Cálculos Útiles</h4>
+                        <div class="formula">
+                            <strong>Porcentajes:</strong><br>
+                            (Categoría / Total) × 100%
+                        </div>
+                        <div class="formula">
+                            <strong>Diferencia:</strong><br>
+                            Mayor - Menor
+                        </div>
+                        <div class="formula">
+                            <strong>Razón:</strong><br>
+                            Categoría A / Categoría B
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Errores Comunes -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Errores Comunes y Cómo Evitarlos</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <div class="warning-box">
+                        <h3>❌ Errores de Construcción</h3>
+                        <ul style="text-align: left; padding-left: 20px;">
+                            <li><strong>Barras de diferente ancho</strong> sin razón</li>
+                            <li><strong>Escala que no inicia en cero</strong></li>
+                            <li><strong>Barras pegadas</strong> (como histograma)</li>
+                            <li><strong>Colores muy similares</strong></li>
+                            <li><strong>Títulos poco descriptivos</strong></li>
+                            <li><strong>Ejes sin etiquetas</strong></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="warning-box">
+                        <h3>❌ Errores de Interpretación</h3>
+                        <ul style="text-align: left; padding-left: 20px;">
+                            <li><strong>No leer</strong> títulos y etiquetas</li>
+                            <li><strong>Asumir causalidad</strong> por diferencias</li>
+                            <li><strong>Ignorar el contexto</strong> de los datos</li>
+                            <li><strong>No considerar</strong> el tamaño de muestra</li>
+                            <li><strong>Generalizar</strong> sin evidencia suficiente</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="highlight-box">
+                <h3>✅ Buenas Prácticas</h3>
+                <ul style="text-align: left; padding-left: 30px; columns: 2;">
+                    <li>Siempre incluir <strong>fuente</strong> y <strong>fecha</strong> de los datos</li>
+                    <li>Usar <strong>escalas apropiadas</strong> que no distorsionen</li>
+                    <li>Ordenar categorías de forma <strong>lógica</strong></li>
+                    <li>Escribir conclusiones <strong>basadas en evidencia</strong></li>
+                    <li>Considerar el <strong>margen de error</strong> y limitaciones</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 15: Herramientas -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Creando Gráficos con Tecnología</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <div class="info-box">
+                        <h3>📊 Excel/Google Sheets</h3>
+                        <ol style="text-align: left; padding-left: 20px;">
+                            <li>Crear tabla con categorías y valores</li>
+                            <li>Seleccionar los datos</li>
+                            <li>Insertar → Gráfico → Columnas</li>
+                            <li>Personalizar títulos y colores</li>
+                            <li>Ajustar escala si es necesario</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="info-box" style="margin-top: 20px;">
+                        <h3>🌐 GeoGebra (Gratuito)</h3>
+                        <ol style="text-align: left; padding-left: 20px;">
+                            <li>Ir a geogebra.org</li>
+                            <li>Seleccionar "Gráficos"</li>
+                            <li>Crear tabla de datos</li>
+                            <li>Usar comando BarChart[]</li>
+                            <li>Personalizar colores y etiquetas</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="highlight-box">
+                        <h3>🚀 Proyecto Tecnológico</h3>
+                        <p><strong>Investigación:</strong> "Preferencias musicales por curso"</p>
+                        
+                        <ol style="text-align: left; padding-left: 20px; margin-top: 15px;">
+                            <li>Encuestar a tu curso</li>
+                            <li>Crear gráfico digital</li>
+                            <li>Comparar con otros cursos</li>
+                            <li>Analizar diferencias</li>
+                            <li>Presentar conclusiones</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="warning-box" style="margin-top: 20px;">
+                        <h3>🏆 Desafío Digital</h3>
+                        <p>Usar datos del INE sobre regiones chilenas y crear un gráfico profesional comparando alguna variable demográfica.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Síntesis -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>¿Qué Aprendimos Hoy?</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <div class="highlight-box">
+                        <h3>📚 Conceptos Clave</h3>
+                        <ul style="text-align: left; padding-left: 20px;">
+                            <li>Los gráficos de barras representan <strong>datos categóricos</strong></li>
+                            <li>Facilitan la <strong>comparación</strong> entre diferentes categorías</li>
+                            <li>Las barras deben ser <strong>separadas</strong> y de igual ancho</li>
+                            <li>La altura es <strong>proporcional</strong> al valor representado</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="info-box">
+                        <h3>🎯 Habilidades Desarrolladas</h3>
+                        <ul style="text-align: left; padding-left: 20px;">
+                            <li>Construcción correcta de gráficos de barras</li>
+                            <li>Interpretación y comparación de datos categóricos</li>
+                            <li>Análisis crítico de información visual</li>
+                            <li>Aplicación en contextos reales chilenos</li>
+                            <li>Comunicación efectiva de conclusiones</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, var(--violeta), #8e44ad); color: white; padding: 25px; border-radius: 15px; text-align: center; margin-top: 30px;">
+                <h3>🎊 ¡Fantástico trabajo!</h3>
+                <p style="font-size: 1.2em; margin-top: 15px;">Los gráficos de barras son la base de la visualización de datos</p>
+                <p style="font-size: 1.1em; font-style: italic; margin-top: 10px;">"Una imagen vale más que mil números"</p>
+            </div>
+        </div>
+
+        <!-- Slide 17: Evaluación -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Evaluación Formativa</h2>
+            </div>
+            
+            <div class="highlight-box">
+                <h3>📋 Criterios de Evaluación</h3>
+                <div style="text-align: left; margin-top: 20px;">
+                    <p><strong>Excelente (4):</strong> El estudiante...</p>
+                    <ul style="padding-left: 30px; margin: 10px 0;">
+                        <li>Construye gráficos de barras correctos, claros y bien presentados</li>
+                        <li>Interpreta toda la información con precisión y detalle</li>
+                        <li>Realiza comparaciones fundamentadas y cálculos correctos</li>
+                        <li>Comunica conclusiones claras basadas en evidencia sólida</li>
+                    </ul>
+                    
+                    <p><strong>Bueno (3):</strong> Cumple mayoría de criterios con errores menores</p>
+                    <p><strong>Suficiente (2):</strong> Construcción e interpretación básicas</p>
+                    <p><strong>Insuficiente (1):</strong> Dificultades significativas en construcción o análisis</p>
+                </div>
+            </div>
+            
+            <div class="warning-box">
+                <h3>🎫 Ticket de Salida - Situación Final</h3>
+                <p>Un quiosco registró ventas: <strong>Bebidas:</strong> 45, <strong>Snacks:</strong> 38, <strong>Dulces:</strong> 52, <strong>Frutas:</strong> 15.</p>
+                
+                <div class="interactive-section">
+                    <h4>Responde estas preguntas:</h4>
+                    <ol style="text-align: left; margin: 15px 0;">
+                        <li>¿Cuál fue el producto más/menos vendido?</li>
+                        <li>¿Cuál es la diferencia entre el mayor y menor?</li>
+                        <li>¿Qué porcentaje representan las frutas del total?</li>
+                    </ol>
+                    
+                    <button class="interactive-btn" onclick="showQuioscoChart()">
+                        📊 Ver Gráfico del Quiosco
+                    </button>
+                    
+                    <div id="quioscoChartContainer" class="chart-container" style="display: none; margin-top: 20px;">
+                        <canvas id="quioscoChart" class="chart-canvas"></canvas>
+                        <div style="margin-top: 15px; padding: 15px; background: var(--gris-claro); border-radius: 8px;">
+                            <p><strong>Respuestas:</strong></p>
+                            <p>1. Más vendido: Dulces (52). Menos vendido: Frutas (15)</p>
+                            <p>2. Diferencia: 52 - 15 = 37 unidades</p>
+                            <p>3. Frutas: 15/150 × 100% = 10% del total</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Navegación -->
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← Anterior</button>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Siguiente →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        // Inicializar gráficos
+        function initCharts() {
+            // Gráfico básico
+            new Chart(document.getElementById('basicChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['A', 'B', 'C', 'D'],
+                    datasets: [{
+                        data: [25, 35, 20, 30],
+                        backgroundColor: ['#3498db', '#e74c3c', '#2ecc71', '#f39c12'],
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+
+            // Gráfico vertical
+            new Chart(document.getElementById('verticalChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Fútbol', 'Básquet', 'Tenis'],
+                    datasets: [{
+                        data: [30, 20, 15],
+                        backgroundColor: '#27ae60',
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { 
+                        legend: { display: false },
+                        title: { display: true, text: 'Barras Verticales' }
+                    },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+
+            // Gráfico horizontal
+            new Chart(document.getElementById('horizontalChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['RM', 'Valpo', 'Biobío'],
+                    datasets: [{
+                        data: [7500, 1900, 2100],
+                        backgroundColor: '#f39c12',
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    plugins: { 
+                        legend: { display: false },
+                        title: { display: true, text: 'Barras Horizontales' }
+                    },
+                    scales: { x: { beginAtZero: true } }
+                }
+            });
+
+            // Gráfico deportes
+            new Chart(document.getElementById('deportesChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Fútbol', 'Básquet', 'Voleibol', 'Tenis', 'Natación', 'Atletismo', 'Otros'],
+                    datasets: [{
+                        data: [180, 85, 70, 60, 55, 35, 15],
+                        backgroundColor: ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#95a5a6'],
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { 
+                        legend: { display: false },
+                        title: { display: true, text: 'Deportes Favoritos (500 estudiantes)' }
+                    },
+                    scales: { y: { beginAtZero: true, max: 200 } }
+                }
+            });
+
+            // Gráfico regiones
+            new Chart(document.getElementById('regionesChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['RM', 'Biobío', 'Valparaíso', 'Maule', 'O\'Higgins', 'La Araucanía', 'Los Lagos', 'Antofagasta'],
+                    datasets: [{
+                        data: [7952, 2037, 1965, 1131, 991, 957, 891, 691],
+                        backgroundColor: '#e74c3c',
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    plugins: { 
+                        legend: { display: false },
+                        title: { display: true, text: 'Población por Región (miles de hab.)' }
+                    },
+                    scales: { x: { beginAtZero: true, max: 8500 } }
+                }
+            });
+
+            // Gráfico transporte
+            new Chart(document.getElementById('transporteChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Metro/Micro', 'Auto familiar', 'Caminando', 'Bicicleta', 'Colectivo'],
+                    datasets: [{
+                        data: [128, 80, 64, 32, 16],
+                        backgroundColor: '#2ecc71',
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { 
+                        legend: { display: false },
+                        title: { display: true, text: 'Medios de Transporte (320 estudiantes)' }
+                    },
+                    scales: { y: { beginAtZero: true, max: 140 } }
+                }
+            });
+
+            // Gráfico comida
+            new Chart(document.getElementById('comidaChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Empanadas', 'Asado', 'Cazuela', 'Pastel Choclo', 'Completo'],
+                    datasets: [{
+                        data: [140, 100, 80, 60, 20],
+                        backgroundColor: '#f39c12',
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { 
+                        legend: { display: false },
+                        title: { display: true, text: 'Platos Típicos Favoritos (400 personas)' }
+                    },
+                    scales: { y: { beginAtZero: true, max: 150 } }
+                }
+            });
+
+            // Gráfico asignaturas
+            new Chart(document.getElementById('asignaturasChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Ed. Física', 'Matemática', 'Historia', 'Lenguaje', 'Biología', 'Inglés', 'Química'],
+                    datasets: [{
+                        data: [70, 56, 42, 42, 35, 28, 7],
+                        backgroundColor: '#9b59b6',
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { 
+                        legend: { display: false },
+                        title: { display: true, text: 'Asignaturas Favoritas (280 estudiantes)' }
+                    },
+                    scales: { y: { beginAtZero: true, max: 80 } }
+                }
+            });
+        }
+
+        // Funciones interactivas
+        function showCarrerasChart() {
+            const container = document.getElementById('carrerasChartContainer');
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                
+                new Chart(document.getElementById('carrerasChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Ingeniería', 'Salud', 'C. Sociales', 'Educación', 'Arte/Humanidades', 'Ciencias'],
+                        datasets: [{
+                            data: [105, 84, 63, 49, 35, 14],
+                            backgroundColor: ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c'],
+                            borderColor: '#2c3e50',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { 
+                            legend: { display: false },
+                            title: { display: true, text: 'Preferencias Vocacionales (350 estudiantes)' }
+                        },
+                        scales: { y: { beginAtZero: true, max: 120 } }
+                    }
+                });
+            }
+        }
+
+        function showQuioscoChart() {
+            const container = document.getElementById('quioscoChartContainer');
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                
+                new Chart(document.getElementById('quioscoChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Dulces', 'Bebidas', 'Snacks', 'Frutas'],
+                        datasets: [{
+                            data: [52, 45, 38, 15],
+                            backgroundColor: ['#e74c3c', '#3498db', '#f39c12', '#2ecc71'],
+                            borderColor: '#2c3e50',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { 
+                            legend: { display: false },
+                            title: { display: true, text: 'Ventas del Quiosco (150 productos totales)' }
+                        },
+                        scales: { y: { beginAtZero: true, max: 60 } }
+                    }
+                });
+            }
+        }
+
+        // Navegación de slides
+        function changeSlide(direction) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide += direction;
+            
+            if (currentSlide >= totalSlides) currentSlide = 0;
+            if (currentSlide < 0) currentSlide = totalSlides - 1;
+            
+            slides[currentSlide].classList.add('active');
+            updateNavigation();
+            updateProgress();
+        }
+
+        function updateNavigation() {
+            document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function updateProgress() {
+            const progress = ((currentSlide + 1) / totalSlides) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        // Navegación con teclado
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            initCharts();
+            updateNavigation();
+            updateProgress();
+        });
+    </script>
+</body>
+</html>

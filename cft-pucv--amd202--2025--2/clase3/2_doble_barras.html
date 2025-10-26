@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráficos de Doble Barras - Representación Comparativa de Datos</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --azul-chile: #003366;
+            --rojo-chile: #FF3333;
+            --verde-chile: #009944;
+            --naranja-claro: #FFA500;
+            --violeta: #9B59B6;
+            --gris-claro: #f8f9fa;
+            --gris-oscuro: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--gris-oscuro);
+            background: linear-gradient(135deg, var(--gris-claro) 0%, #e8f4f8 100%);
+        }
+
+        .presentation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .slide {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            min-height: 500px;
+            display: none;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .slide-header {
+            background: linear-gradient(135deg, var(--azul-chile), var(--violeta));
+            color: white;
+            padding: 30px 40px;
+            border-radius: 15px;
+            margin: -40px -40px 30px -40px;
+            text-align: center;
+        }
+
+        .slide-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .slide-header h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .slide-header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .objectives-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .objective-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid var(--azul-chile);
+            transition: transform 0.3s ease;
+        }
+
+        .objective-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .objective-card h3 {
+            color: var(--azul-chile);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .chart-container {
+            background: var(--gris-claro);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .chart-canvas {
+            max-height: 350px;
+            margin: 20px 0;
+        }
+
+        .data-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+
+        .data-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: var(--azul-chile);
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, var(--verde-chile), #27ae60);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, var(--rojo-chile), #e74c3c);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, var(--naranja-claro), #f39c12);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: var(--azul-chile);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,51,102,0.3);
+        }
+
+        .nav-btn:hover {
+            background: var(--violeta);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(155,89,182,0.4);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(0,51,102,0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: var(--azul-chile);
+            transition: width 0.3s ease;
+            z-index: 1001;
+        }
+
+        .step-list {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .step-list li {
+            counter-increment: step-counter;
+            margin: 15px 0;
+            padding: 15px 15px 15px 60px;
+            background: var(--gris-claro);
+            border-radius: 8px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--azul-chile);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .step-list li:hover {
+            background: #e3f2fd;
+            transform: translateX(10px);
+        }
+
+        .interactive-section {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .interactive-btn {
+            background: var(--verde-chile);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .interactive-btn:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .formula {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2em;
+            text-align: center;
+            margin: 20px 0;
+            border-left: 4px solid var(--azul-chile);
+        }
+
+        .three-column-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .comparison-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-top: 4px solid var(--azul-chile);
+        }
+
+        .comparison-card h4 {
+            color: var(--azul-chile);
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .presentation-container {
+                padding: 10px;
+            }
+            
+            .slide {
+                padding: 20px;
+                margin: 10px 0;
+            }
+            
+            .content-grid,
+            .objectives-grid,
+            .three-column-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .navigation {
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .nav-btn {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="slide-counter" id="slideCounter">1 / 18</div>
+
+    <div class="presentation-container">
+        <!-- Slide 1: Objetivos -->
+        <div class="slide active">
+            <div class="slide-header">
+                <h1>Gráficos de Doble Barras</h1>
+                <h2>Comparación de Dos Series de Datos</h2>
+                <p>Módulo ADM 202 - Profesor Nicolás González M.</p>
+                <p>CFT PUCV - 2025</p>
+            </div>
+            <div class="objectives-grid">
+                <div class="objective-card fade-in">
+                    <h3>🎯 Objetivo General</h3>
+                    <p><strong>Construir e interpretar</strong> gráficos de doble barras de situaciones reales <strong>para comparar</strong> y analizar dos series de datos categóricos de manera efectiva.</p>
+                </div>
+                <div class="objective-card fade-in">
+                    <h3>📝 Objetivos Específicos</h3>
+                    <p>Al final de esta clase podrás:</p>
+                    <ul style="margin-top: 15px; padding-left: 20px;">
+                        <li>✅ Identificar cuándo usar gráficos de doble barras</li>
+                        <li>✅ Construir gráficos de doble barras paso a paso</li>
+                        <li>✅ Interpretar y comparar información entre dos series</li>
+                        <li>✅ Analizar datos de situaciones reales chilenas</li>
+                        <li>✅ Comunicar conclusiones basadas en comparaciones</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Definición -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>¿Qué son los Gráficos de Doble Barras?</h2>
+            </div>
+            <div class="highlight-box">
+                <h3>Definición</h3>
+                <p>Un <strong>gráfico de doble barras</strong> (o gráfico de barras agrupadas) permite <strong>comparar dos series de datos categóricos</strong> en el mismo gráfico, mostrando las barras lado a lado para cada categoría.</p>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <h3 style="color: var(--azul-chile); margin-bottom: 20px;">📋 Características Principales</h3>
+                    <ul class="step-list">
+                        <li><strong>Dos colores diferentes</strong> para cada serie</li>
+                        <li>Barras <strong>agrupadas</strong> por categoría</li>
+                        <li>Permite <strong>comparación directa</strong></li>
+                        <li>Incluye <strong>leyenda</strong> explicativa</li>
+                        <li>Escalas iguales para ambas series</li>
+                    </ul>
+                </div>
+                
+                <div class="chart-container">
+                    <h4>Ejemplo de Doble Barras</h4>
+                    <canvas id="basicDoubleChart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Cuándo usar -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>¿Cuándo Usar Gráficos de Doble Barras?</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <div class="highlight-box">
+                        <h3>✅ Úsalo cuando...</h3>
+                        <ul style="text-align: left; padding-left: 20px;">
+                            <li>Comparas <strong>dos grupos</strong> diferentes</li>
+                            <li>Los datos son <strong>categóricos</strong></li>
+                            <li>Quieres hacer <strong>comparaciones directas</strong></li>
+                            <li>Tienes las <strong>mismas categorías</strong> para ambos grupos</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #e8f5e8; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                        <h4 style="color: var(--verde-chile);">🎯 Ejemplos Apropiados</h4>
+                        <ul>
+                            <li><strong>Hombres</strong> vs. <strong>Mujeres</strong></li>
+                            <li><strong>Antes</strong> vs. <strong>Después</strong></li>
+                            <li><strong>2023</strong> vs. <strong>2024</strong></li>
+                            <li><strong>Grupo A</strong> vs. <strong>Grupo B</strong></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="warning-box">
+                        <h3>❌ No lo uses cuando...</h3>
+                        <ul style="text-align: left; padding-left: 20px;">
+                            <li>Los datos son <strong>continuos</strong></li>
+                            <li>Tienes <strong>más de dos series</strong></li>
+                            <li>Las categorías son <strong>diferentes</strong></li>
+                            <li>Quieres mostrar <strong>proporciones</strong> del total</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin-top: 20px; color: #856404;">
+                        <h4>🔄 Alternativas</h4>
+                        <ul>
+                            <li><strong>Histograma</strong> → datos continuos</li>
+                            <li><strong>Gráfico circular</strong> → proporciones</li>
+                            <li><strong>Barras apiladas</strong> → múltiples series</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Ejemplo Rendimiento por Género -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Ejemplo 1: Promedio de Notas por Asignatura y Género</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <p><strong>Situación:</strong> Un colegio de Santiago analizó el rendimiento académico de 200 estudiantes de 2° medio por género.</p>
+                    
+                    <div class="data-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Asignatura</th>
+                                    <th>Hombres</th>
+                                    <th>Mujeres</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Matemática</td><td>5.8</td><td>5.6</td></tr>
+                                <tr><td>Lenguaje</td><td>5.2</td><td>6.1</td></tr>
+                                <tr><td>Historia</td><td>5.5</td><td>5.9</td></tr>
+                                <tr><td>Ciencias</td><td>6.0</td><td>5.7</td></tr>
+                                <tr><td>Inglés</td><td>5.4</td><td>6.0</td></tr>
+                                <tr><td>Ed. Física</td><td>6.2</td><td>5.8</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h4>Rendimiento Académico por Género - 2° Medio</h4>
+                    <canvas id="rendimientoChart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+            
+            <div class="warning-box">
+                <h3>🤔 Preguntas de Análisis</h3>
+                <p>¿En qué asignaturas rinden mejor los hombres? ¿Y las mujeres? ¿Cuál es la diferencia más grande? ¿Qué patrones observas?</p>
+            </div>
+        </div>
+
+        <!-- Slide 5: Ejemplo Comparación Temporal -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Ejemplo 2: Matrícula Escolar: 2023 vs 2024</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <p><strong>Situación:</strong> La Región de Valparaíso comparó la matrícula por nivel educativo entre los años 2023 y 2024.</p>
+                    
+                    <div class="data-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nivel</th>
+                                    <th>2023</th>
+                                    <th>2024</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Pre-Básica</td><td>28,500</td><td>29,200</td></tr>
+                                <tr><td>Básica</td><td>85,400</td><td>84,100</td></tr>
+                                <tr><td>Media C-H</td><td>35,600</td><td>36,800</td></tr>
+                                <tr><td>Media T-P</td><td>18,900</td><td>20,100</td></tr>
+                                <tr><td>Ed. Adultos</td><td>8,200</td><td>7,800</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h4>Matrícula por Nivel - Región de Valparaíso</h4>
+                    <canvas id="matriculaChart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+            
+            <div class="warning-box">
+                <h3>📊 Situación Problemática</h3>
+                <p>Si la tendencia continúa, ¿qué niveles podrían tener problemas de infraestructura? ¿Cuál es el porcentaje de cambio en cada nivel?</p>
+            </div>
+        </div>
+
+        <!-- Slide 6: Ejemplo Deportes por Región -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Ejemplo 3: Deportes Más Populares por Región</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <p><strong>Situación:</strong> Una encuesta nacional consultó sobre deportes favoritos a 1,500 jóvenes de tres macroregiones de Chile.</p>
+                    
+                    <div class="data-table" style="font-size: 0.9em;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Deporte</th>
+                                    <th>Norte</th>
+                                    <th>Centro</th>
+                                    <th>Sur</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Fútbol</td><td>180</td><td>220</td><td>200</td></tr>
+                                <tr><td>Básquetbol</td><td>120</td><td>140</td><td>80</td></tr>
+                                <tr><td>Surf/Agua</td><td>90</td><td>60</td><td>120</td></tr>
+                                <tr><td>Ciclismo</td><td>60</td><td>100</td><td>90</td></tr>
+                                <tr><td>Atletismo</td><td>50</td><td>80</td><td>60</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h4>Deportes Favoritos por Macroregión</h4>
+                    <canvas id="deportesRegionChart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <h3>🗺️ Conexión Geográfica</h3>
+                <p>¿Cómo influye la geografía en estas preferencias? ¿Por qué el surf es más popular en ciertas regiones?</p>
+            </div>
+        </div>
+
+        <!-- Slide 7: Ejemplo Redes Sociales -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Ejemplo 4: Uso de Redes Sociales</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <p><strong>Situación:</strong> Un estudio sobre uso de tecnología encuestó a 800 estudiantes (14-18 años) y 600 adultos (25-45 años) en Chile.</p>
+                    
+                    <div class="data-table" style="font-size: 0.85em;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Red Social</th>
+                                    <th>Estudiantes</th>
+                                    <th>Adultos</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Instagram</td><td>680</td><td>420</td></tr>
+                                <tr><td>TikTok</td><td>640</td><td>180</td></tr>
+                                <tr><td>WhatsApp</td><td>800</td><td>580</td></tr>
+                                <tr><td>Facebook</td><td>320</td><td>480</td></tr>
+                                <tr><td>Twitter/X</td><td>240</td><td>300</td></tr>
+                                <tr><td>YouTube</td><td>760</td><td>520</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h4>Uso de Redes Sociales por Grupo Etario</h4>
+                    <canvas id="redesSocialesChart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+            
+            <div class="warning-box">
+                <h3>📱 Análisis Digital</h3>
+                <p>¿Qué red social muestra la mayor diferencia generacional? ¿Cuál es más "democrática"? ¿Qué implica esto para la comunicación?</p>
+            </div>
+        </div>
+
+        <!-- Slide 8: Construcción -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Construyendo un Gráfico de Doble Barras</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <h3 style="color: var(--azul-chile);">📝 Paso 1: Organizar los Datos</h3>
+                    <ul class="step-list">
+                        <li>Crear tabla con categorías</li>
+                        <li>Separar las dos series</li>
+                        <li>Verificar unidades iguales</li>
+                        <li>Ordenar lógicamente</li>
+                    </ul>
+                    
+                    <h3 style="color: var(--azul-chile); margin-top: 30px;">📐 Paso 2: Preparar Ejes</h3>
+                    <ul class="step-list">
+                        <li>Eje X: Categorías</li>
+                        <li>Eje Y: Escala numérica</li>
+                        <li>Considerar el rango máximo</li>
+                        <li>Espaciado uniforme</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 style="color: var(--azul-chile);">📊 Paso 3: Dibujar Barras</h3>
+                    <ul class="step-list">
+                        <li>Dos colores diferentes</li>
+                        <li>Barras de igual ancho</li>
+                        <li>Agrupar por categoría</li>
+                        <li>Dejar espacio entre grupos</li>
+                    </ul>
+                    
+                    <h3 style="color: var(--azul-chile); margin-top: 30px;">✨ Paso 4: Elementos Finales</h3>
+                    <ul class="step-list">
+                        <li>Título descriptivo</li>
+                        <li>Etiquetas de ejes</li>
+                        <li>Leyenda clara</li>
+                        <li>Fuente de datos</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="highlight-box">
+                <h3>💡 Consejo Práctico</h3>
+                <p><strong>Regla del contraste:</strong> Usa colores que se distingan claramente (ej: azul y rojo, no azul y verde oscuro).</p>
+            </div>
+        </div>
+
+        <!-- Slide 9: Actividad Práctica -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>¡Tu Turno! - Actividad Práctica</h2>
+            </div>
+            
+            <div class="warning-box">
+                <h3>📋 Situación Problemática</h3>
+                <p>Una encuesta sobre hábitos de lectura consultó a 400 estudiantes de enseñanza media sobre los géneros literarios que más leen, comparando entre 1° y 4° medio:</p>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <h4 style="color: var(--azul-chile);">📚 1° Medio (200 estudiantes):</h4>
+                    <ul>
+                        <li><strong>Ficción/Novelas:</strong> 120</li>
+                        <li><strong>Ciencia Ficción:</strong> 45</li>
+                        <li><strong>Romance:</strong> 80</li>
+                        <li><strong>Misterio/Terror:</strong> 35</li>
+                        <li><strong>No ficción:</strong> 25</li>
+                    </ul>
+                    
+                    <h4 style="color: var(--azul-chile); margin-top: 20px;">📖 4° Medio (200 estudiantes):</h4>
+                    <ul>
+                        <li><strong>Ficción/Novelas:</strong> 90</li>
+                        <li><strong>Ciencia Ficción:</strong> 60</li>
+                        <li><strong>Romance:</strong> 50</li>
+                        <li><strong>Misterio/Terror:</strong> 70</li>
+                        <li><strong>No ficción:</strong> 85</li>
+                    </ul>
+                </div>
+                
+                <div class="interactive-section">
+                    <h4>🚀 Actividad Interactiva</h4>
+                    <button class="interactive-btn" onclick="showLecturaChart()">
+                        📈 Ver Gráfico de Lectura
+                    </button>
+                    <div id="lecturaChartContainer" class="chart-container" style="display: none; margin-top: 20px;">
+                        <canvas id="lecturaChart" class="chart-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <h3>🎯 Desafíos</h3>
+                <ol>
+                    <li>¿Qué género es más popular en 1° medio? ¿Y en 4° medio?</li>
+                    <li>¿En qué género hay mayor diferencia entre niveles?</li>
+                    <li>¿Qué conclusiones puedes sacar sobre la maduración lectora?</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Slide 10: Interpretación -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Cómo Interpretar Gráficos de Doble Barras</h2>
+            </div>
+            
+            <div class="highlight-box">
+                <h3>🔍 Tipos de Comparaciones</h3>
+                <ol style="text-align: left; padding-left: 30px;">
+                    <li><strong>Comparación Directa:</strong> Entre las dos series para la misma categoría</li>
+                    <li><strong>Comparación entre Categorías:</strong> Cuál categoría es mayor en cada serie</li>
+                    <li><strong>Identificación de Patrones:</strong> Tendencias generales entre las series</li>
+                    <li><strong>Cálculo de Diferencias:</strong> Absolutas y relativas</li>
+                </ol>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <div style="background: #e8f5e8; padding: 20px; border-radius: 10px;">
+                        <h4 style="color: var(--verde-chile);">❓ Preguntas Clave</h4>
+                        <ul>
+                            <li>¿Cuál serie es mayor en cada categoría?</li>
+                            <li>¿Dónde están las diferencias más grandes?</li>
+                            <li>¿Hay categorías donde son similares?</li>
+                            <li>¿Qué patrones observas?</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div>
+                    <div style="background: #fff3cd; padding: 20px; border-radius: 10px; color: #856404;">
+                        <h4>🧮 Cálculos Útiles</h4>
+                        <div class="formula">
+                            <strong>Diferencia absoluta:</strong><br>
+                            |A - B|
+                        </div>
+                        <div class="formula">
+                            <strong>Diferencia relativa:</strong><br>
+                            (|A - B| / A) × 100%
+                        </div>
+                        <div class="formula">
+                            <strong>Porcentaje de cambio:</strong><br>
+                            ((B - A) / A) × 100%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Errores Comunes -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Errores Comunes y Cómo Evitarlos</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <div class="warning-box">
+                        <h3>❌ Errores de Construcción</h3>
+                        <ul style="text-align: left; padding-left: 20px;">
+                            <li><strong>Escalas diferentes</strong> para cada serie</li>
+                            <li><strong>Barras superpuestas</strong> en lugar de agrupadas</li>
+                            <li><strong>Colores muy similares</strong> que no se distinguen</li>
+                            <li><strong>Falta de leyenda</strong> o leyenda confusa</li>
+                            <li><strong>Categorías desordenadas</strong> sin lógica</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="warning-box">
+                        <h3>❌ Errores de Interpretación</h3>
+                        <ul style="text-align: left; padding-left: 20px;">
+                            <li>Comparar <strong>valores absolutos</strong> cuando las poblaciones son diferentes</li>
+                            <li>No considerar el <strong>contexto</strong> de los datos</li>
+                            <li><strong>Asumir causalidad</strong> por correlación</li>
+                            <li><strong>Generalizar</strong> con muestras pequeñas</li>
+                            <li><strong>Ignorar</strong> las unidades de medida</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="highlight-box">
+                <h3>✅ Buenas Prácticas</h3>
+                <ul style="text-align: left; padding-left: 30px; columns: 2;">
+                    <li>Usa <strong>porcentajes</strong> cuando las poblaciones son diferentes</li>
+                    <li>Incluye <strong>contexto</strong> y <strong>fuente</strong> de los datos</li>
+                    <li>Mantén <strong>proporciones</strong> visuales apropiadas</li>
+                    <li>Escribe <strong>conclusiones</strong> basadas en evidencia</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 12: Tecnología -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Creando Gráficos con Herramientas Digitales</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <div class="info-box">
+                        <h3>📊 Excel/Google Sheets</h3>
+                        <ol style="text-align: left; padding-left: 20px;">
+                            <li>Organizar datos en columnas</li>
+                            <li>Seleccionar rango de datos</li>
+                            <li>Insertar → Gráfico → Barras agrupadas</li>
+                            <li>Personalizar colores y títulos</li>
+                            <li>Agregar leyenda</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="info-box" style="margin-top: 20px;">
+                        <h3>🌐 GeoGebra (Gratuito)</h3>
+                        <ol style="text-align: left; padding-left: 20px;">
+                            <li>Ir a geogebra.org</li>
+                            <li>Calculadora Gráfica</li>
+                            <li>Usar herramienta de estadística</li>
+                            <li>Ingresar datos en tabla</li>
+                            <li>Crear gráfico automáticamente</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="highlight-box">
+                        <h3>🚀 Proyecto Tecnológico</h3>
+                        <p><strong>Proyecto:</strong> Crear gráfico digital sobre:</p>
+                        <p style="font-style: italic; margin: 15px 0;">"Actividades extraescolares por género en tu colegio"</p>
+                        
+                        <ol style="text-align: left; padding-left: 20px; margin-top: 15px;">
+                            <li>Recopilar datos del curso</li>
+                            <li>Crear gráfico en Excel/GeoGebra</li>
+                            <li>Analizar diferencias</li>
+                            <li>Presentar conclusiones</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="warning-box" style="margin-top: 20px;">
+                        <h3>🏆 Para la Casa</h3>
+                        <p>Investigar datos del INE sobre educación por región y crear un gráfico comparativo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Aplicaciones -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Gráficos de Doble Barras en Otras Asignaturas</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <div class="comparison-card">
+                        <h4>🏛️ Historia y Geografía</h4>
+                        <ul>
+                            <li>Población urbana vs rural por región</li>
+                            <li>Exportaciones: 2020 vs 2024</li>
+                            <li>Resultados electorales por edad</li>
+                            <li>PIB por sector: Norte vs Sur</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="comparison-card">
+                        <h4>🔬 Ciencias Naturales</h4>
+                        <ul>
+                            <li>Especies nativas vs introducidas</li>
+                            <li>Temperatura: invierno vs verano</li>
+                            <li>Contaminación: urbano vs rural</li>
+                            <li>Energías renovables vs tradicionales</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="comparison-card">
+                        <h4>📖 Lenguaje y Comunicación</h4>
+                        <ul>
+                            <li>Comprensión lectora por género</li>
+                            <li>Uso de medios: jóvenes vs adultos</li>
+                            <li>Géneros literarios: antes vs ahora</li>
+                            <li>Idiomas hablados por región</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="comparison-card">
+                        <h4>🧠 Orientación y Psicología</h4>
+                        <ul>
+                            <li>Estrés académico por nivel</li>
+                            <li>Preferencias vocacionales por género</li>
+                            <li>Hábitos de estudio: exitosos vs no exitosos</li>
+                            <li>Uso de tiempo libre por edad</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="highlight-box">
+                <h3>🤝 Proyecto Interdisciplinario</h3>
+                <p><strong>Trabajo con Historia:</strong> Analizar censos de población chilenos de diferentes décadas comparando variables demográficas.</p>
+            </div>
+        </div>
+
+        <!-- Slide 14: Evaluación -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Evaluación Formativa</h2>
+            </div>
+            
+            <div class="highlight-box">
+                <h3>📋 Criterios de Evaluación</h3>
+                <div style="text-align: left; margin-top: 20px;">
+                    <p><strong>Excelente (4):</strong> El estudiante...</p>
+                    <ul style="padding-left: 30px; margin: 10px 0;">
+                        <li>Construye gráficos de doble barras correctos y bien presentados</li>
+                        <li>Interpreta diferencias y similitudes entre series con precisión</li>
+                        <li>Realiza comparaciones fundamentadas y calcula diferencias</li>
+                        <li>Comunica conclusiones claras basadas en evidencia</li>
+                    </ul>
+                    
+                    <p><strong>Bueno (3):</strong> Cumple la mayoría de criterios con errores menores</p>
+                    <p><strong>Suficiente (2):</strong> Construcción básica con interpretación simple</p>
+                    <p><strong>Insuficiente (1):</strong> Dificultades significativas en construcción o interpretación</p>
+                </div>
+            </div>
+            
+            <div class="warning-box">
+                <h3>🎫 Ticket de Salida - Situación Final</h3>
+                <p>Una encuesta sobre transporte mostró: <strong>Metro</strong> - Estudiantes: 120, Trabajadores: 95; <strong>Auto</strong> - Estudiantes: 30, Trabajadores: 180.</p>
+                
+                <div class="interactive-section">
+                    <ol style="text-align: left; margin: 15px 0;">
+                        <li>¿Qué medio prefieren más los estudiantes?</li>
+                        <li>¿Cuál tiene mayor diferencia entre grupos?</li>
+                        <li>¿Por qué crees que existen estas diferencias?</li>
+                    </ol>
+                    
+                    <button class="interactive-btn" onclick="showTransporteChart()">
+                        📊 Ver Gráfico del Transporte
+                    </button>
+                    
+                    <div id="transporteChartContainer" class="chart-container" style="display: none; margin-top: 20px;">
+                        <canvas id="transporteChart" class="chart-canvas"></canvas>
+                        <div style="margin-top: 15px; padding: 15px; background: var(--gris-claro); border-radius: 8px;">
+                            <p><strong>Respuestas:</strong></p>
+                            <p>1. Los estudiantes prefieren más el Metro (120 vs 30)</p>
+                            <p>2. El Auto tiene mayor diferencia (180 - 30 = 150 vs 120 - 95 = 25)</p>
+                            <p>3. Los trabajadores usan más auto por horarios y comodidad</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Síntesis -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>¿Qué Aprendimos Hoy?</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div>
+                    <div class="highlight-box">
+                        <h3>📚 Conceptos Clave</h3>
+                        <ul style="text-align: left; padding-left: 20px;">
+                            <li>Los gráficos de doble barras comparan <strong>dos series</strong> de datos categóricos</li>
+                            <li>Permiten <strong>comparaciones directas</strong> entre grupos o períodos</li>
+                            <li>Requieren <strong>mismas categorías</strong> y <strong>unidades</strong> para ambas series</li>
+                            <li>Son útiles para analizar <strong>diferencias</strong> y <strong>patrones</strong></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="info-box">
+                        <h3>🎯 Habilidades Desarrolladas</h3>
+                        <ul style="text-align: left; padding-left: 20px;">
+                            <li>Construcción correcta de gráficos de doble barras</li>
+                            <li>Interpretación y comparación de series de datos</li>
+                            <li>Análisis crítico de diferencias entre grupos</li>
+                            <li>Aplicación en contextos reales chilenos</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, var(--violeta), #8e44ad); color: white; padding: 25px; border-radius: 15px; text-align: center; margin-top: 30px;">
+                <h3>🎊 ¡Excelente trabajo!</h3>
+                <p style="font-size: 1.2em; margin-top: 15px;">Las comparaciones son la clave del análisis</p>
+                <p style="font-size: 1.1em; font-style: italic; margin-top: 10px;">"No hay nada más práctico que una buena comparación gráfica"</p>
+                
+                <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin-top: 20px;">
+                    <p><strong>Próxima Clase:</strong> "Gráficos de Barras Apiladas"</p>
+                    <p>Aprenderemos a mostrar la composición total de cada categoría usando barras apiladas.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Navegación -->
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← Anterior</button>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Siguiente →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        // Inicializar gráficos
+        function initCharts() {
+            // Gráfico básico de doble barras
+            new Chart(document.getElementById('basicDoubleChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['A', 'B', 'C'],
+                    datasets: [{
+                        label: 'Serie 1',
+                        data: [25, 35, 20],
+                        backgroundColor: '#3498db',
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                    }, {
+                        label: 'Serie 2',
+                        data: [30, 25, 40],
+                        backgroundColor: '#e74c3c',
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true, position: 'top' }
+                    },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+
+            // Gráfico rendimiento por género
+            new Chart(document.getElementById('rendimientoChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Matemática', 'Lenguaje', 'Historia', 'Ciencias', 'Inglés', 'Ed. Física'],
+                    datasets: [{
+                        label: 'Hombres',
+                        data: [5.8, 5.2, 5.5, 6.0, 5.4, 6.2],
+                        backgroundColor: '#3498db',
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                    }, {
+                        label: 'Mujeres',
+                        data: [5.6, 6.1, 5.9, 5.7, 6.0, 5.8],
+                        backgroundColor: '#e74c3c',
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true, position: 'top' },
+                        title: { display: true, text: 'Promedio de Notas por Género' }
+                    },
+                    scales: { 
+                        y: { beginAtZero: false, min: 5.0, max: 6.5 },
+                        x: { ticks: { maxRotation: 45 } }
+                    }
+                }
+            });
+
+            // Gráfico matrícula
+            new Chart(document.getElementById('matriculaChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Pre-Básica', 'Básica', 'Media C-H', 'Media T-P', 'Ed. Adultos'],
+                    datasets: [{
+                        label: '2023',
+                        data: [28.5, 85.4, 35.6, 18.9, 8.2],
+                        backgroundColor: '#27ae60',
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                    }, {
+                        label: '2024',
+                        data: [29.2, 84.1, 36.8, 20.1, 7.8],
+                        backgroundColor: '#f39c12',
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true, position: 'top' },
+                        title: { display: true, text: 'Matrícula por Nivel (miles)' }
+                    },
+                    scales: { 
+                        y: { beginAtZero: true, max: 90 },
+                        x: { ticks: { maxRotation: 45 } }
+                    }
+                }
+            });
+
+            // Gráfico deportes por región
+            new Chart(document.getElementById('deportesRegionChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Fútbol', 'Básquet', 'Surf/Agua', 'Ciclismo', 'Atletismo'],
+                    datasets: [{
+                        label: 'Norte',
+                        data: [180, 120, 90, 60, 50],
+                        backgroundColor: '#f1c40f',
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                    }, {
+                        label: 'Centro',
+                        data: [220, 140, 60, 100, 80],
+                        backgroundColor: '#3498db',
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                    }, {
+                        label: 'Sur',
+                        data: [200, 80, 120, 90, 60],
+                        backgroundColor: '#27ae60',
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true, position: 'top' },
+                        title: { display: true, text: 'Deportes Favoritos por Macroregión' }
+                    },
+                    scales: { 
+                        y: { beginAtZero: true, max: 250 },
+                        x: { ticks: { maxRotation: 45 } }
+                    }
+                }
+            });
+
+            // Gráfico redes sociales
+            new Chart(document.getElementById('redesSocialesChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Instagram', 'TikTok', 'WhatsApp', 'Facebook', 'Twitter/X', 'YouTube'],
+                    datasets: [{
+                        label: 'Estudiantes',
+                        data: [680, 640, 800, 320, 240, 760],
+                        backgroundColor: '#9b59b6',
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                    }, {
+                        label: 'Adultos',
+                        data: [420, 180, 580, 480, 300, 520],
+                        backgroundColor: '#95a5a6',
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true, position: 'top' },
+                        title: { display: true, text: 'Uso de Redes Sociales por Grupo Etario' }
+                    },
+                    scales: { 
+                        y: { beginAtZero: true, max: 850 },
+                        x: { ticks: { maxRotation: 45 } }
+                    }
+                }
+            });
+        }
+
+        // Funciones interactivas
+        function showLecturaChart() {
+            const container = document.getElementById('lecturaChartContainer');
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                
+                new Chart(document.getElementById('lecturaChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Ficción/Novelas', 'Romance', 'No ficción', 'Misterio/Terror', 'Ciencia Ficción'],
+                        datasets: [{
+                            label: '1° Medio',
+                            data: [120, 80, 25, 35, 45],
+                            backgroundColor: '#3498db',
+                            borderColor: '#2c3e50',
+                            borderWidth: 1
+                        }, {
+                            label: '4° Medio',
+                            data: [90, 50, 85, 70, 60],
+                            backgroundColor: '#e74c3c',
+                            borderColor: '#2c3e50',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: true, position: 'top' },
+                            title: { display: true, text: 'Géneros Literarios Favoritos por Nivel' }
+                        },
+                        scales: { 
+                            y: { beginAtZero: true, max: 130 },
+                            x: { ticks: { maxRotation: 45 } }
+                        }
+                    }
+                });
+            }
+        }
+
+        function showTransporteChart() {
+            const container = document.getElementById('transporteChartContainer');
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                
+                new Chart(document.getElementById('transporteChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Metro', 'Auto'],
+                        datasets: [{
+                            label: 'Estudiantes',
+                            data: [120, 30],
+                            backgroundColor: '#3498db',
+                            borderColor: '#2c3e50',
+                            borderWidth: 1
+                        }, {
+                            label: 'Trabajadores',
+                            data: [95, 180],
+                            backgroundColor: '#e74c3c',
+                            borderColor: '#2c3e50',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: true, position: 'top' },
+                            title: { display: true, text: 'Preferencias de Transporte por Grupo' }
+                        },
+                        scales: { 
+                            y: { beginAtZero: true, max: 200 }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Navegación de slides
+        function changeSlide(direction) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide += direction;
+            
+            if (currentSlide >= totalSlides) currentSlide = 0;
+            if (currentSlide < 0) currentSlide = totalSlides - 1;
+            
+            slides[currentSlide].classList.add('active');
+            updateNavigation();
+            updateProgress();
+        }
+
+        function updateNavigation() {
+            document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function updateProgress() {
+            const progress = ((currentSlide + 1) / totalSlides) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        // Navegación con teclado
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            initCharts();
+            updateNavigation();
+            updateProgress();
+        });
+    </script>
+</body>
+</html>

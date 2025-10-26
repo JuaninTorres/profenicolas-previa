@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tablas de Frecuencias — Presentación HTML (CFT 2025)</title>
+  <!-- Bootstrap 5.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root{
+      --azulchile:#003366;
+      --rojochile:#ff3333;
+      --verdechile:#00994c;
+      --naranjaclaro:#ffa500;
+      --violeta:#9b59b6;
+      --texto:#2c3e50;
+    }
+    html,body{
+      height:100%;
+      background:#fff;
+      color:var(--texto);
+      font-size:1.15rem;
+      line-height:1.6;
+    }
+    body{overflow:hidden}
+    .slide{
+      display:none;
+      height:100%;
+      padding-bottom:120px; /* espacio para la barra inferior */
+    }
+    .slide.active{display:block}
+    .frame{
+      max-width:95%;
+      margin:0 auto;
+      padding:2.5rem 2rem 4rem;
+    }
+    header.topbar{
+      position:fixed;top:0;left:0;right:0;z-index:1000;
+      background:var(--azulchile);color:#fff;
+      box-shadow:0 2px 8px rgba(0,0,0,.15);
+    }
+    header .brand{font-weight:800;letter-spacing:.3px;font-size:1.25rem}
+    header .subtitle{opacity:.9;font-size:.95rem}
+    .footbar{
+      position:fixed;left:0;right:0;bottom:0;z-index:1000;
+      background:#f8f9fa;border-top:1px solid #e5e7eb;
+    }
+    .btn-nav{font-weight:600;font-size:1rem}
+    h1,.display-5{color:var(--azulchile);font-size:3rem}
+    h2{color:var(--azulchile);font-size:2.25rem}
+    h3{color:var(--azulchile);font-size:1.8rem}
+    .callout{
+      border-left:6px solid var(--azulchile);
+      background:#eef4fb;
+      padding:1rem 1rem;margin:1rem 0;border-radius:.5rem;
+      font-size:1.05rem;
+    }
+    .callout.alert{border-left-color:var(--rojochile);background:#fff1f1}
+    .callout.success{border-left-color:var(--verdechile);background:#effaf3}
+    .key{font-weight:700;color:var(--azulchile)}
+    .kbd{border:1px solid #cbd5e1;padding:.1rem .35rem;border-radius:.25rem;background:#fff}
+    .toc-list button{border:none;background:transparent;width:100%;text-align:left;padding:.6rem .4rem;border-radius:.5rem;font-size:1rem}
+    .toc-list button:hover{background:#f1f5f9}
+    .pill{display:inline-block;padding:.35rem .75rem;border-radius:999px;background:#e9ecef;margin:.2rem .25rem;font-size:1rem}
+    .big{font-size:1.25rem}
+    .diagram{
+      background:#f6f9ff;border:1px solid #dbeafe;border-radius:1rem;
+      padding:1.2rem; text-align:center; color:#1e40af;
+      font-size:1.1rem;
+    }
+    table.table th, table.table td { vertical-align: middle; }
+  </style>
+</head>
+<body>
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="container-fluid px-3 py-2 d-flex align-items-center justify-content-between">
+      <div>
+        <div class="brand">Tablas de Frecuencias</div>
+        <div class="subtitle small">Organización y Análisis de Datos • CFT 2025</div>
+      </div>
+      <div class="d-flex gap-2">
+        <button id="btnTOC" class="btn btn-light btn-sm" title="Tabla de contenidos">
+          <span class="me-1">☰</span> Contenidos
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Slides -->
+  <main id="slides" class="pt-5 mt-3">
+    <!-- 0. Portada -->
+    <section class="slide active" data-title="Portada">
+      <div class="frame d-flex flex-column justify-content-center" style="min-height:calc(100vh - 140px)">
+        <div class="text-center">
+          <h1 class="display-5 fw-bold">Tablas de Frecuencias</h1>
+          <p class="lead mb-2">Organización y Análisis de Datos</p>
+          <p class="mb-3"><span class="pill">Matemática - Enseñanza Media</span></p>
+          <span class="pill">Profesor de Matemática</span>
+          <span class="pill">CFT PUCV</span>
+          <div class="mt-3 text-muted">Fecha: <span id="today"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1. Contenidos -->
+    <section class="slide" data-title="Contenidos de la Clase">
+      <div class="frame">
+        <h2>Contenidos de la Clase</h2>
+        <ol class="big">
+          <li>Conceptos Fundamentales</li>
+          <li>Tipos de Frecuencias (f, h, F, H)</li>
+          <li>Ejemplos Resueltos</li>
+          <li>Ejercicios para Completar Tablas</li>
+          <li>Ejercicios Tipo Evaluación</li>
+          <li>Síntesis y Aplicaciones</li>
+        </ol>
+        <div class="callout">
+          Basado en tu documento Beamer adjunto. Esta versión respeta secciones, ejemplos y ejercicios, adaptados a HTML. 
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. ¿Qué son las Tablas de Frecuencias? -->
+    <section class="slide" data-title="¿Qué son las Tablas de Frecuencias?">
+      <div class="frame">
+        <h2>¿Qué son las Tablas de Frecuencias?</h2>
+        <div class="callout">
+          <span class="key">Definición:</span> Herramienta que organiza datos y muestra cuántas veces aparece cada valor o categoría en un conjunto.
+        </div>
+        <div class="callout success">
+          <span class="key">¿Para qué sirven?</span>
+          <ul>
+            <li>Organizar grandes cantidades de información</li>
+            <li>Identificar patrones y tendencias</li>
+            <li>Facilitar análisis estadístico posterior</li>
+            <li>Comunicar información de forma clara</li>
+            <li>Tomar decisiones basadas en evidencia</li>
+          </ul>
+        </div>
+        <div class="callout alert"><strong>Ejemplo cotidiano:</strong> Preferencias de asignaturas en un curso.</div>
+      </div>
+    </section>
+
+    <!-- Tipos de Frecuencias -->
+    <section class="slide" data-title="Frecuencia Absoluta (f)">
+      <div class="frame">
+        <h2>Frecuencia Absoluta (f)</h2>
+        <p>número de veces que aparece un dato o intervalo.</p>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr><th>Asignatura</th><th>f</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Matemática</td><td>8</td></tr>
+              <tr><td>Lenguaje</td><td>6</td></tr>
+              <tr><td>Historia</td><td>5</td></tr>
+              <tr><td>Ciencias</td><td>4</td></tr>
+              <tr><td>Inglés</td><td>2</td></tr>
+              <tr class="table-secondary"><th>Total</th><th>25</th></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>La frecuencia absoluta de Matemática es <strong>8</strong> estudiantes.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Frecuencia Relativa (h)">
+      <div class="frame">
+        <h2>Frecuencia Relativa (h)</h2>
+        <div class="callout alert"><strong>Fórmula:</strong> h<sub>i</sub> = f<sub>i</sub> / n</div>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr><th>Asignatura</th><th>f</th><th>h</th><th>h (%)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Matemática</td><td>8</td><td>0,32</td><td>32%</td></tr>
+              <tr><td>Lenguaje</td><td>6</td><td>0,24</td><td>24%</td></tr>
+              <tr><td>Historia</td><td>5</td><td>0,20</td><td>20%</td></tr>
+              <tr><td>Ciencias</td><td>4</td><td>0,16</td><td>16%</td></tr>
+              <tr><td>Inglés</td><td>2</td><td>0,08</td><td>8%</td></tr>
+              <tr class="table-secondary"><th>Total</th><th>25</th><th>1,00</th><th>100%</th></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>El 32% de estudiantes prefiere Matemática.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Frecuencia Absoluta Acumulada (F)">
+      <div class="frame">
+        <h2>Frecuencia Absoluta Acumulada (F)</h2>
+        <div class="callout alert"><strong>Fórmula:</strong> F<sub>i</sub> = f<sub>1</sub> + ... + f<sub>i</sub></div>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr><th>Rango de Notas</th><th>f</th><th>F</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>4.0 — 4.9</td><td>3</td><td>3</td></tr>
+              <tr><td>5.0 — 5.9</td><td>8</td><td>11</td></tr>
+              <tr><td>6.0 — 6.9</td><td>12</td><td>23</td></tr>
+              <tr><td>7.0</td><td>2</td><td>25</td></tr>
+              <tr class="table-secondary"><th>Total</th><th>25</th><th>—</th></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>23 estudiantes obtuvieron 6.9 o menos.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Frecuencia Relativa Acumulada (H)">
+      <div class="frame">
+        <h2>Frecuencia Relativa Acumulada (H)</h2>
+        <div class="callout alert"><strong>Fórmulas:</strong> H = h<sub>1</sub>+...+h<sub>i</sub> o H = F<sub>i</sub>/n</div>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr><th>Rango de Notas</th><th>f</th><th>F</th><th>h</th><th>H</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>4.0 — 4.9</td><td>3</td><td>3</td><td>0,12</td><td>0,12</td></tr>
+              <tr><td>5.0 — 5.9</td><td>8</td><td>11</td><td>0,32</td><td>0,44</td></tr>
+              <tr><td>6.0 — 6.9</td><td>12</td><td>23</td><td>0,48</td><td>0,92</td></tr>
+              <tr><td>7.0</td><td>2</td><td>25</td><td>0,08</td><td>1,00</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>El 92% obtuvo 6.9 o menos.</p>
+      </div>
+    </section>
+
+    <!-- Ejemplos Resueltos Contextualizados -->
+    <section class="slide" data-title="Ejemplo 1: Tiempo de Estudio Diario">
+      <div class="frame">
+        <h2>Ejemplo 1: Tiempo de Estudio Diario</h2>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr><th>Horas de Estudio</th><th>f</th><th>F</th><th>h</th><th>H</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>0 — 1</td><td>8</td><td>8</td><td>0,20</td><td>0,20</td></tr>
+              <tr><td>2 — 3</td><td>15</td><td>23</td><td>0,375</td><td>0,575</td></tr>
+              <tr><td>4 — 5</td><td>12</td><td>35</td><td>0,30</td><td>0,875</td></tr>
+              <tr><td>6 — 7</td><td>5</td><td>40</td><td>0,125</td><td>1,00</td></tr>
+              <tr class="table-secondary"><th>Total</th><th>40</th><th></th><th>1,00</th><th></th></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul>
+          <li>¿% con ≤3 horas? <strong>57,5%</strong></li>
+          <li>¿Más de 3 horas? <strong>17 estudiantes</strong></li>
+          <li>Rango modal: <strong>2–3 horas</strong></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Ejemplo 2: Prueba de Historia">
+      <div class="frame">
+        <h2>Ejemplo 2: Calificaciones en Historia</h2>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr><th>Calificación</th><th>f</th><th>F</th><th>h</th><th>H</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Insuficiente (1.0–3.9)</td><td>4</td><td>4</td><td>0,133</td><td>0,133</td></tr>
+              <tr><td>Suficiente (4.0–4.9)</td><td>6</td><td>10</td><td>0,200</td><td>0,333</td></tr>
+              <tr><td>Bueno (5.0–5.9)</td><td>12</td><td>22</td><td>0,400</td><td>0,733</td></tr>
+              <tr><td>Muy Bueno (6.0–6.9)</td><td>6</td><td>28</td><td>0,200</td><td>0,933</td></tr>
+              <tr><td>Excelente (7.0)</td><td>2</td><td>30</td><td>0,067</td><td>1,000</td></tr>
+              <tr class="table-secondary"><th>Total</th><th>30</th><th></th><th>1,000</th><th></th></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul>
+          <li>El 73,3% tiene "Bueno" o inferior.</li>
+          <li>El 6,7% logra "Excelente".</li>
+          <li>El 40% está en "Bueno".</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Ejemplo 3: Edad Universitarios">
+      <div class="frame">
+        <h2>Ejemplo 3: Edad de Estudiantes Universitarios</h2>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr><th>Edad (años)</th><th>f</th><th>F</th><th>h</th><th>H</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>17 — 18</td><td>20</td><td>20</td><td>0,40</td><td>0,40</td></tr>
+              <tr><td>19 — 20</td><td>18</td><td>38</td><td>0,36</td><td>0,76</td></tr>
+              <tr><td>21 — 22</td><td>8</td><td>46</td><td>0,16</td><td>0,92</td></tr>
+              <tr><td>23 — 24</td><td>3</td><td>49</td><td>0,06</td><td>0,98</td></tr>
+              <tr><td>25 o más</td><td>1</td><td>50</td><td>0,02</td><td>1,00</td></tr>
+              <tr class="table-secondary"><th>Total</th><th>50</th><th></th><th>1,00</th><th></th></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul>
+          <li>76% tiene 20 años o menos.</li>
+          <li>8% tiene 23 o más.</li>
+          <li>La mayoría (40%) está en 17–18.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Ejemplo 4: Actividades Extracurriculares">
+      <div class="frame">
+        <h2>Ejemplo 4: Actividades Extracurriculares</h2>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr><th>Actividad</th><th>f</th><th>F</th><th>h</th><th>H</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Deportes</td><td>25</td><td>25</td><td>0,417</td><td>0,417</td></tr>
+              <tr><td>Arte y Cultura</td><td>15</td><td>40</td><td>0,250</td><td>0,667</td></tr>
+              <tr><td>Ciencia y Tecnología</td><td>10</td><td>50</td><td>0,167</td><td>0,833</td></tr>
+              <tr><td>Voluntariado</td><td>6</td><td>56</td><td>0,100</td><td>0,933</td></tr>
+              <tr><td>Ninguna</td><td>4</td><td>60</td><td>0,067</td><td>1,000</td></tr>
+              <tr class="table-secondary"><th>Total</th><th>60</th><th></th><th>1,000</th><th></th></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul>
+          <li>93,3% participa en alguna actividad.</li>
+          <li>Más popular: <strong>Deportes</strong>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Ejemplo 5: Uso de Dispositivos Tecnológicos">
+      <div class="frame">
+        <h2>Ejemplo 5: Uso de Dispositivos Tecnológicos</h2>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr><th>Horas Semanales</th><th>f</th><th>F</th><th>h</th><th>H</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>0 — 10</td><td>3</td><td>3</td><td>0,086</td><td>0,086</td></tr>
+              <tr><td>11 — 20</td><td>8</td><td>11</td><td>0,229</td><td>0,314</td></tr>
+              <tr><td>21 — 30</td><td>14</td><td>25</td><td>0,400</td><td>0,714</td></tr>
+              <tr><td>31 — 40</td><td>7</td><td>32</td><td>0,200</td><td>0,914</td></tr>
+              <tr><td>Más de 40</td><td>3</td><td>35</td><td>0,086</td><td>1,000</td></tr>
+              <tr class="table-secondary"><th>Total</th><th>35</th><th></th><th>1,000</th><th></th></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul>
+          <li>71,4% usa ≤30 horas/semana.</li>
+          <li>Rango modal: 21–30 horas.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Ejercicios para Completar Tablas -->
+    <section class="slide" data-title="Ejercicio 1: Transporte Escolar">
+      <div class="frame">
+        <h2>Ejercicio 1: Transporte Escolar</h2>
+        <p><strong>Datos:</strong> Metro 18, Micro 12, Auto 8, Bicicleta 5, Caminando 2 (n=45).</p>
+        <div class="callout">
+          <ol>
+            <li>Completa la tabla con f, F, h, H.</li>
+            <li>% de transporte público (Metro+Micro).</li>
+            <li>¿Cuántos usan medios no motorizados?</li>
+            <li>F acumulada hasta “Auto”.</li>
+            <li>Interpreta h para “Metro”.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Ejercicio 2: Puntajes PDT Lenguaje">
+      <div class="frame">
+        <h2>Ejercicio 2: Puntajes PDT Lenguaje</h2>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr><th>Puntaje</th><th>f</th><th>F</th><th>h</th><th>H</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>400 — 499</td><td>12</td><td>?</td><td>?</td><td>?</td></tr>
+              <tr><td>500 — 599</td><td>28</td><td>?</td><td>?</td><td>?</td></tr>
+              <tr><td>600 — 699</td><td>25</td><td>?</td><td>?</td><td>?</td></tr>
+              <tr><td>700 — 800</td><td>15</td><td>?</td><td>?</td><td>?</td></tr>
+              <tr class="table-secondary"><th>Total</th><th>80</th><th></th><th>1,00</th><th></th></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <ol>
+            <li>Completa F, h y H.</li>
+            <li>% con ≥700 puntos.</li>
+            <li>Estudiantes con &lt;600.</li>
+            <li>% con ≤599.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Ejercicio 3: Libros Leídos al Año">
+      <div class="frame">
+        <h2>Ejercicio 3: Libros Leídos al Año</h2>
+        <p><strong>Datos sin procesar (n=50):</strong> 2, 5, 3, 1, 4, 6, 2, 3, 5, 1, 3, 4, 2, 6, 5, 3, 1, 4, 2, 3, 4, 5, 2, 1, 3, 6, 4, 2, 5, 3, 1, 4, 2, 6, 3, 5, 1, 4, 2, 3, 5, 4, 2, 1, 3, 6, 4, 5, 2, 3.</p>
+        <div class="callout">
+          <ol>
+            <li>Organiza en tabla.</li>
+            <li>Calcula f, F, h, H.</li>
+            <li>Moda.</li>
+            <li>% que lee ≤3 libros.</li>
+            <li>¿Cuántos leen &gt;4 libros?</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Ejercicio 4: Tiempo de Recreo">
+      <div class="frame">
+        <h2>Ejercicio 4: Tiempo de Recreo</h2>
+        <p><strong>Datos (n=30):</strong> 15, 20, 25, 30, 15, 20, 25, 15, 30, 20, 25, 15, 30, 20, 25, 30, 15, 20, 25, 30, 15, 25, 20, 30, 15, 25, 20, 30, 25, 20.</p>
+        <div class="callout">
+          <ol>
+            <li>Intervalos: [10–19], [20–24], [25–29], [30–35].</li>
+            <li>Construye f, F, h, H.</li>
+            <li>Intervalo más frecuente.</li>
+            <li>% con ≥25 minutos.</li>
+            <li>Estudiantes con &lt;25 minutos.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Ejercicio 5: Calificaciones Semestrales">
+      <div class="frame">
+        <h2>Ejercicio 5: Calificaciones Semestrales</h2>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr><th>Promedio</th><th>f</th><th>F</th><th>h</th><th>H</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>4.0 — 4.9</td><td>5</td><td>?</td><td>?</td><td>?</td></tr>
+              <tr><td>5.0 — 5.9</td><td>?</td><td>18</td><td>?</td><td>?</td></tr>
+              <tr><td>6.0 — 6.9</td><td>?</td><td>?</td><td>0,45</td><td>?</td></tr>
+              <tr><td>7.0</td><td>4</td><td>?</td><td>?</td><td>?</td></tr>
+              <tr class="table-secondary"><th>Total</th><th>40</th><th></th><th>1,00</th><th></th></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <ol>
+            <li>Completa toda la tabla.</li>
+            <li>¿Cuántos en cada intervalo faltante?</li>
+            <li>% con promedio rojo (&lt;5.0).</li>
+            <li>F acumulada hasta 6.9.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Evaluativos -->
+    <section class="slide" data-title="Evaluativo 1: Asistencia Escolar">
+      <div class="frame">
+        <h2>Evaluativo 1: Asistencia Escolar</h2>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr><th>Días de Asistencia</th><th>Frecuencia</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>18 — 19</td><td>8</td></tr>
+              <tr><td>20 — 21</td><td>22</td></tr>
+              <tr><td>22 — 23</td><td>20</td></tr>
+              <tr><td>24 — 25</td><td>10</td></tr>
+              <tr class="table-secondary"><th>Total</th><th>60</th></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <ol>
+            <li>Construye F, h y H.</li>
+            <li>% con ≤21 días.</li>
+            <li>¿Cuántos con asistencia perfecta (24–25)?</li>
+            <li>% que cumple mínimo de 20 días.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Evaluativo 2: Resultados SIMCE">
+      <div class="frame">
+        <h2>Evaluativo 2: Resultados SIMCE</h2>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr><th>Nivel de Logro</th><th>f</th><th>F</th><th>h</th><th>H</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Insuficiente</td><td>30</td><td>?</td><td>?</td><td>?</td></tr>
+              <tr><td>Elemental</td><td>45</td><td>?</td><td>?</td><td>?</td></tr>
+              <tr><td>Adecuado</td><td>60</td><td>?</td><td>?</td><td>?</td></tr>
+              <tr><td>Avanzado</td><td>15</td><td>?</td><td>?</td><td>?</td></tr>
+              <tr class="table-secondary"><th>Total</th><th>150</th><th></th><th>1,00</th><th></th></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <ol>
+            <li>Completa todos los valores faltantes.</li>
+            <li>% con “Adecuado” o superior.</li>
+            <li>¿Cuántos NO alcanzan “Adecuado”?</li>
+            <li>¿Nivel más frecuente?</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Evaluativo 3: Proyecto Integrador">
+      <div class="frame">
+        <h2>Evaluativo 3: Proyecto Integrador</h2>
+        <ul>
+          <li>15% gasta entre $5.000–$9.999</li>
+          <li>35% gasta entre $10.000–$14.999</li>
+          <li>30% gasta entre $15.000–$19.999</li>
+          <li>20% gasta $20.000 o más</li>
+        </ul>
+        <div class="callout">
+          <ol>
+            <li>Construye la tabla completa de frecuencias.</li>
+            <li>¿Cuántos gastan &lt;$15.000?</li>
+            <li>% que gasta ≥$20.000.</li>
+            <li>Si el promedio nacional es $12.000: % sobre el promedio.</li>
+            <li>Conclusión general.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Síntesis y Aplicaciones -->
+    <section class="slide" data-title="Resumen de Conceptos Clave">
+      <div class="frame">
+        <h2>Resumen de Conceptos Clave</h2>
+        <ul>
+          <li><strong>Frecuencia Absoluta (f):</strong> cuántas veces aparece cada dato.</li>
+          <li><strong>Frecuencia Relativa (h):</strong> proporción h = f / n.</li>
+          <li><strong>Frecuencia Absoluta Acumulada (F):</strong> suma progresiva de f.</li>
+          <li><strong>Frecuencia Relativa Acumulada (H):</strong> proporción acumulada.</li>
+        </ul>
+        <div class="callout alert">
+          <ul>
+            <li>∑f = n, ∑h = 1.</li>
+            <li>H del último intervalo = 1.</li>
+            <li>Las acumuladas siempre crecen.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Aplicaciones y Estrategias">
+      <div class="frame">
+        <h2>¿Dónde Aplicamos las Tablas de Frecuencias?</h2>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <h5 class="text-success fw-bold">Ámbito educativo</h5>
+            <ul>
+              <li>Calificaciones y rendimiento</li>
+              <li>Resultados estandarizados</li>
+              <li>Preferencias y opiniones</li>
+              <li>Asistencia y participación</li>
+            </ul>
+          </div>
+          <div class="col-md-6">
+            <h5 class="text-primary fw-bold">Vida cotidiana</h5>
+            <ul>
+              <li>Encuestas y opinión pública</li>
+              <li>Análisis de ventas y consumo</li>
+              <li>Estudios de mercado</li>
+              <li>Investigaciones científicas y sociales</li>
+              <li>Deportes y entretenimiento</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3 class="mt-4">Estrategias para Resolver Ejercicios</h3>
+        <div class="callout success">
+          <ol>
+            <li>Ordena y organiza los datos.</li>
+            <li>Identifica el total n.</li>
+            <li>Calcula en orden: f → F → h → H.</li>
+            <li>Verifica: ∑f = n y ∑h = 1.</li>
+            <li>Interpreta en contexto y responde con precisión.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cierre -->
+    <section class="slide" data-title="Cierre">
+      <div class="frame d-flex flex-column justify-content-center" style="min-height:calc(100vh - 140px)">
+        <div class="text-center">
+          <h2 class="mb-3">¡Excelente Trabajo!</h2>
+          <p class="lead">Has aprendido a organizar y analizar datos con tablas de frecuencias.</p>
+          <p class="text-muted">¿Preguntas o comentarios?</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer / Nav bar -->
+  <div class="footbar py-2">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-2">
+        <button id="prevBtn" class="btn btn-outline-secondary btn-sm btn-nav">⟵ Anterior</button>
+        <button id="nextBtn" class="btn btn-primary btn-sm btn-nav">Siguiente ⟶</button>
+      </div>
+      <div class="text-muted small">
+        Diapositiva <span id="slideNum">1</span>/<span id="slideTotal">21</span> • Navega con ← → o usa el menú
+      </div>
+    </div>
+  </div>
+
+  <!-- TOC Offcanvas -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="tocCanvas" aria-labelledby="tocLabel">
+    <div class="offcanvas-header">
+      <h5 id="tocLabel">Contenidos</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div id="tocList" class="toc-list"></div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS + Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function(){
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const slideNum = document.getElementById('slideNum');
+      const slideTotal = document.getElementById('slideTotal');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const btnTOC = document.getElementById('btnTOC');
+      const today = document.getElementById('today');
+
+      // Fecha local (Chile)
+      const d = new Date();
+      today && (today.textContent = d.toLocaleDateString('es-CL', {year:'numeric', month:'long', day:'numeric'}));
+
+      let idx = 0;
+      slideTotal.textContent = slides.length;
+
+      function show(i){
+        idx = (i+slides.length)%slides.length;
+        slides.forEach((s,k)=>s.classList.toggle('active', k===idx));
+        slideNum.textContent = idx+1;
+        window.scrollTo({top:0, behavior:'instant'});
+      }
+
+      prevBtn.addEventListener('click', ()=>show(idx-1));
+      nextBtn.addEventListener('click', ()=>show(idx+1));
+
+      document.addEventListener('keydown', (e)=>{
+        if(e.key==='ArrowRight') show(idx+1);
+        if(e.key==='ArrowLeft') show(idx-1);
+        if(e.key.toLowerCase()==='h') show(0);
+        if(e.key.toLowerCase()==='e') show(slides.length-1);
+      });
+
+      // TOC
+      const tocCanvas = new bootstrap.Offcanvas('#tocCanvas');
+      btnTOC.addEventListener('click', ()=> tocCanvas.toggle());
+      const tocList = document.getElementById('tocList');
+      slides.forEach((s, k)=>{
+        const t = s.getAttribute('data-title') || ('Diapositiva '+(k+1));
+        const btn = document.createElement('button');
+        btn.className='w-100 text-truncate';
+        btn.textContent = (k+1)+'. '+t;
+        btn.addEventListener('click', ()=>{ tocCanvas.hide(); show(k); });
+        const item = document.createElement('div');
+        item.appendChild(btn);
+        tocList.appendChild(item);
+      });
+
+      // Mostrar la primera
+      show(0);
+    })();
+  </script>
+</body>
+</html>

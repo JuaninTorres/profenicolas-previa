@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Clase 2 — Tablas de Frecuencias (AMD 202)</title>
+  <!-- Chart.js (compat con plantilla) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" defer></script>
+  <style>
+    *{box-sizing:border-box}
+    :root{
+      --azul-chile:#003366;--rojo-chile:#FF3333;--verde-chile:#009944;--naranja:#FFA500;--violeta:#9B59B6;
+      --gris-claro:#f8f9fa;--gris-oscuro:#2c3e50;
+      --fs-base: clamp(18px, 1.1vw + 10px, 22px);
+      --fs-small: clamp(16px, 0.8vw + 9px, 20px);
+      --fs-h1: clamp(2.2rem, 4.2vw, 4rem);
+      --fs-h2: clamp(1.6rem, 2.8vw, 3rem);
+      --fs-h3: clamp(1.2rem, 1.6vw, 1.75rem);
+    }
+    html,body{height:100%}
+    body{
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
+      font-size:var(--fs-base);line-height:1.7;color:var(--gris-oscuro);
+      background:linear-gradient(135deg,var(--gris-claro) 0%, #e8f4f8 100%)
+    }
+    .presentation-container{max-width:1280px;margin-inline:auto;padding:20px}
+    .slide{background:#fff;border-radius:16px;padding:48px;margin:20px 0;
+      box-shadow:0 10px 30px rgba(0,0,0,.1);min-height:86vh;display:none}
+    .slide.active{display:block}
+    .slide-header{
+      background:linear-gradient(135deg,var(--azul-chile),var(--violeta));color:#fff;
+      padding:32px 44px;border-radius:16px;margin:-48px -48px 32px -48px;text-align:center
+    }
+    .slide-header h1{font-size:var(--fs-h1);margin-bottom:8px;font-weight:800}
+    .slide-header h2{font-size:var(--fs-h2);margin-bottom:6px;font-weight:700}
+    .slide-header p{font-size:clamp(1rem,1.2vw,1.35rem);opacity:.95}
+    .content-grid,.objectives-grid{display:grid;gap:32px;margin:24px 0}
+    .content-grid{grid-template-columns:1fr 1fr}
+    .objectives-grid{grid-template-columns:1fr 1fr}
+    .content-grid.one-col{grid-template-columns:1fr}
+    .objective-card,.comparison-card{
+      background:linear-gradient(135deg,#f8f9fa,#e9ecef);
+      padding:24px;border-radius:12px;border-left:6px solid var(--azul-chile)
+    }
+    .objective-card h3{color:var(--azul-chile);font-size:var(--fs-h3);margin-bottom:10px}
+    .info-box{background:linear-gradient(135deg,var(--naranja),#f39c12);color:#fff;padding:22px;
+      border-radius:12px;margin:12px 0}
+    .highlight-box{background:linear-gradient(135deg,var(--verde-chile),#27ae60);color:#fff;padding:22px;
+      border-radius:12px;margin:12px 0}
+    .data-table{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,.08);margin:16px 0;width:100%}
+    .data-table table{width:100%;border-collapse:collapse;table-layout:auto}
+    .data-table thead th{background:var(--azul-chile);color:#fff;padding:16px 18px;font-weight:800;font-size:1.06em}
+    .data-table td{padding:14px 18px;border-bottom:1px solid #eee;text-align:center;font-size:1.05em}
+    .data-table tr:nth-child(even){background:#f8f9fa}
+    .data-table.scroll-x{overflow-x:auto}
+    .step-list{list-style:none;counter-reset:step}
+    .step-list li{counter-increment:step;margin:12px 0;padding:14px 14px 14px 56px;background:var(--gris-claro);
+      border-radius:10px;position:relative;font-size:clamp(1.05rem,.9vw + .7rem,1.35rem)}
+    .step-list li::before{content:counter(step);position:absolute;left:18px;top:50%;transform:translateY(-50%);
+      background:var(--azul-chile);color:#fff;width:30px;height:30px;border-radius:50%;
+      display:grid;place-items:center;font-weight:800}
+    .navigation{position:fixed;bottom:24px;right:24px;display:flex;gap:12px;z-index:10}
+    .nav-btn{background:var(--azul-chile);color:#fff;border:none;padding:14px 22px;border-radius:999px;cursor:pointer;
+      font-size:clamp(1rem,1vw + .6rem,1.3rem);font-weight:700;box-shadow:0 4px 15px rgba(0,51,102,.3)}
+    .nav-btn:disabled{opacity:.5;cursor:not-allowed}
+    .slide-counter{position:fixed;top:24px;right:24px;background:rgba(0,51,102,.92);color:#fff;padding:10px 16px;
+      border-radius:26px;font-weight:800;z-index:11;font-size:clamp(.95rem,.9vw + .6rem,1.2rem)}
+    .progress-bar{position:fixed;top:0;left:0;height:5px;background:var(--azul-chile);width:0;transition:width .3s ease;z-index:12}
+    @media (max-width:768px){
+      .presentation-container{padding:12px}
+      body{font-size:clamp(18px,4.5vw,20px)}
+      .slide{padding:22px;margin:10px 0;min-height:88vh}
+      .content-grid,.objectives-grid{grid-template-columns:1fr;gap:20px}
+      .navigation{bottom:16px;right:16px}
+      .data-table.scroll-x{overflow-x:auto}
+    }
+    @media print{
+      .navigation,.progress-bar,.slide-counter{display:none !important}
+      .slide{display:block;page-break-after:always;box-shadow:none;margin:0;padding:20mm;border-radius:0;min-height:auto}
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="slide-counter" id="slideCounter">Cargando…</div>
+
+  <main class="presentation-container">
+
+    <!-- 1 / 26: Portada -->
+    <section class="slide active">
+      <header class="slide-header">
+        <h1>Introducción a la Estadística</h1>
+        <h2>Módulo: AMD 202 — Estadísticas básicas</h2>
+        <p><strong>Profesor:</strong> Nicolás González Martínez — Centro de Formación Técnica PUCV</p>
+        <p><strong>Fecha:</strong> 4 de septiembre de 2025 · <strong>Carrera:</strong> Técnico en Administración de Empresas</p>
+      </header>
+    </section>
+
+    <!-- 2 / 26: Contenidos -->
+    <section class="slide">
+      <header class="slide-header"><h2>Contenidos de la Presentación</h2></header>
+      <ol class="step-list">
+        <li>¿Qué son las Tablas de Frecuencias?</li>
+        <li>Tipos de Frecuencias</li>
+        <li>Ejemplo Contextualizado</li>
+        <li>Ejercicios para Resolver</li>
+        <li>Resumen y Aplicaciones</li>
+      </ol>
+    </section>
+
+    <!-- 3 / 26: Definición tabla de frecuencias -->
+    <section class="slide">
+      <header class="slide-header"><h2>Definición: Tabla de Frecuencias</h2></header>
+      <div class="objective-card">
+        <h3 class="h5">¿Qué es una Tabla de Frecuencias?</h3>
+        <p>Es una herramienta estadística que organiza y presenta datos de forma ordenada, mostrando cuántas veces aparece cada valor o categoría en un conjunto de datos.</p>
+      </div>
+      <div class="objective-card">
+        <h3 class="h5">¿Para qué sirve?</h3>
+        <ul class="step-list">
+          <li>Organizar grandes cantidades de información</li>
+          <li>Identificar patrones y tendencias</li>
+          <li>Facilitar el análisis de datos</li>
+          <li>Tomar decisiones basadas en evidencia</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 4 / 26: Frecuencia Absoluta (def + ejemplo) -->
+    <section class="slide">
+      <header class="slide-header"><h2>Frecuencia Absoluta</h2></header>
+      <div class="objective-card">
+        <h3 class="h5">Definición</h3>
+        <p>La frecuencia absoluta (<strong>f<sub>i</sub></strong>) es el número de veces que aparece un dato o valor específico en el conjunto de datos.</p>
+      </div>
+      <div class="objective-card">
+        <h3 class="h5">Ejemplo (30 estudiantes, deporte favorito)</h3>
+        <div class="data-table scroll-x">
+          <table>
+            <thead><tr><th>Deporte</th><th>f</th></tr></thead>
+            <tbody>
+              <tr><td>Fútbol</td><td>12</td></tr>
+              <tr><td>Básquetbol</td><td>8</td></tr>
+              <tr><td>Tenis</td><td>6</td></tr>
+              <tr><td>Natación</td><td>4</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="m-0">La frecuencia absoluta del fútbol es <strong>f<sub>1</sub> = 12</strong>.</p>
+      </div>
+    </section>
+
+    <!-- 5 / 26: Frecuencia Relativa (def) -->
+    <section class="slide">
+      <header class="slide-header"><h2>Frecuencia Relativa</h2></header>
+      <div class="objective-card">
+        <h3 class="h5">Definición</h3>
+        <p>La frecuencia relativa (<strong>h<sub>i</sub></strong>) es la proporción que representa cada frecuencia absoluta del total de datos.</p>
+        <div class="info-box"><strong>Fórmula:</strong> h<sub>i</sub> = f<sub>i</sub> / n</div>
+      </div>
+    </section>
+
+    <!-- 6 / 26: Frecuencia Relativa (ejemplo) -->
+    <section class="slide">
+      <header class="slide-header"><h2>Frecuencia Relativa — Ejemplo</h2></header>
+      <p>Continuando con el ejemplo (n = 30):</p>
+      <div class="data-table scroll-x">
+        <table>
+          <thead><tr><th>Deporte</th><th>f</th><th>n</th><th>h</th></tr></thead>
+          <tbody>
+            <tr><td>Fútbol</td><td>12</td><td>30</td><td>0,40 = 40%</td></tr>
+            <tr><td>Básquetbol</td><td>8</td><td>30</td><td>0,267 = 26,7%</td></tr>
+            <tr><td>Tenis</td><td>6</td><td>30</td><td>0,20 = 20%</td></tr>
+            <tr><td>Natación</td><td>4</td><td>30</td><td>0,133 = 13,3%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 7 / 26: Frecuencia Absoluta Acumulada (def) -->
+    <section class="slide">
+      <header class="slide-header"><h2>Frecuencia Absoluta Acumulada</h2></header>
+      <div class="objective-card">
+        <h3 class="h5">Definición</h3>
+        <p>La frecuencia absoluta acumulada (<strong>F<sub>i</sub></strong>) es la suma de las frecuencias absolutas desde el primer dato hasta el dato considerado.</p>
+        <div class="info-box">F<sub>i</sub> = f<sub>1</sub> + f<sub>2</sub> + … + f<sub>i</sub></div>
+      </div>
+    </section>
+
+    <!-- 8 / 26: Frecuencia Absoluta Acumulada (ejemplo) -->
+    <section class="slide">
+      <header class="slide-header"><h2>Frecuencia Absoluta Acumulada — Ejemplo</h2></header>
+      <p>Edades de trabajadores (ordenadas):</p>
+      <div class="data-table scroll-x">
+        <table>
+          <thead><tr><th>Edad</th><th>f</th><th>F</th></tr></thead>
+          <tbody>
+            <tr><td>22–30</td><td>8</td><td>8</td></tr>
+            <tr><td>31–39</td><td>15</td><td>23</td></tr>
+            <tr><td>40–48</td><td>12</td><td>35</td></tr>
+            <tr><td>49–57</td><td>5</td><td>40</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 9 / 26: Frecuencia Relativa Acumulada (def) -->
+    <section class="slide">
+      <header class="slide-header"><h2>Frecuencia Relativa Acumulada</h2></header>
+      <div class="objective-card">
+        <h3 class="h5">Definición</h3>
+        <p>La frecuencia relativa acumulada (<strong>H<sub>i</sub></strong>) es la suma de las frecuencias relativas hasta el dato considerado.</p>
+        <div class="info-box">H<sub>i</sub> = h<sub>1</sub> + h<sub>2</sub> + … + h<sub>i</sub> = F<sub>i</sub> / n</div>
+      </div>
+    </section>
+
+    <!-- 10 / 26: Frecuencia Relativa Acumulada (ejemplo) -->
+    <section class="slide">
+      <header class="slide-header"><h2>Frecuencia Relativa Acumulada — Ejemplo</h2></header>
+      <p>Completando el ejemplo anterior (n = 40):</p>
+      <div class="data-table scroll-x">
+        <table>
+          <thead><tr><th>Edad</th><th>f</th><th>F</th><th>h</th><th>H</th></tr></thead>
+          <tbody>
+            <tr><td>22–30</td><td>8</td><td>8</td><td>0,20</td><td>0,20</td></tr>
+            <tr><td>31–39</td><td>15</td><td>23</td><td>0,375</td><td>0,575</td></tr>
+            <tr><td>40–48</td><td>12</td><td>35</td><td>0,30</td><td>0,875</td></tr>
+            <tr><td>49–57</td><td>5</td><td>40</td><td>0,125</td><td>1,00</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 11 / 26: Ejemplo 1 -->
+    <section class="slide">
+      <header class="slide-header"><h2>Ejemplo 1: Ingresos Familiares en Chile</h2></header>
+      <p>Encuesta a 50 familias (miles de pesos):</p>
+      <div class="data-table scroll-x">
+        <table>
+          <thead><tr><th>Ingreso (miles $)</th><th>f</th><th>F</th><th>h</th><th>H</th></tr></thead>
+          <tbody>
+            <tr><td>300–499</td><td>8</td><td>8</td><td>0,16</td><td>0,16</td></tr>
+            <tr><td>500–699</td><td>12</td><td>20</td><td>0,24</td><td>0,40</td></tr>
+            <tr><td>700–899</td><td>15</td><td>35</td><td>0,30</td><td>0,70</td></tr>
+            <tr><td>900–1099</td><td>10</td><td>45</td><td>0,20</td><td>0,90</td></tr>
+            <tr><td>1100–1299</td><td>5</td><td>50</td><td>0,10</td><td>1,00</td></tr>
+            <tr><td><strong>Total</strong></td><td><strong>50</strong></td><td></td><td><strong>1,00</strong></td><td><strong>1,00</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 12 / 26: Ejemplo 2 -->
+    <section class="slide">
+      <header class="slide-header"><h2>Ejemplo 2: Tiempo en Redes Sociales</h2></header>
+      <p>60 jóvenes (15–18 años) — horas diarias:</p>
+      <div class="data-table scroll-x">
+        <table>
+          <thead><tr><th>Horas diarias</th><th>f</th><th>F</th><th>h</th><th>H</th></tr></thead>
+          <tbody>
+            <tr><td>1–2</td><td>5</td><td>5</td><td>0,083</td><td>0,083</td></tr>
+            <tr><td>3–4</td><td>18</td><td>23</td><td>0,300</td><td>0,383</td></tr>
+            <tr><td>5–6</td><td>22</td><td>45</td><td>0,367</td><td>0,750</td></tr>
+            <tr><td>7–8</td><td>12</td><td>57</td><td>0,200</td><td>0,950</td></tr>
+            <tr><td>9–10</td><td>3</td><td>60</td><td>0,050</td><td>1,000</td></tr>
+            <tr><td><strong>Total</strong></td><td><strong>60</strong></td><td></td><td><strong>1,000</strong></td><td><strong>1,000</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 13 / 26: Ejemplo 3 -->
+    <section class="slide">
+      <header class="slide-header"><h2>Ejemplo 3: Precio de Viviendas en Chile</h2></header>
+      <p>Departamentos 2D en Santiago (UF):</p>
+      <div class="data-table scroll-x">
+        <table>
+          <thead><tr><th>Precio (UF)</th><th>f</th><th>F</th><th>h</th><th>H</th></tr></thead>
+          <tbody>
+            <tr><td>1500–1999</td><td>6</td><td>6</td><td>0,12</td><td>0,12</td></tr>
+            <tr><td>2000–2499</td><td>14</td><td>20</td><td>0,28</td><td>0,40</td></tr>
+            <tr><td>2500–2999</td><td>18</td><td>38</td><td>0,36</td><td>0,76</td></tr>
+            <tr><td>3000–3499</td><td>8</td><td>46</td><td>0,16</td><td>0,92</td></tr>
+            <tr><td>3500–3999</td><td>4</td><td>50</td><td>0,08</td><td>1,00</td></tr>
+            <tr><td><strong>Total</strong></td><td><strong>50</strong></td><td></td><td><strong>1,00</strong></td><td><strong>1,00</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 14 / 26: Ejemplo 4 -->
+    <section class="slide">
+      <header class="slide-header"><h2>Ejemplo 4: Consumo de Pan en Chile</h2></header>
+      <p>Consumo semanal (kg) — 40 familias:</p>
+      <div class="data-table scroll-x">
+        <table>
+          <thead><tr><th>Kg de pan/semana</th><th>f</th><th>F</th><th>h</th><th>H</th></tr></thead>
+          <tbody>
+            <tr><td>0,5–1,4</td><td>3</td><td>3</td><td>0,075</td><td>0,075</td></tr>
+            <tr><td>1,5–2,4</td><td>12</td><td>15</td><td>0,300</td><td>0,375</td></tr>
+            <tr><td>2,5–3,4</td><td>16</td><td>31</td><td>0,400</td><td>0,775</td></tr>
+            <tr><td>3,5–4,4</td><td>7</td><td>38</td><td>0,175</td><td>0,950</td></tr>
+            <tr><td>4,5–5,4</td><td>2</td><td>40</td><td>0,050</td><td>1,000</td></tr>
+            <tr><td><strong>Total</strong></td><td><strong>40</strong></td><td></td><td><strong>1,000</strong></td><td><strong>1,000</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 15 / 26: Ejercicio 1 -->
+    <section class="slide">
+      <header class="slide-header"><h2>Ejercicio 1: Notas de Matemática</h2></header>
+      <p><strong>Datos (25 estudiantes):</strong></p>
+      <p>6,2 5,5 4,8 6,7 5,1 6,0 5,8 4,5 6,3 5,9<br/>6,1 5,6 4,9 6,5 5,3 6,4 5,7 5,0 6,8 5,4<br/>6,6 4,7 5,2 6,9 4,6</p>
+      <div class="objective-card">
+        <h3 class="h5">Tareas</h3>
+        <ol class="step-list">
+          <li>Agrupa en intervalos: [4,0–4,9[, [5,0–5,9[, [6,0–7,0]</li>
+          <li>Construye la tabla de frecuencias completa</li>
+          <li>Calcula f, F, h, H</li>
+          <li>Interpreta los resultados</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 16 / 26: Ejercicio 2 -->
+    <section class="slide">
+      <header class="slide-header"><h2>Ejercicio 2: Transporte en Santiago</h2></header>
+      <p><strong>Datos (40 personas):</strong> Metro: 18 · Micro: 12 · Auto: 6 · Bicicleta: 4</p>
+      <div class="objective-card">
+        <h3 class="h5">Tareas</h3>
+        <ol class="step-list">
+          <li>Construye la tabla de frecuencias completa</li>
+          <li>% que usa transporte público (Metro + Micro)</li>
+          <li>Frecuencia acumulada hasta Auto particular</li>
+          <li>Interpreta la frecuencia relativa por medio</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 17 / 26: Ejercicio 3 -->
+    <section class="slide">
+      <header class="slide-header"><h2>Ejercicio 3: Consumo de Agua</h2></header>
+      <p><strong>Datos (30 hogares):</strong></p>
+      <p>8 12 15 9 11 14 10 13 16 7<br/>12 11 15 8 14 9 13 10 16 12<br/>11 9 14 8 15 10 13 12 7 16</p>
+      <div class="objective-card">
+        <h3 class="h5">Tareas</h3>
+        <ol class="step-list">
+          <li>Intervalos: [7–9], [10–12], [13–15], [16–18]</li>
+          <li>Completa f, F, h, H</li>
+          <li>¿Qué porcentaje consume &gt; 12 m³?</li>
+          <li>¿Cuántos hogares consumen hasta 12 m³?</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 18 / 26: Ejercicio 4 -->
+    <section class="slide">
+      <header class="slide-header"><h2>Ejercicio 4: Temperaturas en Santiago</h2></header>
+      <p><strong>Datos (40 días, °C):</strong></p>
+      <p>28,5 31,2 29,8 33,1 27,9 30,4 32,7 26,3 29,1 31,8<br/>
+         30,9 28,7 32,4 27,6 33,5 29,3 31,6 28,2 30,8 32,9<br/>
+         27,8 33,8 29,7 31,3 28,4 30,1 32,2 27,1 31,9 29,6<br/>
+         33,2 28,9 30,7 32,6 29,4 31,1 28,6 33,4 30,3 29,9</p>
+      <div class="objective-card">
+        <h3 class="h5">Tareas</h3>
+        <ol class="step-list">
+          <li>Intervalos: [26,0–28,9[, [29,0–31,9[, [32,0–34,0]</li>
+          <li>Tabla de frecuencias completa</li>
+          <li>Calcula f, F, h, H</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 19 / 26: Ejercicio 5 -->
+    <section class="slide">
+      <header class="slide-header"><h2>Ejercicio 5: Traslado al Colegio</h2></header>
+      <p><strong>Datos (35 estudiantes, min):</strong></p>
+      <p>15 28 22 35 18 31 25 12 29 33<br/>
+         21 17 26 38 14 30 24 19 32 27<br/>
+         16 34 23 36 20 13 28 37 22 31<br/>
+         18 25 33 15 29</p>
+      <div class="objective-card">
+        <h3 class="h5">Tareas</h3>
+        <ol class="step-list">
+          <li>Intervalos: [10–19[, [20–29[, [30–39]</li>
+          <li>Tabla de frecuencias completa</li>
+          <li>Calcula f, F, h, H</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 20 / 26: Ejercicio 6 -->
+    <section class="slide">
+      <header class="slide-header"><h2>Ejercicio 6: Puntajes PSU Matemática — RM</h2></header>
+      <p><strong>Datos (120 estudiantes, intervalos):</strong></p>
+      <div class="data-table scroll-x">
+        <table>
+          <thead><tr><th>Intervalo</th><th>f</th><th>F</th><th>h</th><th>H</th></tr></thead>
+          <tbody>
+            <tr><td>[400–499]</td><td>18</td><td></td><td></td><td></td></tr>
+            <tr><td>[500–599]</td><td>35</td><td></td><td></td><td></td></tr>
+            <tr><td>[600–699]</td><td>42</td><td></td><td></td><td></td></tr>
+            <tr><td>[700–800]</td><td>25</td><td></td><td></td><td></td></tr>
+            <tr><td><strong>Total</strong></td><td><strong>120</strong></td><td></td><td><strong>1,00</strong></td><td><strong>1,00</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="m-0"><em>Tarea:</em> Completa todas las frecuencias faltantes.</p>
+    </section>
+
+    <!-- 21 / 26: Ejercicio 7 -->
+    <section class="slide">
+      <header class="slide-header"><h2>Ejercicio 7: Consumo de Agua — Maipú</h2></header>
+      <p><strong>Datos (150 hogares, m³):</strong></p>
+      <div class="data-table scroll-x">
+        <table>
+          <thead><tr><th>Intervalo</th><th>f</th><th>F</th><th>h</th><th>H</th></tr></thead>
+          <tbody>
+            <tr><td>[8–12[</td><td>22</td><td></td><td></td><td></td></tr>
+            <tr><td>[12–16[</td><td>45</td><td></td><td></td><td></td></tr>
+            <tr><td>[16–20[</td><td>58</td><td></td><td></td><td></td></tr>
+            <tr><td>[20–24]</td><td>25</td><td></td><td></td><td></td></tr>
+            <tr><td><strong>Total</strong></td><td><strong>150</strong></td><td></td><td><strong>1,00</strong></td><td><strong>1,00</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="m-0"><em>Tarea:</em> Completa la tabla de frecuencias.</p>
+    </section>
+
+    <!-- 22 / 26: Ejercicio 8 -->
+    <section class="slide">
+      <header class="slide-header"><h2>Ejercicio 8: Velocidad de Internet — Concepción</h2></header>
+      <p><strong>Datos (180 hogares, Mbps):</strong></p>
+      <div class="data-table scroll-x">
+        <table>
+          <thead><tr><th>Intervalo</th><th>f</th><th>F</th><th>h</th><th>H</th></tr></thead>
+          <tbody>
+            <tr><td>[5–15[</td><td>28</td><td></td><td></td><td></td></tr>
+            <tr><td>[15–25[</td><td>52</td><td></td><td></td><td></td></tr>
+            <tr><td>[25–35[</td><td>67</td><td></td><td></td><td></td></tr>
+            <tr><td>[35–45[</td><td>24</td><td></td><td></td><td></td></tr>
+            <tr><td>[45–55]</td><td>9</td><td></td><td></td><td></td></tr>
+            <tr><td><strong>Total</strong></td><td><strong>180</strong></td><td></td><td><strong>1,00</strong></td><td><strong>1,00</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="m-0"><em>Tarea:</em> Completa la tabla de frecuencias.</p>
+    </section>
+
+    <!-- 23 / 26: Ejercicio 9 -->
+    <section class="slide">
+      <header class="slide-header"><h2>Ejercicio 9: Ventas Mensuales — PYMES</h2></header>
+      <p><strong>Datos (1000 PYMES, millones CLP):</strong></p>
+      <div class="data-table scroll-x">
+        <table>
+          <thead><tr><th>Intervalo</th><th>f</th><th>F</th><th>h</th><th>H</th></tr></thead>
+          <tbody>
+            <tr><td>[5–15[</td><td>145</td><td></td><td></td><td></td></tr>
+            <tr><td>[15–25[</td><td>228</td><td></td><td></td><td></td></tr>
+            <tr><td>[25–35[</td><td>267</td><td></td><td></td><td></td></tr>
+            <tr><td>[35–45[</td><td>186</td><td></td><td></td><td></td></tr>
+            <tr><td>[45–55[</td><td>124</td><td></td><td></td><td></td></tr>
+            <tr><td>[55–65]</td><td>50</td><td></td><td></td><td></td></tr>
+            <tr><td><strong>Total</strong></td><td><strong>1000</strong></td><td></td><td><strong>1,00</strong></td><td><strong>1,00</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="m-0"><em>Tarea:</em> Completa la tabla de frecuencias.</p>
+    </section>
+
+    <!-- 24 / 26: Ejercicio 10 -->
+    <section class="slide">
+      <header class="slide-header"><h2>Ejercicio 10: Salarios — Sector Financiero</h2></header>
+      <p><strong>Datos (2000 profesionales, miles CLP):</strong></p>
+      <div class="data-table scroll-x">
+        <table>
+          <thead><tr><th>Intervalo</th><th>f</th><th>F</th><th>h</th><th>H</th></tr></thead>
+          <tbody>
+            <tr><td>[800–1200[</td><td>180</td><td></td><td></td><td></td></tr>
+            <tr><td>[1200–1600[</td><td>285</td><td></td><td></td><td></td></tr>
+            <tr><td>[1600–2000[</td><td>412</td><td></td><td></td><td></td></tr>
+            <tr><td>[2000–2400[</td><td>368</td><td></td><td></td><td></td></tr>
+            <tr><td>[2400–2800[</td><td>295</td><td></td><td></td><td></td></tr>
+            <tr><td>[2800–3200[</td><td>218</td><td></td><td></td><td></td></tr>
+            <tr><td>[3200–3600[</td><td>142</td><td></td><td></td><td></td></tr>
+            <tr><td>[3600–4000]</td><td>100</td><td></td><td></td><td></td></tr>
+            <tr><td><strong>Total</strong></td><td><strong>2000</strong></td><td></td><td><strong>1,00</strong></td><td><strong>1,00</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="m-0"><em>Tarea:</em> Completa la tabla de frecuencias.</p>
+    </section>
+
+    <!-- 25 / 26: Resumen de Conceptos -->
+    <section class="slide">
+      <header class="slide-header"><h2>Resumen de Conceptos</h2></header>
+      <div class="content-grid one-col">
+        <ul class="step-list">
+          <li><strong>Frecuencia Absoluta (f):</strong> número de veces que aparece un dato.</li>
+          <li><strong>Frecuencia Relativa (h):</strong> proporción h = f / n.</li>
+          <li><strong>Frecuencia Absoluta Acumulada (F):</strong> suma acumulada de f.</li>
+          <li><strong>Frecuencia Relativa Acumulada (H):</strong> suma acumulada de h.</li>
+          <li><strong>Propiedades:</strong> Σ f<sub>i</sub> = n · Σ h<sub>i</sub> = 1 (100%) · H<sub>última</sub> = 1 · F y H crecen monótonamente.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 26 / 26: Aplicaciones -->
+    <section class="slide">
+      <header class="slide-header"><h2>Aplicaciones en la Vida Real</h2></header>
+      <div class="content-grid">
+        <div class="objective-card">
+          <h3 class="h5">¿Dónde las usamos?</h3>
+          <ul class="step-list">
+            <li>Salud: síntomas, efectividad de tratamientos</li>
+            <li>Educación: calificaciones, rendimiento académico</li>
+            <li>Economía: distribución de ingresos, gastos familiares</li>
+            <li>Deportes: estadísticas de jugadores, resultados</li>
+            <li>Marketing: preferencias, análisis de mercado</li>
+            <li>Clima: temperaturas, precipitaciones</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <p class="m-0"><strong>Habilidad del siglo XXI:</strong> Interpretar y analizar datos es clave para tomar decisiones informadas en cualquier ámbito.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Navegación global -->
+  <div class="navigation" aria-label="Controles de navegación">
+    <button id="prevBtn" class="nav-btn" type="button">⟵ Anterior</button>
+    <button id="nextBtn" class="nav-btn" type="button">Siguiente ⟶</button>
+  </div>
+
+  <!-- Fix de navegación (inline) + auto-ensanche -->
+  <script>
+  (function(){
+    'use strict';
+    function ready(cb){document.readyState==='loading'?document.addEventListener('DOMContentLoaded',cb):cb();}
+    ready(function(){
+      const slides=[...document.querySelectorAll('.slide')];
+      if(!slides.length) return;
+      const progressBar=document.getElementById('progressBar')||(function(){const b=document.createElement('div');b.id='progressBar';b.className='progress-bar';document.body.appendChild(b);return b;})();
+      const slideCounter=document.getElementById('slideCounter')||(function(){const c=document.createElement('div');c.id='slideCounter';c.className='slide-counter';document.body.appendChild(c);return c;})();
+      let nav=document.querySelector('.navigation');
+      if(!nav){nav=document.createElement('div');nav.className='navigation';document.body.appendChild(nav);}
+      let prevBtn=nav.querySelector('#prevBtn'); if(!prevBtn){prevBtn=document.createElement('button');prevBtn.id='prevBtn';prevBtn.className='nav-btn';prevBtn.type='button';prevBtn.textContent='⟵ Anterior';nav.appendChild(prevBtn);} else {prevBtn.type='button';}
+      let nextBtn=nav.querySelector('#nextBtn'); if(!nextBtn){nextBtn=document.createElement('button');nextBtn.id='nextBtn';nextBtn.className='nav-btn';nextBtn.type='button';nextBtn.textContent='Siguiente ⟶';nav.appendChild(nextBtn);} else {nextBtn.type='button';}
+      const total=slides.length;
+      const clamp=(n,min,max)=>Math.min(Math.max(n,min),max);
+      const indexFromHash=()=>{const m=location.hash&&location.hash.match(/slide-(\\d+)/i);if(!m) return 0;const i=parseInt(m[1],10)-1;return Number.isFinite(i)?clamp(i,0,total-1):0;};
+      let current=indexFromHash();
+      function setActive(i,{fromHash=false}={}){
+        const next=clamp(i,0,total-1);
+        if(next===current && !fromHash) return;
+        slides.forEach((s,k)=>s.classList.toggle('active',k===next));
+        current=next;
+        slideCounter.textContent=`${current+1} / ${total}`;
+        progressBar.style.width=((current+1)/total*100)+'%';
+        prevBtn.disabled=current===0;
+        nextBtn.disabled=current===total-1;
+        if(!fromHash){history.replaceState(null,'',`#slide-${current+1}`);}
+        window.scrollTo({top:0,behavior:('instant'in window)?'instant':'auto'});
+      }
+      if(!slides.some(s=>s.classList.contains('active'))){ setActive(current); }
+      else { const found=slides.findIndex(s=>s.classList.contains('active')); current=found>=0?found:current; setActive(current); }
+      prevBtn.addEventListener('click',e=>{e.preventDefault();setActive(current-1);});
+      nextBtn.addEventListener('click',e=>{e.preventDefault();setActive(current+1);});
+      document.addEventListener('keydown',e=>{
+        const t=(e.target&&e.target.tagName)?e.target.tagName.toLowerCase():''; if(t==='input'||t==='textarea'||(e.target&&e.target.isContentEditable)) return;
+        if(['ArrowRight','PageDown','ArrowDown'].includes(e.key)){e.preventDefault();setActive(current+1);}
+        else if(['ArrowLeft','PageUp','ArrowUp'].includes(e.key)){e.preventDefault();setActive(current-1);}
+        else if(e.key==='Home'){e.preventDefault();setActive(0);}
+        else if(e.key==='End'){e.preventDefault();setActive(total-1);}
+      });
+      window.addEventListener('hashchange',()=>setActive(indexFromHash(),{fromHash:true}));
+      let sx=null, sy=null;
+      document.addEventListener('touchstart',e=>{const t=e.changedTouches[0];sx=t.clientX;sy=t.clientY;},{passive:true});
+      document.addEventListener('touchend',e=>{
+        if(sx==null||sy==null) return;
+        const t=e.changedTouches[0], dx=t.clientX-sx, dy=t.clientY-sy;
+        if(Math.abs(dx)>40 && Math.abs(dx)>Math.abs(dy)) { dx<0?setActive(current+1):setActive(current-1); }
+        sx=sy=null;
+      },{passive:true});
+
+      // Auto-ensanche rejilla/tabla
+      document.querySelectorAll('.content-grid').forEach(function(grid){
+        const kids = Array.from(grid.children).filter(Boolean);
+        if (kids.length === 1) grid.classList.add('one-col');
+        if (kids.length === 2) {
+          const len = kids.map(k => (k.textContent||'').trim().length);
+          const small = len.some(n => n < 40);
+          const big = len.some(n => n > 80);
+          if (small && big) grid.classList.add('one-col');
+        }
+      });
+      document.querySelectorAll('.data-table').forEach(dt=>dt.classList.add('scroll-x'));
+    });
+  })();
+  </script>
+</body>
+</html>

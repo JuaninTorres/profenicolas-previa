@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medidas de Posición y Dispersión</title>
+    
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- MathJax para notación matemática -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        :root {
+            --azulchile: #0033A0;
+            --rojochile: #D52B1E;
+            --verdechile: #2E8B57;
+            --warmorange: #FF8C42;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .slide {
+            display: none;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-content {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        h1 {
+            color: var(--azulchile);
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 2.5rem;
+        }
+        
+        h2 {
+            color: var(--rojochile);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+        
+        h3 {
+            color: var(--verdechile);
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .ejercicio-numero {
+            background: var(--warmorange);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            display: inline-block;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+        
+        .datos {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 5px solid var(--azulchile);
+            margin: 1.5rem 0;
+            font-size: 1.4rem;
+            text-align: center;
+            font-weight: 500;
+            line-height: 1.8;
+        }
+        
+        table {
+            margin: 1.5rem 0;
+            width: 100%;
+            font-size: 1.1rem;
+        }
+        
+        thead {
+            background: var(--azulchile);
+            color: white;
+        }
+        
+        thead th {
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        tbody td {
+            padding: 0.75rem;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+        
+        tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        tbody tr.suma-row {
+            background-color: #d4edda !important;
+            font-weight: bold;
+        }
+        
+        .pregunta {
+            background: #e7f3ff;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 0.5rem 0;
+            border-left: 4px solid var(--verdechile);
+        }
+        
+        .navigation {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.95);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .nav-btn {
+            background: var(--azulchile);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background: var(--rojochile);
+            transform: scale(1.05);
+        }
+        
+        .nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+        
+        .slide-counter {
+            font-weight: bold;
+            color: var(--azulchile);
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .portada {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        
+        .portada h1 {
+            font-size: 3.5rem;
+            margin-bottom: 2rem;
+            color: var(--azulchile);
+        }
+        
+        .portada .subtitulo {
+            font-size: 1.5rem;
+            color: var(--rojochile);
+            margin-bottom: 3rem;
+        }
+        
+        .portada .icon {
+            font-size: 5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .tabla-frecuencias {
+            font-size: 1rem;
+        }
+        
+        .tabla-frecuencias thead {
+            background: var(--verdechile);
+        }
+        
+        footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid #dee2e6;
+            text-align: center;
+            color: #6c757d;
+        }
+        
+        @media (max-width: 768px) {
+            .slide-content {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .navigation {
+                bottom: 1rem;
+                padding: 0.5rem 1rem;
+            }
+            
+            .nav-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Slide 1: Portada -->
+<div class="slide active">
+    <div class="slide-content portada">
+        <div class="icon">📊</div>
+        <h1>Guía de Ejercitación</h1>
+        <p class="subtitulo">Medidas de Posición y Medidas de Dispersión</p>
+        <div style="margin-top: 3rem;">
+            <p style="font-size: 1.2rem; color: var(--verdechile);">
+                <strong>Contenidos:</strong>
+            </p>
+            <p>✓ Media aritmética</p>
+            <p>✓ Varianza y Desviación estándar</p>
+            <p>✓ Cuartiles (\(Q_1\), \(Q_2\), \(Q_3\))</p>
+            <p>✓ Diagramas de caja</p>
+            <p>✓ Tablas de frecuencias</p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 2: Ejercicio 1 -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 1</span>
+        <h2>Notas de Examen Final</h2>
+        
+        <p>Los siguientes datos corresponden a las notas obtenidas por un grupo de estudiantes en su examen final de matemáticas:</p>
+        
+        <div class="datos">
+            1,9 − 6,5 − 4,8 − 5,8 − 6,7 − 7,0 − 4,6 − 3,7
+        </div>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> \(\bar{x}\) (Media aritmética)
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> Complete la siguiente tabla, y calcule la varianza y la desviación estándar de los datos:
+        </div>
+        
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>\(x_i\)</th>
+                    <th>\(x_i - \bar{x}\)</th>
+                    <th>\((x_i - \bar{x})^2\)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>1,9</td><td></td><td></td></tr>
+                <tr><td>6,5</td><td></td><td></td></tr>
+                <tr><td>4,8</td><td></td><td></td></tr>
+                <tr><td>5,8</td><td></td><td></td></tr>
+                <tr><td>6,7</td><td></td><td></td></tr>
+                <tr><td>7,0</td><td></td><td></td></tr>
+                <tr><td>4,6</td><td></td><td></td></tr>
+                <tr><td>3,7</td><td></td><td></td></tr>
+                <tr class="suma-row">
+                    <td>suma</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Slide 3: Ejercicio 2 -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 2</span>
+        <h2>Tiempo de Viaje al Colegio</h2>
+        
+        <p>Un grupo de estudiantes de Quintero registró cuántos minutos se demora cada uno en llegar al colegio:</p>
+        
+        <div class="datos">
+            10 – 15 – 18 – 12 – 14 – 20 – 17 – 13 – 11 – 19 – 16 – 14
+        </div>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> \(\bar{x}\) (Media aritmética)
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> Complete la siguiente tabla, y calcule la varianza y la desviación estándar de los datos:
+        </div>
+        
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>\(x_i\)</th>
+                    <th>\(x_i - \bar{x}\)</th>
+                    <th>\((x_i - \bar{x})^2\)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>10</td><td></td><td></td></tr>
+                <tr><td>15</td><td></td><td></td></tr>
+                <tr><td>18</td><td></td><td></td></tr>
+                <tr><td>12</td><td></td><td></td></tr>
+                <tr><td>14</td><td></td><td></td></tr>
+                <tr><td>20</td><td></td><td></td></tr>
+                <tr><td>17</td><td></td><td></td></tr>
+                <tr><td>13</td><td></td><td></td></tr>
+                <tr><td>11</td><td></td><td></td></tr>
+                <tr><td>19</td><td></td><td></td></tr>
+                <tr><td>16</td><td></td><td></td></tr>
+                <tr><td>14</td><td></td><td></td></tr>
+                <tr class="suma-row">
+                    <td>suma</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Slide 4: Ejercicio 3 -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 3</span>
+        <h2>Uso de Celular para Redes Sociales</h2>
+        
+        <p>Doce estudiantes anotaron cuántas horas al día usan su celular para redes sociales:</p>
+        
+        <div class="datos">
+            4 – 3 – 5 – 2 – 6 – 4 – 3 – 7 – 5 – 4 – 6 – 3
+        </div>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> \(\bar{x}\) (Media aritmética)
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> Complete la siguiente tabla, y calcule la varianza y la desviación estándar de los datos:
+        </div>
+        
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>\(x_i\)</th>
+                    <th>\(x_i - \bar{x}\)</th>
+                    <th>\((x_i - \bar{x})^2\)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>4</td><td></td><td></td></tr>
+                <tr><td>3</td><td></td><td></td></tr>
+                <tr><td>5</td><td></td><td></td></tr>
+                <tr><td>2</td><td></td><td></td></tr>
+                <tr><td>6</td><td></td><td></td></tr>
+                <tr><td>4</td><td></td><td></td></tr>
+                <tr><td>3</td><td></td><td></td></tr>
+                <tr><td>7</td><td></td><td></td></tr>
+                <tr><td>5</td><td></td><td></td></tr>
+                <tr><td>4</td><td></td><td></td></tr>
+                <tr><td>6</td><td></td><td></td></tr>
+                <tr><td>3</td><td></td><td></td></tr>
+                <tr class="suma-row">
+                    <td>suma</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Slide 5: Ejercicio 4 -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 4</span>
+        <h2>Cálculo Mental Rápido</h2>
+        
+        <p>Durante una actividad de cálculo mental rápido, los estudiantes obtuvieron los siguientes puntajes:</p>
+        
+        <div class="datos">
+            72 – 65 – 80 – 78 – 74 – 69 – 85 – 70 – 77 – 82 – 68 – 75 – 79 – 84 - 68
+        </div>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> \(\bar{x}\) (Media aritmética)
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> Complete la siguiente tabla, y calcule la varianza y la desviación estándar de los datos:
+        </div>
+        
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>\(x_i\)</th>
+                    <th>\(x_i - \bar{x}\)</th>
+                    <th>\((x_i - \bar{x})^2\)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>72</td><td></td><td></td></tr>
+                <tr><td>65</td><td></td><td></td></tr>
+                <tr><td>80</td><td></td><td></td></tr>
+                <tr><td>78</td><td></td><td></td></tr>
+                <tr><td>74</td><td></td><td></td></tr>
+                <tr><td>69</td><td></td><td></td></tr>
+                <tr><td>85</td><td></td><td></td></tr>
+                <tr><td>70</td><td></td><td></td></tr>
+                <tr><td>77</td><td></td><td></td></tr>
+                <tr><td>82</td><td></td><td></td></tr>
+                <tr><td>68</td><td></td><td></td></tr>
+                <tr><td>75</td><td></td><td></td></tr>
+                <tr><td>79</td><td></td><td></td></tr>
+                <tr><td>84</td><td></td><td></td></tr>
+                <tr><td>68</td><td></td><td></td></tr>
+                <tr class="suma-row">
+                    <td>suma</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Slide 6: Ejercicio 5 -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 5</span>
+        <h2>Temperaturas en Quintero</h2>
+        
+        <p>Se registraron las temperaturas máximas (en °C) durante días consecutivos en Quintero:</p>
+        
+        <div class="datos">
+            18 – 19 – 21 – 22 – 20 – 18 – 19 – 21 – 23 – 22 – 20 – 19 – 22 – 25 – 18
+        </div>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> \(\bar{x}\) (Media aritmética)
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> Complete la siguiente tabla, y calcule la varianza y la desviación estándar de los datos:
+        </div>
+        
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>\(x_i\)</th>
+                    <th>\(x_i - \bar{x}\)</th>
+                    <th>\((x_i - \bar{x})^2\)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>18</td><td></td><td></td></tr>
+                <tr><td>19</td><td></td><td></td></tr>
+                <tr><td>21</td><td></td><td></td></tr>
+                <tr><td>22</td><td></td><td></td></tr>
+                <tr><td>20</td><td></td><td></td></tr>
+                <tr><td>18</td><td></td><td></td></tr>
+                <tr><td>19</td><td></td><td></td></tr>
+                <tr><td>21</td><td></td><td></td></tr>
+                <tr><td>23</td><td></td><td></td></tr>
+                <tr><td>22</td><td></td><td></td></tr>
+                <tr><td>20</td><td></td><td></td></tr>
+                <tr><td>19</td><td></td><td></td></tr>
+                <tr><td>22</td><td></td><td></td></tr>
+                <tr><td>25</td><td></td><td></td></tr>
+                <tr><td>18</td><td></td><td></td></tr>
+                <tr class="suma-row">
+                    <td>suma</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Slide 7: Ejercicio 6 -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 6</span>
+        <h2>Horas Viendo Series</h2>
+        
+        <p>Un grupo de estudiantes anotó cuántas horas dedicó a ver series durante las vacaciones:</p>
+        
+        <div class="datos">
+            45 – 60 – 70 – 55 – 80 – 65 – 50 – 75 – 90 – 55 – 60 – 70 – 85 – 65 – 50
+        </div>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> \(\bar{x}\) (Media aritmética)
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> Complete la siguiente tabla, y calcule la varianza y la desviación estándar de los datos:
+        </div>
+        
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>\(x_i\)</th>
+                    <th>\(x_i - \bar{x}\)</th>
+                    <th>\((x_i - \bar{x})^2\)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>45</td><td></td><td></td></tr>
+                <tr><td>60</td><td></td><td></td></tr>
+                <tr><td>70</td><td></td><td></td></tr>
+                <tr><td>55</td><td></td><td></td></tr>
+                <tr><td>80</td><td></td><td></td></tr>
+                <tr><td>65</td><td></td><td></td></tr>
+                <tr><td>50</td><td></td><td></td></tr>
+                <tr><td>75</td><td></td><td></td></tr>
+                <tr><td>90</td><td></td><td></td></tr>
+                <tr><td>55</td><td></td><td></td></tr>
+                <tr><td>60</td><td></td><td></td></tr>
+                <tr><td>70</td><td></td><td></td></tr>
+                <tr><td>85</td><td></td><td></td></tr>
+                <tr><td>65</td><td></td><td></td></tr>
+                <tr><td>50</td><td></td><td></td></tr>
+                <tr class="suma-row">
+                    <td>suma</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Slide 8: Ejercicio 7 -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 7</span>
+        <h2>Evaluación Diagnóstica de Matemática</h2>
+        
+        <p>En una evaluación diagnóstica de Matemática, los puntajes obtenidos por 50 estudiantes fueron:</p>
+        
+        <div class="datos" style="font-size: 1.2rem; line-height: 2;">
+            22, 25, 27, 29, 30, 31, 32, 33, 33, 34, 35, 36, 36, 37, 37, 38, 39, 40, 40, 41, 42, 42, 43, 43, 44,<br>
+            45, 45, 46, 47, 48, 49, 50, 50, 51, 52, 53, 54, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 65, 67, 70
+        </div>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> Media aritmética
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> \(Q_1\) (Primer cuartil)
+        </div>
+        
+        <div class="pregunta">
+            <strong>c)</strong> \(Q_2\) (Segundo cuartil o Mediana)
+        </div>
+        
+        <div class="pregunta">
+            <strong>d)</strong> \(Q_3\) (Tercer cuartil)
+        </div>
+        
+        <div class="pregunta">
+            <strong>e)</strong> Construir un diagrama de cajón para representar la situación
+        </div>
+    </div>
+</div>
+
+<!-- Slide 9: Ejercicio 8 -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 8</span>
+        <h2>Tiempo de Atención en el Kiosco</h2>
+        
+        <p>Se midió el tiempo (en segundos) que tardó en atenderse a 45 estudiantes en el kiosco del colegio:</p>
+        
+        <div class="datos" style="font-size: 1.2rem; line-height: 2;">
+            24, 25, 26, 27, 27, 28, 29, 30, 30, 31, 31, 32, 33, 33, 33, 34, 35, 35, 36, 36, 37, 37, 38,<br>
+            39, 39, 40, 40, 41, 42, 42, 43, 44, 45, 46, 46, 47, 48, 48, 49, 50, 52, 53, 54, 56, 58
+        </div>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> Media aritmética
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> \(Q_1\) (Primer cuartil)
+        </div>
+        
+        <div class="pregunta">
+            <strong>c)</strong> \(Q_2\) (Segundo cuartil o Mediana)
+        </div>
+        
+        <div class="pregunta">
+            <strong>d)</strong> \(Q_3\) (Tercer cuartil)
+        </div>
+        
+        <div class="pregunta">
+            <strong>e)</strong> Construir un diagrama de cajón para representar la situación
+        </div>
+    </div>
+</div>
+
+<!-- Slide 10: Ejercicio 9 -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 9</span>
+        <h2>Horas de Redes Sociales Semanales</h2>
+        
+        <p>Un grupo de 70 estudiantes registró cuántas horas a la semana usó su celular para redes sociales:</p>
+        
+        <div class="datos" style="font-size: 1.15rem; line-height: 2;">
+            1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6,<br>
+            7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 10, 11, 11, 12, 12, 12,<br>
+            13, 13, 13, 14, 14, 14, 15, 15, 16, 16, 17, 18, 19
+        </div>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> Media aritmética
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> \(Q_1\) (Primer cuartil)
+        </div>
+        
+        <div class="pregunta">
+            <strong>c)</strong> \(Q_2\) (Segundo cuartil o Mediana)
+        </div>
+        
+        <div class="pregunta">
+            <strong>d)</strong> \(Q_3\) (Tercer cuartil)
+        </div>
+        
+        <div class="pregunta">
+            <strong>e)</strong> Construir un diagrama de cajón para representar la situación
+        </div>
+    </div>
+</div>
+
+<!-- Slide 11: Ejercicio 10 -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 10</span>
+        <h2>Gasto en Colaciones Semanales</h2>
+        
+        <p>Los siguientes son los montos (en pesos chilenos) que gastaron 80 estudiantes en colaciones durante una semana:</p>
+        
+        <div class="datos" style="font-size: 1.05rem; line-height: 1.9;">
+            1000, 1100, 1200, 1300, 1300, 1350, 1400, 1450, 1500, 1500, 1500, 1550, 1600, 1600, 1600, 1650, 1700,<br>
+            1700, 1750, 1750, 1800, 1800, 1800, 1850, 1900, 1900, 1950, 1950, 2000, 2000, 2000, 2050, 2100, 2100,<br>
+            2100, 2150, 2200, 2200, 2250, 2300, 2300, 2300, 2350, 2400, 2400, 2450, 2500, 2500, 2500, 2550, 2600,<br>
+            2600, 2600, 2650, 2700, 2750, 2800, 2800, 2850, 2900, 2900, 2950, 3000, 3000, 3050, 3100, 3150, 3200,<br>
+            3250, 3300, 3350, 3400, 3450, 3500, 3600, 3700, 3800, 4000, 4200, 4500
+        </div>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> Media aritmética
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> \(Q_1\) (Primer cuartil)
+        </div>
+        
+        <div class="pregunta">
+            <strong>c)</strong> \(Q_2\) (Segundo cuartil o Mediana)
+        </div>
+        
+        <div class="pregunta">
+            <strong>d)</strong> \(Q_3\) (Tercer cuartil)
+        </div>
+        
+        <div class="pregunta">
+            <strong>e)</strong> Construir un diagrama de cajón para representar la situación
+        </div>
+    </div>
+</div>
+
+<!-- Slide 12: Ejercicio 11 -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 11</span>
+        <h2>Carrera de 100 Metros Planos</h2>
+        
+        <p>Los siguientes son los tiempos (en segundos) obtenidos por 45 estudiantes en una carrera de 100 metros planos:</p>
+        
+        <div class="datos" style="font-size: 1.2rem; line-height: 2;">
+            13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 15, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18,<br>
+            18, 19, 19, 19, 19, 20, 20, 20, 21, 21, 22, 22, 22, 23, 23, 24, 24, 25, 26, 27, 28, 30
+        </div>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> Media aritmética
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> \(Q_1\) (Primer cuartil)
+        </div>
+        
+        <div class="pregunta">
+            <strong>c)</strong> \(Q_2\) (Segundo cuartil o Mediana)
+        </div>
+        
+        <div class="pregunta">
+            <strong>d)</strong> \(Q_3\) (Tercer cuartil)
+        </div>
+        
+        <div class="pregunta">
+            <strong>e)</strong> Construir un diagrama de cajón para representar la situación
+        </div>
+    </div>
+</div>
+
+<!-- Slide 13: Ejercicio 12 -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 12</span>
+        <h2>Peso de Mochilas</h2>
+        
+        <p>Se midió el peso (en kilogramos) de las mochilas de 50 estudiantes del colegio:</p>
+        
+        <div class="datos" style="font-size: 1.1rem; line-height: 2;">
+            4,2 – 4,3 – 4,4 – 4,4 – 4,5 – 4,6 – 4,7 – 4,7 – 4,8 – 4,8 – 4,9 – 5,0 – 5,0 – 5,1 – 5,1 – 5,2 – 5,3 – 5,4 –<br>
+            5,4 – 5,5 – 5,6 – 5,6 – 5,7 – 5,8 – 5,8 – 5,9 – 6,0 – 6,1 – 6,1 – 6,2 – 6,3 – 6,3 – 6,4 – 6,5 – 6,6 – 6,6 –<br>
+            6,8 – 6,9 – 7,0 – 7,2 – 7,3 – 7,4 – 7,5 – 7,6 – 7,8 – 8,0 – 8,1 – 8,3 – 8,5 – 8,7
+        </div>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> Media aritmética
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> \(Q_1\) (Primer cuartil)
+        </div>
+        
+        <div class="pregunta">
+            <strong>c)</strong> \(Q_2\) (Segundo cuartil o Mediana)
+        </div>
+        
+        <div class="pregunta">
+            <strong>d)</strong> \(Q_3\) (Tercer cuartil)
+        </div>
+        
+        <div class="pregunta">
+            <strong>e)</strong> Construir un diagrama de cajón para representar la situación
+        </div>
+    </div>
+</div>
+
+<!-- Slide 14: Ejercicio 13 -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 13</span>
+        <h2>Consumo de Energía en Hogares</h2>
+        
+        <p>Se registró el consumo de energía (en kWh) de 70 hogares durante el mes de septiembre:</p>
+        
+        <div class="datos" style="font-size: 1rem; line-height: 1.9;">
+            90, 95, 100, 102, 104, 105, 106, 108, 110, 111, 112, 114, 115, 116, 118, 119, 120, 120, 121, 122, 123, 124,<br>
+            125, 126, 127, 128, 129, 130, 130, 131, 132, 133, 134, 135, 136, 137, 138, 140, 141, 142, 143, 144, 145, 146,<br>
+            147, 148, 149, 150, 151, 152, 153, 154, 156, 157, 158, 159, 160, 162, 163, 165, 166, 168, 170, 172, 174, 175,<br>
+            176, 178, 180, 182
+        </div>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> Media aritmética
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> \(Q_1\) (Primer cuartil)
+        </div>
+        
+        <div class="pregunta">
+            <strong>c)</strong> \(Q_2\) (Segundo cuartil o Mediana)
+        </div>
+        
+        <div class="pregunta">
+            <strong>d)</strong> \(Q_3\) (Tercer cuartil)
+        </div>
+        
+        <div class="pregunta">
+            <strong>e)</strong> Construir un diagrama de cajón para representar la situación
+        </div>
+    </div>
+</div>
+
+<!-- Slide 15: Ejercicio 14 (Tabla de Frecuencias) -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 14</span>
+        <h2>Puntajes en una Prueba de Matemática</h2>
+        
+        <table class="table table-bordered tabla-frecuencias">
+            <thead>
+                <tr>
+                    <th>Intervalo</th>
+                    <th>\(f\)</th>
+                    <th>\(F\)</th>
+                    <th>\(h_i\)</th>
+                    <th>\(h_i\%\)</th>
+                    <th>\(H\)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>30–39</td>
+                    <td>6</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>40–49</td>
+                    <td>10</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>50–59</td>
+                    <td>14</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>60–69</td>
+                    <td>12</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>70–79</td>
+                    <td>5</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>80–89</td>
+                    <td>3</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="suma-row">
+                    <td><strong>Total</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> Complete la tabla de frecuencias
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> Media aritmética
+        </div>
+    </div>
+</div>
+
+<!-- Slide 16: Ejercicio 15 (Tabla de Frecuencias) -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 15</span>
+        <h2>Goles Anotados en un Torneo Escolar</h2>
+        
+        <table class="table table-bordered tabla-frecuencias">
+            <thead>
+                <tr>
+                    <th>Intervalo</th>
+                    <th>\(f\)</th>
+                    <th>\(F\)</th>
+                    <th>\(h_i\)</th>
+                    <th>\(h_i\%\)</th>
+                    <th>\(H\)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>0–4</td>
+                    <td>8</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>5–9</td>
+                    <td>14</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>10–14</td>
+                    <td>20</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>15–19</td>
+                    <td>10</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>20–24</td>
+                    <td>6</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>25–29</td>
+                    <td>2</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="suma-row">
+                    <td><strong>Total</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> Complete la tabla de frecuencias
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> Media aritmética
+        </div>
+    </div>
+</div>
+
+<!-- Slide 17: Ejercicio 16 (Tabla de Frecuencias) -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 16</span>
+        <h2>Tiempo de Atención en el Kiosco del Colegio</h2>
+        
+        <table class="table table-bordered tabla-frecuencias">
+            <thead>
+                <tr>
+                    <th>Intervalo</th>
+                    <th>\(f\)</th>
+                    <th>\(F\)</th>
+                    <th>\(h_i\)</th>
+                    <th>\(h_i\%\)</th>
+                    <th>\(H\)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>20–24</td>
+                    <td>5</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>25–29</td>
+                    <td>8</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>30–34</td>
+                    <td>15</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>35–39</td>
+                    <td>10</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>40–44</td>
+                    <td>7</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>45–49</td>
+                    <td>5</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="suma-row">
+                    <td><strong>Total</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> Complete la tabla de frecuencias
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> Media aritmética
+        </div>
+    </div>
+</div>
+
+<!-- Slide 18: Ejercicio 17 (Tabla de Frecuencias) -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 17</span>
+        <h2>Tiempos de Viaje al Colegio</h2>
+        
+        <table class="table table-bordered tabla-frecuencias">
+            <thead>
+                <tr>
+                    <th>Intervalo</th>
+                    <th>\(f\)</th>
+                    <th>\(F\)</th>
+                    <th>\(h_i\)</th>
+                    <th>\(h_i\%\)</th>
+                    <th>\(H\)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>5–9</td>
+                    <td>4</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>10–14</td>
+                    <td>9</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>15–19</td>
+                    <td>12</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>20–24</td>
+                    <td>16</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>25–29</td>
+                    <td>10</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>30–34</td>
+                    <td>9</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="suma-row">
+                    <td><strong>Total</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> Complete la tabla de frecuencias
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> Media aritmética
+        </div>
+    </div>
+</div>
+
+<!-- Slide 19: Ejercicio 18 (Tabla de Frecuencias) -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 18</span>
+        <h2>Alturas de Plantas en un Experimento (cm)</h2>
+        
+        <table class="table table-bordered tabla-frecuencias">
+            <thead>
+                <tr>
+                    <th>Intervalo</th>
+                    <th>\(f\)</th>
+                    <th>\(F\)</th>
+                    <th>\(h_i\)</th>
+                    <th>\(h_i\%\)</th>
+                    <th>\(H\)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>10–14</td>
+                    <td>5</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>15–19</td>
+                    <td>9</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>20–24</td>
+                    <td>12</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>25–29</td>
+                    <td>10</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>30–34</td>
+                    <td>8</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>35–39</td>
+                    <td>6</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="suma-row">
+                    <td><strong>Total</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> Complete la tabla de frecuencias
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> Media aritmética
+        </div>
+    </div>
+</div>
+
+<!-- Slide 20: Ejercicio 19 (Tabla de Frecuencias) -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 19</span>
+        <h2>Edades de Participantes</h2>
+        
+        <table class="table table-bordered tabla-frecuencias">
+            <thead>
+                <tr>
+                    <th>Intervalo</th>
+                    <th>\(f\)</th>
+                    <th>\(F\)</th>
+                    <th>\(h_i\)</th>
+                    <th>\(h_i\%\)</th>
+                    <th>\(H\)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>14–15</td>
+                    <td>6</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>16–17</td>
+                    <td>8</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>18–19</td>
+                    <td>10</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>20–21</td>
+                    <td>14</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>22–23</td>
+                    <td>8</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>24–25</td>
+                    <td>4</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="suma-row">
+                    <td><strong>Total</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> Complete la tabla de frecuencias
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> Media aritmética
+        </div>
+    </div>
+</div>
+
+<!-- Slide 21: Ejercicio 20 (Tabla de Frecuencias) -->
+<div class="slide">
+    <div class="slide-content">
+        <span class="ejercicio-numero">Ejercicio 20</span>
+        <h2>Duración de Videos Vistos en Redes Sociales (minutos)</h2>
+        
+        <table class="table table-bordered tabla-frecuencias">
+            <thead>
+                <tr>
+                    <th>Intervalo</th>
+                    <th>\(f\)</th>
+                    <th>\(F\)</th>
+                    <th>\(h_i\)</th>
+                    <th>\(h_i\%\)</th>
+                    <th>\(H\)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>0–5</td>
+                    <td>4</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>6–10</td>
+                    <td>9</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>11–15</td>
+                    <td>14</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>16–20</td>
+                    <td>13</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>21–25</td>
+                    <td>10</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>26–30</td>
+                    <td>6</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="suma-row">
+                    <td><strong>Total</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>Considerando esta información, determine:</h3>
+        
+        <div class="pregunta">
+            <strong>a)</strong> Complete la tabla de frecuencias
+        </div>
+        
+        <div class="pregunta">
+            <strong>b)</strong> Media aritmética
+        </div>
+    </div>
+</div>
+
+<!-- Slide Final -->
+<div class="slide">
+    <div class="slide-content portada">
+        <div class="icon">✅</div>
+        <h1>¡Fin de la Guía!</h1>
+        <p class="subtitulo">Medidas de Posición y Dispersión</p>
+        <div style="margin-top: 3rem;">
+            <p style="font-size: 1.3rem; color: var(--verdechile);">
+                <strong>Has completado la revisión de 20 ejercicios:</strong>
+            </p>
+            <p>📌 Ejercicios 1-6: Media, Varianza y Desviación Estándar</p>
+            <p>📌 Ejercicios 7-13: Cuartiles y Diagramas de Caja</p>
+            <p>📌 Ejercicios 14-20: Tablas de Frecuencias</p>
+        </div>
+        
+        <footer>
+            <p><strong>Material desarrollado para estudiantes de Matemáticas</strong></p>
+            <p>Profesor de Matemáticas | 2025</p>
+        </footer>
+    </div>
+</div>
+
+<!-- Navegación -->
+<div class="navigation">
+    <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">◀ Anterior</button>
+    <span class="slide-counter">
+        <span id="currentSlide">1</span> / <span id="totalSlides">22</span>
+    </span>
+    <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Siguiente ▶</button>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+let currentSlide = 0;
+const slides = document.querySelectorAll('.slide');
+const totalSlides = slides.length;
+
+document.getElementById('totalSlides').textContent = totalSlides;
+
+function showSlide(n) {
+    slides[currentSlide].classList.remove('active');
+    
+    currentSlide = (n + totalSlides) % totalSlides;
+    
+    slides[currentSlide].classList.add('active');
+    document.getElementById('currentSlide').textContent = currentSlide + 1;
+    
+    // Actualizar botones
+    document.getElementById('prevBtn').disabled = currentSlide === 0;
+    document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+    
+    // Scroll to top
+    window.scrollTo(0, 0);
+}
+
+function changeSlide(direction) {
+    showSlide(currentSlide + direction);
+}
+
+// Navegación con teclado
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'ArrowLeft') {
+        changeSlide(-1);
+    } else if (event.key === 'ArrowRight') {
+        changeSlide(1);
+    }
+});
+
+// Inicializar
+showSlide(0);
+</script>
+
+</body>
+</html>

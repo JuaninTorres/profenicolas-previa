@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Técnicas de Conteo - Ejercicios Interactivos</title>
+    
+    <!-- MathJax para mejorar la visualización matemática -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            text-align: center;
+            color: #764ba2;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .info-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+
+        .info-box p {
+            margin: 5px 0;
+            color: #856404;
+        }
+
+        .info-box ul {
+            margin: 10px 0 0 20px;
+            color: #856404;
+        }
+
+        .slide {
+            display: none;
+            flex-grow: 1;
+        }
+
+        .slide.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-number {
+            text-align: center;
+            color: #667eea;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .exercise {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 5px solid #667eea;
+        }
+
+        .exercise-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .exercise-text {
+            font-size: 1.15em;
+            color: #333;
+            margin: 15px 0;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .btn-solution {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-solution:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-solution:active {
+            transform: translateY(0);
+        }
+
+        .solution {
+            display: none;
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-top: 15px;
+            border-radius: 8px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .solution-title {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .solution-content {
+            color: #333;
+            line-height: 1.8;
+        }
+
+        .formula {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #ddd;
+        }
+
+        .result {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-weight: bold;
+            border: 1px solid #c3e6cb;
+        }
+
+        .technique-badge {
+            display: inline-block;
+            background: #17a2b8;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .nav-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .progress-bar {
+            flex-grow: 1;
+            margin: 0 20px;
+            text-align: center;
+        }
+
+        .progress-text {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .progress-track {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .icon {
+            font-size: 1.2em;
+        }
+
+        .evaluacion {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .evaluacion a{
+            font-weight: bold;
+            color: #dc3545;
+            text-decoration: none;
+            font-size: x-large;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .progress-bar {
+                width: 100%;
+                margin: 15px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔢 Técnicas de Conteo</h1>
+        <p class="subtitle">Ejercicios Interactivos - Nivel Intermedio</p>
+        
+        <div class="info-box">
+            <p><strong>📚 Instrucciones:</strong></p>
+            <ul>
+                <li>Lee cada ejercicio cuidadosamente e identifica qué técnica de conteo usar</li>
+                <li>Intenta resolverlo antes de ver la solución</li>
+                <li>Presiona "Ver Solución" para verificar tu respuesta</li>
+                <li>Usa los botones de navegación para avanzar o retroceder</li>
+            </ul>
+        </div>
+
+        <!-- SLIDE 1 -->
+        <div class="slide active" id="slide1">
+            <div class="slide-number">Slide 1 de 14</div>
+
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 1</span>
+                <p class="exercise-text">
+                    ¿Cuántas claves de 4 dígitos se pueden formar usando los números del 0 al 9, si se pueden repetir los dígitos?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol1')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol1">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Variación con Repetición</span>
+                        <p><strong>Análisis:</strong> Tenemos 10 opciones (0-9) para cada una de las 4 posiciones y podemos repetir</p>
+                        <p>$n = 10$ (dígitos), $r = 4$ (posiciones)</p>
+                        <div class="formula">
+                            $$VR_{10,4} = 10^4 = 10 \times 10 \times 10 \times 10 = 10.000$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 10.000 claves diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 2</span>
+                <p class="exercise-text">
+                    De un grupo de 15 estudiantes, se debe formar un comité de 5 personas. ¿De cuántas formas se puede formar este comité?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol2')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol2">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Combinatoria</span>
+                        <p><strong>Análisis:</strong> Elegimos 5 personas de 15 y el orden no importa (un comité es lo mismo independiente del orden)</p>
+                        <p>$n = 15$, $r = 5$</p>
+                        <div class="formula">
+                            $$C_{15,5} = \frac{15!}{5! \times 10!} = \frac{15 \times 14 \times 13 \times 12 \times 11}{5 \times 4 \times 3 \times 2 \times 1} = \frac{360.360}{120} = 3.003$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 3.003 formas diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2 -->
+        <div class="slide" id="slide2">
+            <div class="slide-number">Slide 2 de 14</div>
+            
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 3</span>
+                <p class="exercise-text">
+                    Una señal se compone de 7 banderas en línea: 3 rojas, 2 azules y 2 verdes. ¿Cuántas señales diferentes se pueden formar?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol3')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol3">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Permutación con Repetición</span>
+                        <p><strong>Análisis:</strong> Ordenamos 7 banderas pero hay elementos repetidos</p>
+                        <p>Total: 7 banderas (3R, 2A, 2V)</p>
+                        <div class="formula">
+                            $$P_7^{3,2,2} = \frac{7!}{3! \times 2! \times 2!} = \frac{5.040}{6 \times 2 \times 2} = \frac{5.040}{24} = 210$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 210 señales diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 4</span>
+                <p class="exercise-text">
+                    En una competencia hay 10 participantes. ¿De cuántas formas diferentes se pueden otorgar los premios de 1°, 2° y 3° lugar?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol4')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol4">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Variación sin Repetición</span>
+                        <p><strong>Análisis:</strong> El orden importa (1°, 2°, 3° son diferentes) y no se repiten personas</p>
+                        <p>$n = 10$, $r = 3$</p>
+                        <div class="formula">
+                            $$V_{10,3} = \frac{10!}{(10-3)!} = \frac{10!}{7!} = 10 \times 9 \times 8 = 720$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 720 formas diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3 -->
+        <div class="slide" id="slide3">
+            <div class="slide-number">Slide 3 de 14</div>
+            
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 5</span>
+                <p class="exercise-text">
+                    Una familia de 5 personas va al cine y deben sentarse en una fila de 5 asientos contiguos. ¿De cuántas maneras diferentes pueden ubicarse?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol5')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol5">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Permutación Simple</span>
+                        <p><strong>Análisis:</strong> Ordenamos 5 personas en 5 lugares, todos diferentes</p>
+                        <div class="formula">
+                            $$P_5 = 5! = 5 \times 4 \times 3 \times 2 \times 1 = 120$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 120 maneras diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 6</span>
+                <p class="exercise-text">
+                    Una pizzería ofrece 10 ingredientes diferentes. Si quieres ordenar una pizza con exactamente 4 ingredientes, ¿cuántas pizzas diferentes puedes crear?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol6')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol6">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Combinatoria</span>
+                        <p><strong>Análisis:</strong> Elegimos 4 ingredientes de 10 y el orden no importa (una pizza con jamón-queso es igual a queso-jamón)</p>
+                        <p>$n = 10$, $r = 4$</p>
+                        <div class="formula">
+                            $$C_{10,4} = \frac{10!}{4! \times 6!} = \frac{10 \times 9 \times 8 \times 7}{4 \times 3 \times 2 \times 1} = \frac{5.040}{24} = 210$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 210 pizzas diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4 -->
+        <div class="slide" id="slide4">
+            <div class="slide-number">Slide 4 de 14</div>
+            
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 7</span>
+                <p class="exercise-text">
+                    ¿Cuántas palabras diferentes (con o sin sentido) se pueden formar con todas las letras de la palabra MATEMÁTICA?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol7')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol7">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Permutación con Repetición</span>
+                        <p><strong>Análisis:</strong> MATEMÁTICA tiene 10 letras con repeticiones</p>
+                        <p>Repeticiones: M(2), A(3), T(2), E(1), I(1), C(1)</p>
+                        <div class="formula">
+                            $$P_{10}^{2,3,2,1,1,1} = \frac{10!}{2! \times 3! \times 2!} = \frac{3.628.800}{2 \times 6 \times 2} = \frac{3.628.800}{24} = 151.200$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 151.200 palabras diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 8</span>
+                <p class="exercise-text">
+                    Un curso tiene 25 estudiantes. ¿De cuántas maneras se puede elegir un presidente, un vicepresidente y un secretario (cada cargo debe ser ocupado por una persona diferente)?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol8')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol8">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Variación sin Repetición</span>
+                        <p><strong>Análisis:</strong> Importa el orden (presidente ≠ vicepresidente) y no se repiten</p>
+                        <p>$n = 25$, $r = 3$</p>
+                        <div class="formula">
+                            $$V_{25,3} = \frac{25!}{(25-3)!} = \frac{25!}{22!} = 25 \times 24 \times 23 = 13.800$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 13.800 maneras diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5 -->
+        <div class="slide" id="slide5">
+            <div class="slide-number">Slide 5 de 14</div>
+            
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 9</span>
+                <p class="exercise-text">
+                    Un equipo de fútbol tiene 5 jugadores que pueden jugar como delanteros. ¿De cuántas formas diferentes pueden ubicarse estos 5 jugadores en las 5 posiciones de la delantera?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol9')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol9">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Permutación Simple</span>
+                        <p><strong>Análisis:</strong> Ordenamos 5 jugadores en 5 posiciones, todos diferentes</p>
+                        <div class="formula">
+                            $$P_5 = 5! = 5 \times 4 \times 3 \times 2 \times 1 = 120$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 120 formas diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 10</span>
+                <p class="exercise-text">
+                    Un examen de alternativas tiene 8 preguntas, cada una con 4 opciones (A, B, C, D). ¿Cuántas formas diferentes hay de responder el examen?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol10')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol10">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Variación con Repetición</span>
+                        <p><strong>Análisis:</strong> Para cada pregunta hay 4 opciones y podemos repetir</p>
+                        <p>$n = 4$ (opciones), $r = 8$ (preguntas)</p>
+                        <div class="formula">
+                            $$VR_{4,8} = 4^8 = 65.536$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 65.536 formas diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6 -->
+        <div class="slide" id="slide6">
+            <div class="slide-number">Slide 6 de 14</div>
+            
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 11</span>
+                <p class="exercise-text">
+                    En una biblioteca se deben ordenar 7 libros diferentes en un estante. ¿De cuántas maneras distintas se pueden organizar?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol11')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol11">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Permutación Simple</span>
+                        <p><strong>Análisis:</strong> Ordenamos 7 libros diferentes</p>
+                        <div class="formula">
+                            $$P_7 = 7! = 7 \times 6 \times 5 \times 4 \times 3 \times 2 \times 1 = 5.040$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 5.040 maneras diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 12</span>
+                <p class="exercise-text">
+                    En una clase hay 18 mujeres y 12 hombres. Se debe formar un grupo de 6 personas que incluya exactamente 4 mujeres y 2 hombres. ¿De cuántas formas se puede formar este grupo?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol12')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol12">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Combinatoria (Principio Multiplicativo)</span>
+                        <p><strong>Análisis:</strong> Combinamos dos selecciones independientes</p>
+                        <p>Seleccionar 4 mujeres de 18 y 2 hombres de 12</p>
+                        <div class="formula">
+                            $$C_{18,4} = \frac{18!}{4! \times 14!} = \frac{18 \times 17 \times 16 \times 15}{24} = 3.060$$
+                            $$C_{12,2} = \frac{12!}{2! \times 10!} = \frac{12 \times 11}{2} = 66$$
+                            $$\text{Total} = 3.060 \times 66 = 201.960$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 201.960 formas diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7 -->
+        <div class="slide" id="slide7">
+            <div class="slide-number">Slide 7 de 14</div>
+            
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 13</span>
+                <p class="exercise-text">
+                    ¿De cuántas formas se pueden ordenar las letras de la palabra MISSISSIPPI?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol13')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol13">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Permutación con Repetición</span>
+                        <p><strong>Análisis:</strong> MISSISSIPPI tiene 11 letras con repeticiones</p>
+                        <p>Repeticiones: M(1), I(4), S(4), P(2)</p>
+                        <div class="formula">
+                            $$P_{11}^{1,4,4,2} = \frac{11!}{1! \times 4! \times 4! \times 2!} = \frac{39.916.800}{1 \times 24 \times 24 \times 2} = \frac{39.916.800}{1.152} = 34.650$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 34.650 formas diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 14</span>
+                <p class="exercise-text">
+                    Una clave de seguridad consta de 4 dígitos diferentes del 1 al 9. ¿Cuántas claves diferentes se pueden formar?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol14')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol14">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Variación sin Repetición</span>
+                        <p><strong>Análisis:</strong> Importa el orden y los dígitos son diferentes</p>
+                        <p>$n = 9$, $r = 4$</p>
+                        <div class="formula">
+                            $$V_{9,4} = \frac{9!}{(9-4)!} = \frac{9!}{5!} = 9 \times 8 \times 7 \times 6 = 3.024$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 3.024 claves diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 8 -->
+        <div class="slide" id="slide8">
+            <div class="slide-number">Slide 8 de 14</div>
+            
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 15</span>
+                <p class="exercise-text">
+                    Una profesora debe asignar 4 tareas diferentes a 4 estudiantes (una tarea por estudiante). ¿De cuántas formas puede hacer la asignación?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol15')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol15">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Permutación Simple</span>
+                        <p><strong>Análisis:</strong> Asignamos 4 tareas diferentes a 4 estudiantes</p>
+                        <div class="formula">
+                            $$P_4 = 4! = 4 \times 3 \times 2 \times 1 = 24$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 24 formas diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 16</span>
+                <p class="exercise-text">
+                    ¿Cuántas placas patentes se pueden formar con 2 letras seguidas de 3 números, si se pueden repetir tanto letras como números? (Considera 26 letras del alfabeto)
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol16')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol16">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Variación con Repetición (Principio Multiplicativo)</span>
+                        <p><strong>Análisis:</strong> Letras y números pueden repetirse</p>
+                        <div class="formula">
+                            $$\text{Letras: } VR_{26,2} = 26^2 = 676$$
+                            $$\text{Números: } VR_{10,3} = 10^3 = 1.000$$
+                            $$\text{Total} = 676 \times 1.000 = 676.000$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 676.000 placas diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 9 -->
+        <div class="slide" id="slide9">
+            <div class="slide-number">Slide 9 de 14</div>
+
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 17</span>
+                <p class="exercise-text">
+                    En un código binario de 8 dígitos hay 5 unos y 3 ceros. ¿Cuántos códigos diferentes se pueden formar?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol17')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol17">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Permutación con Repetición</span>
+                        <p><strong>Análisis:</strong> 8 dígitos con repeticiones (5 unos, 3 ceros)</p>
+                        <div class="formula">
+                            $$P_8^{5,3} = \frac{8!}{5! \times 3!} = \frac{40.320}{120 \times 6} = \frac{40.320}{720} = 56$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 56 códigos diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 18</span>
+                <p class="exercise-text">
+                    En una baraja de 52 cartas, ¿de cuántas formas se pueden seleccionar 7 cartas (sin importar el orden)?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol18')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol18">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Combinatoria</span>
+                        <p><strong>Análisis:</strong> Seleccionamos 7 cartas de 52 y el orden no importa</p>
+                        <p>$n = 52$, $r = 7$</p>
+                        <div class="formula">
+                            $$C_{52,7} = \frac{52!}{7! \times 45!} = \frac{52 \times 51 \times 50 \times 49 \times 48 \times 47 \times 46}{7 \times 6 \times 5 \times 4 \times 3 \times 2 \times 1}$$
+                            $$= \frac{674.274.182.400}{5.040} = 133.784.560$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 133.784.560 formas diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 10 -->
+        <div class="slide" id="slide10">
+            <div class="slide-number">Slide 10 de 14</div>
+            
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 19</span>
+                <p class="exercise-text">
+                    En una competencia de atletismo, 6 corredores participan en una final. ¿De cuántas formas distintas pueden llegar a la meta (sin empates)?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol19')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol19">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Permutación Simple</span>
+                        <p><strong>Análisis:</strong> Ordenamos las 6 posiciones de llegada</p>
+                        <div class="formula">
+                            $$P_6 = 6! = 6 \times 5 \times 4 \times 3 \times 2 \times 1 = 720$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 720 formas diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 20</span>
+                <p class="exercise-text">
+                    De un grupo de 12 atletas, ¿de cuántas formas se pueden seleccionar 4 para formar una posta de relevos (considerando que el orden en que corren es importante)?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol20')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol20">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Variación sin Repetición</span>
+                        <p><strong>Análisis:</strong> El orden importa (posición 1,2,3,4) y no se repiten atletas</p>
+                        <p>$n = 12$, $r = 4$</p>
+                        <div class="formula">
+                            $$V_{12,4} = \frac{12!}{(12-4)!} = \frac{12!}{8!} = 12 \times 11 \times 10 \times 9 = 11.880$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 11.880 formas diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 11 -->
+        <div class="slide" id="slide11">
+            <div class="slide-number">Slide 11 de 14</div>
+            
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 21</span>
+                <p class="exercise-text">
+                    ¿Cuántas formas hay de ordenar 9 libros en un estante si 4 son de matemática, 3 de ciencias y 2 de historia (los libros de la misma materia son idénticos)?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol21')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol21">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Permutación con Repetición</span>
+                        <p><strong>Análisis:</strong> 9 libros con repeticiones por materia</p>
+                        <p>Total: 9 libros (4M, 3C, 2H)</p>
+                        <div class="formula">
+                            $$P_9^{4,3,2} = \frac{9!}{4! \times 3! \times 2!} = \frac{362.880}{24 \times 6 \times 2} = \frac{362.880}{288} = 1.260$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 1.260 formas diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 22</span>
+                <p class="exercise-text">
+                    En un juego de dados, lanzas 5 dados de 6 caras simultáneamente. ¿Cuántos resultados diferentes son posibles?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol22')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol22">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Variación con Repetición</span>
+                        <p><strong>Análisis:</strong> Cada dado puede mostrar cualquier valor del 1 al 6</p>
+                        <p>$n = 6$ (caras), $r = 5$ (dados)</p>
+                        <div class="formula">
+                            $$VR_{6,5} = 6^5 = 7.776$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 7.776 resultados diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 12 -->
+        <div class="slide" id="slide12">
+            <div class="slide-number">Slide 12 de 14</div>
+            
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 23</span>
+                <p class="exercise-text">
+                    Un equipo de básquetbol tiene 12 jugadores. ¿De cuántas formas puede el entrenador elegir a los 5 jugadores que iniciarán el partido?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol23')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol23">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Combinatoria</span>
+                        <p><strong>Análisis:</strong> Seleccionamos 5 jugadores de 12, el orden no importa</p>
+                        <p>$n = 12$, $r = 5$</p>
+                        <div class="formula">
+                            $$C_{12,5} = \frac{12!}{5! \times 7!} = \frac{12 \times 11 \times 10 \times 9 \times 8}{5 \times 4 \times 3 \times 2 \times 1} = \frac{95.040}{120} = 792$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 792 formas diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 24</span>
+                <p class="exercise-text">
+                    En una carrera de 8 caballos, ¿de cuántas formas diferentes pueden llegar los primeros 5 lugares (sin empates)?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol24')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol24">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Variación sin Repetición</span>
+                        <p><strong>Análisis:</strong> Importa el orden de llegada y no se repiten caballos</p>
+                        <p>$n = 8$, $r = 5$</p>
+                        <div class="formula">
+                            $$V_{8,5} = \frac{8!}{(8-5)!} = \frac{8!}{3!} = 8 \times 7 \times 6 \times 5 \times 4 = 6.720$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 6.720 formas diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 13 (último ejercicio solo) -->
+        <div class="slide" id="slide13">
+            <div class="slide-number">Slide 13 de 14</div>
+            
+            <div class="exercise">
+                <span class="exercise-number">Ejercicio 25</span>
+                <p class="exercise-text">
+                    Una heladería ofrece 6 sabores diferentes. Si puedes elegir 3 bolas de helado y el orden en que las eliges importa (porque van una sobre otra), ¿cuántas combinaciones diferentes puedes hacer permitiendo repetir sabores?
+                </p>
+                <button class="btn-solution" onclick="toggleSolution('sol25')">
+                    <span class="icon">👁️</span> Ver Solución
+                </button>
+                <div class="solution" id="sol25">
+                    <div class="solution-title">📝 Solución:</div>
+                    <div class="solution-content">
+                        <span class="technique-badge">Variación con Repetición</span>
+                        <p><strong>Análisis:</strong> El orden importa (chocolate-vainilla-fresa ≠ fresa-chocolate-vainilla) y podemos repetir sabores</p>
+                        <p>$n = 6$ (sabores), $r = 3$ (bolas)</p>
+                        <div class="formula">
+                            $$VR_{6,3} = 6^3 = 6 \times 6 \times 6 = 216$$
+                        </div>
+                        <div class="result">
+                            ✅ Respuesta: 216 combinaciones diferentes
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide14">
+            <div class="slide-number">Slide 14 de 14</div>
+
+            <div class="exercise">
+                <span class="exercise-number">Evaluación</span>
+                <p class="exercise-text">
+                    ¡Felicidades por completar los ejercicios! Ahora, te invitamos a realizar una evaluación para poner a prueba tus conocimientos sobre Permutaciones, Variaciones y Combinatoria.
+                </p>
+                <div class="evaluacion">
+                    <a href="https://forms.gle/fisKDE8pqbfry4RWA" target="_blank">
+                        <span class="icon">📝</span> Ir a la Evaluación
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- NAVEGACIÓN -->
+        <div class="navigation">
+            <button class="nav-button" id="prevBtn" onclick="changeSlide(-1)">
+                <span class="icon">⬅️</span> Anterior
+            </button>
+            
+            <div class="progress-bar">
+                <div class="progress-text">
+                    Progreso: <span id="currentSlide">1</span> / 14
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="progressFill" style="width: 7.14%"></div>
+                </div>
+            </div>
+            
+            <button class="nav-button" id="nextBtn" onclick="changeSlide(1)">
+                Siguiente <span class="icon">➡️</span>
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 14;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            
+            if (n > totalSlides) {
+                currentSlide = totalSlides;
+            } else if (n < 1) {
+                currentSlide = 1;
+            } else {
+                currentSlide = n;
+            }
+
+            // Ocultar todos los slides
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+
+            // Mostrar el slide actual
+            slides[currentSlide - 1].classList.add('active');
+
+            // Cerrar todas las soluciones del slide actual
+            const currentSolutions = slides[currentSlide - 1].querySelectorAll('.solution');
+            currentSolutions.forEach(solution => {
+                solution.style.display = 'none';
+                const button = solution.previousElementSibling;
+                button.innerHTML = '<span class="icon">👁️</span> Ver Solución';
+            });
+
+            // Actualizar botones
+            document.getElementById('prevBtn').disabled = (currentSlide === 1);
+            document.getElementById('nextBtn').disabled = (currentSlide === totalSlides);
+
+            // Actualizar progreso
+            document.getElementById('currentSlide').textContent = currentSlide;
+            const progressPercentage = (currentSlide / totalSlides) * 100;
+            document.getElementById('progressFill').style.width = progressPercentage + '%';
+
+            // Scroll al tope
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function changeSlide(direction) {
+            showSlide(currentSlide + direction);
+        }
+
+        function toggleSolution(id) {
+            const solution = document.getElementById(id);
+            const button = solution.previousElementSibling;
+            
+            if (solution.style.display === 'none' || solution.style.display === '') {
+                solution.style.display = 'block';
+                button.innerHTML = '<span class="icon">🔒</span> Ocultar Solución';
+            } else {
+                solution.style.display = 'none';
+                button.innerHTML = '<span class="icon">👁️</span> Ver Solución';
+            }
+        }
+
+        // Navegación con teclado
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (event.key === 'ArrowRight') {
+                changeSlide(1);
+            }
+        });
+
+        // Efectos de hover
+        document.querySelectorAll('.exercise').forEach(exercise => {
+            exercise.addEventListener('mouseenter', function() {
+                this.style.backgroundColor = '#f0f2ff';
+            });
+            exercise.addEventListener('mouseleave', function() {
+                this.style.backgroundColor = '#f8f9fa';
+            });
+        });
+
+        // Inicializar
+        showSlide(1);
+    </script>
+</body>
+</html>

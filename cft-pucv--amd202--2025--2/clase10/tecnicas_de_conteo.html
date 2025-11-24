@@ -1,0 +1,1857 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Técnicas de Conteo - Matemáticas</title>
+    
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- MathJax -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global',
+                scale: 1.3
+            },
+            chtml: {
+                scale: 1.3
+            }
+        };
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --azulchile: #0033A0;
+            --rojochile: #D52B1E;
+            --verdechile: #2C5234;
+            --warmorange: #FF8C42;
+            --bg-light: #F8F9FA;
+            --text-dark: #212529;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--bg-light) 0%, #E9ECEF 100%);
+            overflow: hidden;
+        }
+        
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .slide {
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 60px 80px;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow-y: auto;
+        }
+        
+        .slide.active {
+            display: flex;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .slide-header {
+            border-bottom: 4px solid var(--azulchile);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .slide-title {
+            font-family: 'Roboto Slab', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--azulchile);
+            margin-bottom: 10px;
+        }
+        
+        .slide-subtitle {
+            font-size: 1.8rem;
+            color: var(--rojochile);
+            font-weight: 400;
+        }
+        
+        .slide-content {
+            flex: 1;
+            font-size: 1.6rem;
+            line-height: 1.9;
+            color: var(--text-dark);
+        }
+        
+        .definition-box {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border-left: 6px solid var(--azulchile);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .definition-title {
+            font-weight: 700;
+            font-size: 2rem;
+            color: var(--azulchile);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .definition-title::before {
+            content: "📘";
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .example-box {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border-left: 6px solid var(--warmorange);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .example-title {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--warmorange);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .example-title::before {
+            content: "💡";
+            margin-right: 10px;
+            font-size: 1.6rem;
+        }
+        
+        .solution-box {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            border-left: 6px solid var(--verdechile);
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .solution-box.show {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .solution-title {
+            font-weight: 700;
+            font-size: 1.7rem;
+            color: var(--verdechile);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .solution-title::before {
+            content: "✓";
+            margin-right: 10px;
+            font-size: 1.6rem;
+            background: var(--verdechile);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-show-solution {
+            background: var(--verdechile);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-show-solution:hover {
+            background: #1B4D2B;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-show-solution:active {
+            transform: translateY(0);
+        }
+        
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .nav-btn {
+            background: var(--azulchile);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        .nav-btn:hover:not(:disabled) {
+            background: #002B85;
+            transform: scale(1.1);
+        }
+        
+        .nav-btn:disabled {
+            background: #CCC;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        
+        .slide-counter {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--azulchile);
+            min-width: 100px;
+            text-align: center;
+        }
+        
+        .footer {
+            border-top: 3px solid var(--rojochile);
+            padding-top: 15px;
+            margin-top: 30px;
+            font-size: 1.2rem;
+            color: #666;
+            text-align: center;
+        }
+        
+        .footer-credits {
+            font-weight: 600;
+            color: var(--azulchile);
+        }
+        
+        .math-display {
+            font-size: 1.8rem;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .formula-box {
+            background: #F5F5F5;
+            border: 2px solid var(--azulchile);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .portada {
+            background: linear-gradient(135deg, var(--azulchile) 0%, var(--rojochile) 100%);
+            color: white;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .portada .slide-title {
+            color: white;
+            font-size: 5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .portada .slide-subtitle {
+            color: #FFE0B2;
+            font-size: 2.4rem;
+            margin-bottom: 50px;
+        }
+        
+        .portada-icon {
+            font-size: 8rem;
+            margin-bottom: 30px;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-top: 15px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+        }
+        
+        strong {
+            color: var(--rojochile);
+        }
+        
+        /* Scrollbar personalizado */
+        .slide::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .slide::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .slide::-webkit-scrollbar-thumb {
+            background: var(--azulchile);
+            border-radius: 10px;
+        }
+        
+        .slide::-webkit-scrollbar-thumb:hover {
+            background: var(--rojochile);
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Slide 1: Portada -->
+        <div class="slide active portada">
+            <div>
+                <div class="portada-icon">🔢</div>
+                <h1 class="slide-title">Técnicas de Conteo</h1>
+                <p class="slide-subtitle">Principio Multiplicativo, Factorial y Números Combinatorios</p>
+                <p style="font-size: 1.9rem; margin-top: 40px;">Matemáticas - Nivel Superior</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Principio Multiplicativo - Definición -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Principio Multiplicativo</h2>
+                <p class="slide-subtitle">Concepto Fundamental</p>
+            </div>
+            <div class="slide-content">
+                <div class="definition-box">
+                    <div class="definition-title">Definición</div>
+                    <p>Si un evento puede ocurrir de \(m\) maneras diferentes y, después de que esto suceda, un segundo evento puede ocurrir de \(n\) maneras diferentes, entonces <strong>ambos eventos pueden ocurrir en secuencia de \(m \times n\) maneras diferentes</strong>.</p>
+                    <div class="formula-box">
+                        <p>Si tenemos \(k\) eventos con \(n_1, n_2, n_3, \ldots, n_k\) opciones respectivamente:</p>
+                        \[\text{Total de formas} = n_1 \times n_2 \times n_3 \times \cdots \times n_k\]
+                    </div>
+                    <p style="margin-top: 20px;"><strong>Aplicación:</strong> Se utiliza para contar el número total de resultados posibles cuando tenemos una secuencia de decisiones o eventos independientes.</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 3: Principio Multiplicativo - Ejemplos 1 y 2 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Principio Multiplicativo</h2>
+                <p class="slide-subtitle">Ejemplos 1 y 2</p>
+            </div>
+            <div class="slide-content">
+                <!-- Ejemplo 1 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 1: Vestimenta</div>
+                    <p>María tiene 5 blusas diferentes, 4 pantalones diferentes y 3 pares de zapatos diferentes. ¿De cuántas formas diferentes puede vestirse María eligiendo una blusa, un pantalón y un par de zapatos?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(1)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-1">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Aplicamos el Principio Multiplicativo:</strong></p>
+                        <ul>
+                            <li>Número de opciones para blusas: \(5\)</li>
+                            <li>Número de opciones para pantalones: \(4\)</li>
+                            <li>Número de opciones para zapatos: \(3\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[\text{Total de combinaciones} = 5 \times 4 \times 3 = 60\]
+                        </div>
+                        <p><strong>Respuesta:</strong> María puede vestirse de <strong>60 formas diferentes</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- Ejemplo 2 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 2: Placas de Automóvil</div>
+                    <p>Una placa de automóvil consta de 2 letras seguidas de 4 dígitos. ¿Cuántas placas diferentes se pueden formar si se pueden usar las 26 letras del alfabeto y los dígitos del 0 al 9, permitiendo repeticiones?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(2)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-2">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Analizamos cada posición:</strong></p>
+                        <ul>
+                            <li>Primera letra: \(26\) opciones</li>
+                            <li>Segunda letra: \(26\) opciones (se permite repetición)</li>
+                            <li>Primer dígito: \(10\) opciones (0-9)</li>
+                            <li>Segundo dígito: \(10\) opciones</li>
+                            <li>Tercer dígito: \(10\) opciones</li>
+                            <li>Cuarto dígito: \(10\) opciones</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[\text{Total de placas} = 26 \times 26 \times 10 \times 10 \times 10 \times 10\]
+                            \[= 26^2 \times 10^4 = 676 \times 10000 = 6,760,000\]
+                        </div>
+                        <p><strong>Respuesta:</strong> Se pueden formar <strong>6,760,000 placas diferentes</strong>.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 4: Principio Multiplicativo - Ejemplos 3 y 4 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Principio Multiplicativo</h2>
+                <p class="slide-subtitle">Ejemplos 3 y 4</p>
+            </div>
+            <div class="slide-content">
+                <!-- Ejemplo 3 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 3: Menú de Restaurante</div>
+                    <p>Un restaurante ofrece un menú del día que incluye: 3 opciones de entrada, 6 opciones de plato principal, 4 opciones de postre y 5 opciones de bebida. ¿De cuántas formas diferentes puede un cliente elegir su menú completo (entrada, plato principal, postre y bebida)?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(3)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-3">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Aplicamos el Principio Multiplicativo a cada categoría:</strong></p>
+                        <ul>
+                            <li>Opciones de entrada: \(3\)</li>
+                            <li>Opciones de plato principal: \(6\)</li>
+                            <li>Opciones de postre: \(4\)</li>
+                            <li>Opciones de bebida: \(5\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[\text{Total de menús} = 3 \times 6 \times 4 \times 5\]
+                            \[= 18 \times 20 = 360\]
+                        </div>
+                        <p><strong>Respuesta:</strong> El cliente puede elegir su menú de <strong>360 formas diferentes</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- Ejemplo 4 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 4: Contraseñas</div>
+                    <p>Una contraseña de seguridad consta de 3 letras mayúsculas seguidas de 3 dígitos. ¿Cuántas contraseñas diferentes se pueden formar si NO se permiten repeticiones de letras ni de dígitos?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(4)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-4">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Sin repeticiones, cada elección reduce las opciones siguientes:</strong></p>
+                        <ul>
+                            <li>Primera letra: \(26\) opciones</li>
+                            <li>Segunda letra: \(25\) opciones (no puede repetir la primera)</li>
+                            <li>Tercera letra: \(24\) opciones</li>
+                            <li>Primer dígito: \(10\) opciones (0-9)</li>
+                            <li>Segundo dígito: \(9\) opciones</li>
+                            <li>Tercer dígito: \(8\) opciones</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[\text{Total de contraseñas} = 26 \times 25 \times 24 \times 10 \times 9 \times 8\]
+                            \[= 15,600 \times 720 = 11,232,000\]
+                        </div>
+                        <p><strong>Respuesta:</strong> Se pueden formar <strong>11,232,000 contraseñas diferentes</strong>.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 5: Factorial - Definición -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Factorial</h2>
+                <p class="slide-subtitle">Concepto y Notación</p>
+            </div>
+            <div class="slide-content">
+                <div class="definition-box">
+                    <div class="definition-title">Definición</div>
+                    <p>El <strong>factorial de un número natural \(n\)</strong>, denotado como \(n!\), es el producto de todos los números naturales desde 1 hasta \(n\).</p>
+                    <div class="formula-box">
+                        \[n! = n \times (n-1) \times (n-2) \times \cdots \times 3 \times 2 \times 1\]
+                        <p style="margin-top: 15px;">Por convención: \(0! = 1\) y \(1! = 1\)</p>
+                    </div>
+                    <p style="margin-top: 20px;"><strong>Interpretación:</strong> \(n!\) representa el número de formas diferentes en que se pueden ordenar \(n\) objetos distintos.</p>
+                    <p style="margin-top: 15px;"><strong>Ejemplos básicos:</strong></p>
+                    <ul>
+                        <li>\(3! = 3 \times 2 \times 1 = 6\)</li>
+                        <li>\(4! = 4 \times 3 \times 2 \times 1 = 24\)</li>
+                        <li>\(5! = 5 \times 4 \times 3 \times 2 \times 1 = 120\)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 6: Factorial - Ejemplos 1 y 2 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Factorial</h2>
+                <p class="slide-subtitle">Ejemplos 1 y 2</p>
+            </div>
+            <div class="slide-content">
+                <!-- Ejemplo 1 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 1: Cálculo de 6!</div>
+                    <p>Calcula el valor de \(6!\)</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(5)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-5">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Aplicamos la definición de factorial:</strong></p>
+                        <div class="formula-box">
+                            \[6! = 6 \times 5 \times 4 \times 3 \times 2 \times 1\]
+                        </div>
+                        <p><strong>Cálculo paso a paso:</strong></p>
+                        <ul>
+                            <li>\(6 \times 5 = 30\)</li>
+                            <li>\(30 \times 4 = 120\)</li>
+                            <li>\(120 \times 3 = 360\)</li>
+                            <li>\(360 \times 2 = 720\)</li>
+                            <li>\(720 \times 1 = 720\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[6! = 720\]
+                        </div>
+                        <p><strong>Respuesta:</strong> \(6! = 720\)</p>
+                    </div>
+                </div>
+
+                <!-- Ejemplo 2 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 2: Cálculo de 9!</div>
+                    <p>Calcula el valor de \(9!\)</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(6)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-6">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Aplicamos la definición de factorial:</strong></p>
+                        <div class="formula-box">
+                            \[9! = 9 \times 8 \times 7 \times 6 \times 5 \times 4 \times 3 \times 2 \times 1\]
+                        </div>
+                        <p><strong>Cálculo paso a paso:</strong></p>
+                        <ul>
+                            <li>\(9 \times 8 = 72\)</li>
+                            <li>\(72 \times 7 = 504\)</li>
+                            <li>\(504 \times 6 = 3,024\)</li>
+                            <li>\(3,024 \times 5 = 15,120\)</li>
+                            <li>\(15,120 \times 4 = 60,480\)</li>
+                            <li>\(60,480 \times 3 = 181,440\)</li>
+                            <li>\(181,440 \times 2 = 362,880\)</li>
+                            <li>\(362,880 \times 1 = 362,880\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[9! = 362,880\]
+                        </div>
+                        <p><strong>Respuesta:</strong> \(9! = 362,880\)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 7: Factorial - Ejemplos 3 y 4 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Factorial</h2>
+                <p class="slide-subtitle">Ejemplos 3 y 4</p>
+            </div>
+            <div class="slide-content">
+                <!-- Ejemplo 3 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 3: Cálculo Directo</div>
+                    <p>Calcula el valor de \(\displaystyle\frac{10!}{7!}\)</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(7)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-7">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Método 1: Simplificación antes de calcular</strong></p>
+                        <div class="formula-box">
+                            \[\frac{10!}{7!} = \frac{10 \times 9 \times 8 \times 7!}{7!}\]
+                            \[= 10 \times 9 \times 8\]
+                            \[= 720\]
+                        </div>
+                        <p><strong>Método 2: Calcular y dividir (menos eficiente)</strong></p>
+                        <ul>
+                            <li>\(10! = 3,628,800\)</li>
+                            <li>\(7! = 5,040\)</li>
+                            <li>\(\displaystyle\frac{3,628,800}{5,040} = 720\)</li>
+                        </ul>
+                        <p><strong>Respuesta:</strong> \(\displaystyle\frac{10!}{7!} = 720\)</p>
+                        <p style="margin-top: 15px;"><em>Nota: Siempre es más eficiente simplificar antes de calcular.</em></p>
+                    </div>
+                </div>
+
+                <!-- Ejemplo 4 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 4: Ecuación con Factoriales</div>
+                    <p>Resuelve la ecuación: \(\displaystyle\frac{(n+1)!}{n!} = 12\)</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(8)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-8">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Simplificamos el lado izquierdo:</strong></p>
+                        <div class="formula-box">
+                            \[\frac{(n+1)!}{n!} = \frac{(n+1) \times n!}{n!} = n+1\]
+                        </div>
+                        <p><strong>Ahora la ecuación queda:</strong></p>
+                        <div class="formula-box">
+                            \[n + 1 = 12\]
+                            \[n = 11\]
+                        </div>
+                        <p><strong>Verificación:</strong></p>
+                        <ul>
+                            <li>\(\displaystyle\frac{12!}{11!} = 12\) ✓</li>
+                        </ul>
+                        <p><strong>Respuesta:</strong> \(n = 11\)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 8: Número Combinatorio - Definición -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Número Combinatorio</h2>
+                <p class="slide-subtitle">Concepto y Fórmula</p>
+            </div>
+            <div class="slide-content">
+                <div class="definition-box">
+                    <div class="definition-title">Definición</div>
+                    <p>El <strong>número combinatorio</strong> \(\displaystyle\binom{n}{k}\) (leído "n sobre k" o "combinaciones de n en k") representa el número de formas de elegir \(k\) elementos de un conjunto de \(n\) elementos, <strong>sin importar el orden</strong>.</p>
+                    <div class="formula-box">
+                        \[\binom{n}{k} = \frac{n!}{k!(n-k)!}\]
+                        <p style="margin-top: 15px;">donde \(0 \leq k \leq n\)</p>
+                    </div>
+                    <p style="margin-top: 20px;"><strong>Propiedades importantes:</strong></p>
+                    <ul>
+                        <li>\(\displaystyle\binom{n}{0} = 1\) (solo hay una forma de elegir 0 elementos)</li>
+                        <li>\(\displaystyle\binom{n}{n} = 1\) (solo hay una forma de elegir todos los elementos)</li>
+                        <li>\(\displaystyle\binom{n}{k} = \binom{n}{n-k}\) (simetría)</li>
+                        <li>\(\displaystyle\binom{n}{1} = n\) (hay n formas de elegir 1 elemento)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 9: Número Combinatorio - Ejemplos 1 y 2 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Número Combinatorio</h2>
+                <p class="slide-subtitle">Ejemplos 1 y 2</p>
+            </div>
+            <div class="slide-content">
+                <!-- Ejemplo 1 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 1: Cálculo de C(10,3)</div>
+                    <p>Calcula el valor de \(\displaystyle\binom{10}{3}\)</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(9)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-9">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Aplicamos la fórmula del número combinatorio:</strong></p>
+                        <div class="formula-box">
+                            \[\binom{10}{3} = \frac{10!}{3!(10-3)!} = \frac{10!}{3! \cdot 7!}\]
+                        </div>
+                        <p><strong>Simplificamos:</strong></p>
+                        <div class="formula-box">
+                            \[= \frac{10 \times 9 \times 8 \times 7!}{3! \cdot 7!} = \frac{10 \times 9 \times 8}{3!}\]
+                        </div>
+                        <p><strong>Calculamos paso a paso:</strong></p>
+                        <ul>
+                            <li>\(3! = 3 \times 2 \times 1 = 6\)</li>
+                            <li>\(10 \times 9 = 90\)</li>
+                            <li>\(90 \times 8 = 720\)</li>
+                            <li>\(\displaystyle\frac{720}{6} = 120\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[\binom{10}{3} = 120\]
+                        </div>
+                        <p><strong>Respuesta:</strong> \(\displaystyle\binom{10}{3} = 120\)</p>
+                    </div>
+                </div>
+
+                <!-- Ejemplo 2 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 2: Cálculo de C(15,5)</div>
+                    <p>Calcula el valor de \(\displaystyle\binom{15}{5}\)</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(10)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-10">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Aplicamos la fórmula del número combinatorio:</strong></p>
+                        <div class="formula-box">
+                            \[\binom{15}{5} = \frac{15!}{5!(15-5)!} = \frac{15!}{5! \cdot 10!}\]
+                        </div>
+                        <p><strong>Simplificamos:</strong></p>
+                        <div class="formula-box">
+                            \[= \frac{15 \times 14 \times 13 \times 12 \times 11}{5!}\]
+                            \[= \frac{15 \times 14 \times 13 \times 12 \times 11}{120}\]
+                        </div>
+                        <p><strong>Calculamos el numerador paso a paso:</strong></p>
+                        <ul>
+                            <li>\(5! = 5 \times 4 \times 3 \times 2 \times 1 = 120\)</li>
+                            <li>\(15 \times 14 = 210\)</li>
+                            <li>\(210 \times 13 = 2,730\)</li>
+                            <li>\(2,730 \times 12 = 32,760\)</li>
+                            <li>\(32,760 \times 11 = 360,360\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[\frac{360,360}{120} = 3,003\]
+                        </div>
+                        <p><strong>Respuesta:</strong> \(\displaystyle\binom{15}{5} = 3,003\)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 10: Número Combinatorio - Ejemplos 3 y 4 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Número Combinatorio</h2>
+                <p class="slide-subtitle">Ejemplos 3 y 4</p>
+            </div>
+            <div class="slide-content">
+                <!-- Ejemplo 3 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 3: Cálculo de C(20,2)</div>
+                    <p>Calcula el valor de \(\displaystyle\binom{20}{2}\)</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(11)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-11">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Aplicamos la fórmula del número combinatorio:</strong></p>
+                        <div class="formula-box">
+                            \[\binom{20}{2} = \frac{20!}{2!(20-2)!} = \frac{20!}{2! \cdot 18!}\]
+                        </div>
+                        <p><strong>Simplificamos:</strong></p>
+                        <div class="formula-box">
+                            \[= \frac{20 \times 19 \times 18!}{2! \cdot 18!} = \frac{20 \times 19}{2!}\]
+                        </div>
+                        <p><strong>Calculamos paso a paso:</strong></p>
+                        <ul>
+                            <li>\(2! = 2 \times 1 = 2\)</li>
+                            <li>\(20 \times 19 = 380\)</li>
+                            <li>\(\displaystyle\frac{380}{2} = 190\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[\binom{20}{2} = 190\]
+                        </div>
+                        <p><strong>Respuesta:</strong> \(\displaystyle\binom{20}{2} = 190\)</p>
+                    </div>
+                </div>
+
+                <!-- Ejemplo 4 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 4: Verificación de Simetría</div>
+                    <p>Calcula \(\displaystyle\binom{8}{3}\) y \(\displaystyle\binom{8}{5}\), y verifica que son iguales.</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(12)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-12">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Calculamos \(\displaystyle\binom{8}{3}\):</strong></p>
+                        <div class="formula-box">
+                            \[\binom{8}{3} = \frac{8!}{3! \cdot 5!} = \frac{8 \times 7 \times 6}{3!} = \frac{8 \times 7 \times 6}{6}\]
+                        </div>
+                        <ul>
+                            <li>\(8 \times 7 = 56\)</li>
+                            <li>\(56 \times 6 = 336\)</li>
+                            <li>\(3! = 6\)</li>
+                            <li>\(\displaystyle\frac{336}{6} = 56\)</li>
+                        </ul>
+                        <p><strong>Calculamos \(\displaystyle\binom{8}{5}\):</strong></p>
+                        <div class="formula-box">
+                            \[\binom{8}{5} = \frac{8!}{5! \cdot 3!} = \frac{8 \times 7 \times 6}{3!} = \frac{336}{6} = 56\]
+                        </div>
+                        <p><strong>Verificación:</strong></p>
+                        <ul>
+                            <li>\(\displaystyle\binom{8}{3} = 56\)</li>
+                            <li>\(\displaystyle\binom{8}{5} = 56\)</li>
+                            <li>Por lo tanto: \(\displaystyle\binom{8}{3} = \binom{8}{5}\) ✓</li>
+                        </ul>
+                        <p><strong>Propiedad de simetría:</strong> \(\displaystyle\binom{n}{k} = \binom{n}{n-k}\)</p>
+                        <p><strong>Respuesta:</strong> Ambos números combinatorios son iguales a <strong>56</strong>.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 11: Conclusión Parcial -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Resumen - Parte 1</h2>
+                <p class="slide-subtitle">Conceptos Básicos</p>
+            </div>
+            <div class="slide-content">
+                <div class="definition-box">
+                    <div class="definition-title">Conceptos Revisados</div>
+                    <p><strong>1. Principio Multiplicativo:</strong></p>
+                    <ul>
+                        <li>Se usa cuando tenemos eventos secuenciales e independientes</li>
+                        <li>Multiplicamos el número de opciones de cada evento</li>
+                        <li>Fórmula: \(n_1 \times n_2 \times n_3 \times \cdots \times n_k\)</li>
+                    </ul>
+                    <p style="margin-top: 20px;"><strong>2. Factorial (\(n!\)):</strong></p>
+                    <ul>
+                        <li>Representa el número de permutaciones de \(n\) objetos</li>
+                        <li>El orden SÍ importa</li>
+                        <li>Fórmula: \(n! = n \times (n-1) \times \cdots \times 2 \times 1\)</li>
+                    </ul>
+                    <p style="margin-top: 20px;"><strong>3. Número Combinatorio (\(\displaystyle\binom{n}{k}\)):</strong></p>
+                    <ul>
+                        <li>Representa el número de formas de elegir \(k\) elementos de \(n\)</li>
+                        <li>El orden NO importa</li>
+                        <li>Fórmula: \(\displaystyle\binom{n}{k} = \frac{n!}{k!(n-k)!}\)</li>
+                    </ul>
+                </div>
+                <p style="text-align: center; font-size: 2rem; margin-top: 30px; color: var(--azulchile); font-weight: 700;">
+                    Continuamos con más técnicas...
+                </p>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 12: Permutaciones Simples - Definición -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Permutaciones Simples</h2>
+                <p class="slide-subtitle">Concepto y Fórmula</p>
+            </div>
+            <div class="slide-content">
+                <div class="definition-box">
+                    <div class="definition-title">Definición</div>
+                    <p>Una <strong>permutación simple</strong> es un arreglo ordenado de \(n\) elementos distintos, donde se utilizan <strong>todos los elementos</strong> y <strong>el orden importa</strong>.</p>
+                    <div class="formula-box">
+                        <p><strong>Fórmula de Permutaciones Simples:</strong></p>
+                        \[P(n) = n!\]
+                        <p style="margin-top: 15px;">donde \(n! = n \times (n-1) \times (n-2) \times \cdots \times 2 \times 1\)</p>
+                    </div>
+                    <p style="margin-top: 20px;"><strong>Características:</strong></p>
+                    <ul>
+                        <li>El orden SÍ importa: ABC ≠ BAC ≠ CAB</li>
+                        <li>Se usan TODOS los elementos disponibles</li>
+                        <li>NO se permiten repeticiones</li>
+                        <li>Cada elemento aparece exactamente una vez</li>
+                    </ul>
+                    <p style="margin-top: 20px;"><strong>Ejemplos de aplicación:</strong></p>
+                    <ul>
+                        <li>Ordenar libros en un estante</li>
+                        <li>Formar filas de personas</li>
+                        <li>Organizar tareas en secuencia</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 13: Permutaciones Simples - Ejemplos 1 y 2 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Permutaciones Simples</h2>
+                <p class="slide-subtitle">Ejemplos 1 y 2</p>
+            </div>
+            <div class="slide-content">
+                <!-- Ejemplo 1 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 1: Ordenar Libros</div>
+                    <p>¿De cuántas formas diferentes se pueden ordenar 5 libros distintos en un estante?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(13)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-13">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Se trata de ordenar 5 elementos usando todos:</strong></p>
+                        <div class="formula-box">
+                            \[P(5) = 5! = 5 \times 4 \times 3 \times 2 \times 1\]
+                        </div>
+                        <p><strong>Calculamos paso a paso:</strong></p>
+                        <ul>
+                            <li>\(5 \times 4 = 20\)</li>
+                            <li>\(20 \times 3 = 60\)</li>
+                            <li>\(60 \times 2 = 120\)</li>
+                            <li>\(120 \times 1 = 120\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[P(5) = 120\]
+                        </div>
+                        <p><strong>Respuesta:</strong> Los 5 libros se pueden ordenar de <strong>120 formas diferentes</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- Ejemplo 2 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 2: Fila de Estudiantes</div>
+                    <p>7 estudiantes deben formar una fila para una fotografía. ¿De cuántas formas diferentes pueden acomodarse?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(14)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-14">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Debemos ordenar 7 estudiantes en 7 posiciones:</strong></p>
+                        <div class="formula-box">
+                            \[P(7) = 7! = 7 \times 6 \times 5 \times 4 \times 3 \times 2 \times 1\]
+                        </div>
+                        <p><strong>Calculamos paso a paso:</strong></p>
+                        <ul>
+                            <li>\(7 \times 6 = 42\)</li>
+                            <li>\(42 \times 5 = 210\)</li>
+                            <li>\(210 \times 4 = 840\)</li>
+                            <li>\(840 \times 3 = 2,520\)</li>
+                            <li>\(2,520 \times 2 = 5,040\)</li>
+                            <li>\(5,040 \times 1 = 5,040\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[P(7) = 5,040\]
+                        </div>
+                        <p><strong>Respuesta:</strong> Los estudiantes pueden acomodarse de <strong>5,040 formas diferentes</strong>.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 14: Permutaciones Simples - Ejemplos 3 y 4 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Permutaciones Simples</h2>
+                <p class="slide-subtitle">Ejemplos 3 y 4</p>
+            </div>
+            <div class="slide-content">
+                <!-- Ejemplo 3 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 3: Orden de Presentación</div>
+                    <p>En un concurso de talentos hay 4 participantes. ¿De cuántas formas diferentes se puede establecer el orden de presentación?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(15)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-15">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Debemos ordenar 4 participantes en 4 posiciones:</strong></p>
+                        <div class="formula-box">
+                            \[P(4) = 4! = 4 \times 3 \times 2 \times 1\]
+                        </div>
+                        <p><strong>Calculamos paso a paso:</strong></p>
+                        <ul>
+                            <li>\(4 \times 3 = 12\)</li>
+                            <li>\(12 \times 2 = 24\)</li>
+                            <li>\(24 \times 1 = 24\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[P(4) = 24\]
+                        </div>
+                        <p><strong>Respuesta:</strong> Se puede establecer el orden de presentación de <strong>24 formas diferentes</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- Ejemplo 4 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 4: Horario de Clases</div>
+                    <p>Un profesor debe organizar 8 temas diferentes para enseñar durante un semestre. ¿De cuántas formas puede ordenar la secuencia de enseñanza de estos temas?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(16)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-16">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Se deben ordenar 8 temas en 8 posiciones:</strong></p>
+                        <div class="formula-box">
+                            \[P(8) = 8! = 8 \times 7 \times 6 \times 5 \times 4 \times 3 \times 2 \times 1\]
+                        </div>
+                        <p><strong>Calculamos paso a paso:</strong></p>
+                        <ul>
+                            <li>\(8 \times 7 = 56\)</li>
+                            <li>\(56 \times 6 = 336\)</li>
+                            <li>\(336 \times 5 = 1,680\)</li>
+                            <li>\(1,680 \times 4 = 6,720\)</li>
+                            <li>\(6,720 \times 3 = 20,160\)</li>
+                            <li>\(20,160 \times 2 = 40,320\)</li>
+                            <li>\(40,320 \times 1 = 40,320\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[P(8) = 40,320\]
+                        </div>
+                        <p><strong>Respuesta:</strong> El profesor puede ordenar los temas de <strong>40,320 formas diferentes</strong>.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 15: Permutaciones con Repetición - Definición -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Permutaciones con Repetición</h2>
+                <p class="slide-subtitle">Concepto y Fórmula</p>
+            </div>
+            <div class="slide-content">
+                <div class="definition-box">
+                    <div class="definition-title">Definición</div>
+                    <p>Una <strong>permutación con repetición</strong> es un arreglo ordenado de \(n\) elementos donde algunos elementos se repiten. Si tenemos \(n\) elementos con \(n_1\) repeticiones del primer tipo, \(n_2\) del segundo tipo, etc., entonces:</p>
+                    <div class="formula-box">
+                        <p><strong>Fórmula general:</strong></p>
+                        \[PR^{n}_{(n_1, n_2, \ldots, n_k)} = \frac{n!}{n_1! \cdot n_2! \cdot \ldots \cdot n_k!}\]
+                        <p style="margin-top: 15px;">donde \(n = n_1 + n_2 + \cdots + n_k\)</p>
+                    </div>
+                    <p style="margin-top: 20px;"><strong>Características:</strong></p>
+                    <ul>
+                        <li>El orden SÍ importa</li>
+                        <li>Algunos elementos se repiten</li>
+                        <li>Se divide entre los factoriales de las repeticiones</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 16: Permutaciones con Repetición - Ejemplos 1 y 2 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Permutaciones con Repetición</h2>
+                <p class="slide-subtitle">Ejemplos 1 y 2</p>
+            </div>
+            <div class="slide-content">
+                <!-- Ejemplo 1 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 1: Palabra con Letras Repetidas</div>
+                    <p>¿Cuántos arreglos diferentes se pueden formar con las letras de la palabra "BANANA"? (tiene 3 letras A, 2 letras N y 1 letra B)</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(17)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-17">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Identificamos: Total de letras = 6, con 3 A, 2 N y 1 B</strong></p>
+                        <div class="formula-box">
+                            \[PR^{6}_{(3, 2, 1)} = \frac{6!}{3! \cdot 2! \cdot 1!}\]
+                        </div>
+                        <p><strong>Calculamos:</strong></p>
+                        <ul>
+                            <li>\(6! = 720\)</li>
+                            <li>\(3! = 6\)</li>
+                            <li>\(2! = 2\)</li>
+                            <li>\(1! = 1\)</li>
+                            <li>Denominador: \(6 \times 2 \times 1 = 12\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[= \frac{720}{12} = 60\]
+                        </div>
+                        <p><strong>Respuesta:</strong> Se pueden formar <strong>60 arreglos diferentes</strong> con las letras de BANANA.</p>
+                    </div>
+                </div>
+
+                <!-- Ejemplo 2 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 2: Banderas de Colores</div>
+                    <p>Una señal se forma colocando 10 banderas en fila: 4 rojas, 3 azules y 3 verdes. ¿Cuántas señales diferentes se pueden formar?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(18)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-18">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Total de banderas = 10, con 4 rojas, 3 azules y 3 verdes</strong></p>
+                        <div class="formula-box">
+                            \[PR^{10}_{(4, 3, 3)} = \frac{10!}{4! \cdot 3! \cdot 3!}\]
+                        </div>
+                        <p><strong>Calculamos:</strong></p>
+                        <ul>
+                            <li>\(10! = 3,628,800\)</li>
+                            <li>\(4! = 24\)</li>
+                            <li>\(3! = 6\)</li>
+                            <li>\(3! = 6\)</li>
+                            <li>Denominador: \(24 \times 6 \times 6 = 864\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[= \frac{3,628,800}{864} = 4,200\]
+                        </div>
+                        <p><strong>Respuesta:</strong> Se pueden formar <strong>4,200 señales diferentes</strong>.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 17: Permutaciones con Repetición - Ejemplos 3 y 4 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Permutaciones con Repetición</h2>
+                <p class="slide-subtitle">Ejemplos 3 y 4</p>
+            </div>
+            <div class="slide-content">
+                <!-- Ejemplo 3 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 3: Código Binario</div>
+                    <p>Un código de 6 dígitos se forma usando 3 ceros (0) y 3 unos (1). ¿Cuántos códigos diferentes se pueden crear?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(19)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-19">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Total de dígitos = 6, con 3 ceros y 3 unos</strong></p>
+                        <div class="formula-box">
+                            \[PR^{6}_{(3, 3)} = \frac{6!}{3! \cdot 3!}\]
+                        </div>
+                        <p><strong>Calculamos:</strong></p>
+                        <ul>
+                            <li>\(6! = 720\)</li>
+                            <li>\(3! = 6\)</li>
+                            <li>\(3! = 6\)</li>
+                            <li>Denominador: \(6 \times 6 = 36\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[= \frac{720}{36} = 20\]
+                        </div>
+                        <p><strong>Respuesta:</strong> Se pueden crear <strong>20 códigos diferentes</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- Ejemplo 4 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 4: Collar de Perlas</div>
+                    <p>Se desea hacer un collar en línea con 8 perlas: 5 blancas y 3 negras. ¿De cuántas formas diferentes se puede diseñar el collar?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(20)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-20">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Total de perlas = 8, con 5 blancas y 3 negras</strong></p>
+                        <div class="formula-box">
+                            \[PR^{8}_{(5, 3)} = \frac{8!}{5! \cdot 3!}\]
+                        </div>
+                        <p><strong>Calculamos:</strong></p>
+                        <ul>
+                            <li>\(8! = 40,320\)</li>
+                            <li>\(5! = 120\)</li>
+                            <li>\(3! = 6\)</li>
+                            <li>Denominador: \(120 \times 6 = 720\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[= \frac{40,320}{720} = 56\]
+                        </div>
+                        <p><strong>Respuesta:</strong> El collar se puede diseñar de <strong>56 formas diferentes</strong>.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 18: Variaciones sin Repetición - Definición -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Variaciones sin Repetición</h2>
+                <p class="slide-subtitle">Concepto y Fórmula</p>
+            </div>
+            <div class="slide-content">
+                <div class="definition-box">
+                    <div class="definition-title">Definición</div>
+                    <p>Las <strong>variaciones sin repetición</strong> son arreglos ordenados de \(r\) elementos tomados de un conjunto de \(n\) elementos distintos, donde <strong>no se repiten elementos</strong> y <strong>el orden importa</strong>.</p>
+                    <div class="formula-box">
+                        <p><strong>Fórmula:</strong></p>
+                        \[V(n,r) = \frac{n!}{(n-r)!}\]
+                        <p style="margin-top: 15px;">También se denota como \(V_n^r\) o \(_nP_r\)</p>
+                    </div>
+                    <p style="margin-top: 20px;"><strong>Nota importante:</strong></p>
+                    <p>Las variaciones sin repetición son equivalentes a las permutaciones sin repetición. Ambos términos se refieren al mismo concepto matemático.</p>
+                    <p style="margin-top: 15px;"><strong>Características:</strong></p>
+                    <ul>
+                        <li>El orden SÍ importa</li>
+                        <li>NO se permiten repeticiones</li>
+                        <li>\(r \leq n\) siempre</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 19: Variaciones sin Repetición - Ejemplos 1 y 2 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Variaciones sin Repetición</h2>
+                <p class="slide-subtitle">Ejemplos 1 y 2</p>
+            </div>
+            <div class="slide-content">
+                <!-- Ejemplo 1 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 1: Podio de Competencia</div>
+                    <p>En una competencia de atletismo participan 9 corredores. ¿De cuántas formas diferentes se pueden otorgar las medallas de oro, plata y bronce?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(21)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-21">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Se eligen 3 posiciones (podio) de 9 corredores, el orden importa:</strong></p>
+                        <div class="formula-box">
+                            \[V(9,3) = \frac{9!}{(9-3)!} = \frac{9!}{6!}\]
+                        </div>
+                        <p><strong>Simplificamos:</strong></p>
+                        <div class="formula-box">
+                            \[= 9 \times 8 \times 7\]
+                        </div>
+                        <p><strong>Calculamos:</strong></p>
+                        <ul>
+                            <li>\(9 \times 8 = 72\)</li>
+                            <li>\(72 \times 7 = 504\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[V(9,3) = 504\]
+                        </div>
+                        <p><strong>Respuesta:</strong> Las medallas se pueden otorgar de <strong>504 formas diferentes</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- Ejemplo 2 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 2: Directiva Escolar</div>
+                    <p>De un grupo de 11 estudiantes se deben elegir presidente, vicepresidente, secretario, tesorero y vocal. ¿De cuántas formas se puede conformar esta directiva?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(22)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-22">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Se eligen 5 cargos de 11 estudiantes, sin repetir:</strong></p>
+                        <div class="formula-box">
+                            \[V(11,5) = \frac{11!}{(11-5)!} = \frac{11!}{6!}\]
+                        </div>
+                        <p><strong>Simplificamos:</strong></p>
+                        <div class="formula-box">
+                            \[= 11 \times 10 \times 9 \times 8 \times 7\]
+                        </div>
+                        <p><strong>Calculamos paso a paso:</strong></p>
+                        <ul>
+                            <li>\(11 \times 10 = 110\)</li>
+                            <li>\(110 \times 9 = 990\)</li>
+                            <li>\(990 \times 8 = 7,920\)</li>
+                            <li>\(7,920 \times 7 = 55,440\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[V(11,5) = 55,440\]
+                        </div>
+                        <p><strong>Respuesta:</strong> La directiva se puede conformar de <strong>55,440 formas diferentes</strong>.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 20: Variaciones sin Repetición - Ejemplos 3 y 4 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Variaciones sin Repetición</h2>
+                <p class="slide-subtitle">Ejemplos 3 y 4</p>
+            </div>
+            <div class="slide-content">
+                <!-- Ejemplo 3 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 3: Carrera de Relevos</div>
+                    <p>Un equipo de atletismo tiene 6 corredores y debe seleccionar 4 de ellos para una carrera de relevos (1°, 2°, 3° y 4° corredor). ¿De cuántas formas puede formar el equipo?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(23)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-23">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Se eligen 4 posiciones de 6 corredores, el orden importa:</strong></p>
+                        <div class="formula-box">
+                            \[V(6,4) = \frac{6!}{(6-4)!} = \frac{6!}{2!}\]
+                        </div>
+                        <p><strong>Simplificamos:</strong></p>
+                        <div class="formula-box">
+                            \[= \frac{6 \times 5 \times 4 \times 3 \times 2!}{2!} = 6 \times 5 \times 4 \times 3\]
+                        </div>
+                        <p><strong>Calculamos:</strong></p>
+                        <ul>
+                            <li>\(6 \times 5 = 30\)</li>
+                            <li>\(30 \times 4 = 120\)</li>
+                            <li>\(120 \times 3 = 360\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[V(6,4) = 360\]
+                        </div>
+                        <p><strong>Respuesta:</strong> El equipo se puede formar de <strong>360 formas diferentes</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- Ejemplo 4 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 4: Códigos de Acceso</div>
+                    <p>Una empresa debe asignar códigos de 2 dígitos diferentes a sus empleados, usando los dígitos del 1 al 8. ¿Cuántos códigos diferentes se pueden crear?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(24)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-24">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Se eligen 2 dígitos de 8 disponibles, sin repetir:</strong></p>
+                        <div class="formula-box">
+                            \[V(8,2) = \frac{8!}{(8-2)!} = \frac{8!}{6!}\]
+                        </div>
+                        <p><strong>Simplificamos:</strong></p>
+                        <div class="formula-box">
+                            \[= 8 \times 7\]
+                        </div>
+                        <p><strong>Calculamos:</strong></p>
+                        <ul>
+                            <li>\(8 \times 7 = 56\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[V(8,2) = 56\]
+                        </div>
+                        <p><strong>Respuesta:</strong> Se pueden crear <strong>56 códigos diferentes</strong>.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 21: Variaciones con Repetición - Definición -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Variaciones con Repetición</h2>
+                <p class="slide-subtitle">Concepto y Fórmula</p>
+            </div>
+            <div class="slide-content">
+                <div class="definition-box">
+                    <div class="definition-title">Definición</div>
+                    <p>Las <strong>variaciones con repetición</strong> son arreglos ordenados de \(r\) elementos tomados de un conjunto de \(n\) elementos distintos, donde <strong>SÍ se permiten repeticiones</strong> y <strong>el orden importa</strong>.</p>
+                    <div class="formula-box">
+                        <p><strong>Fórmula:</strong></p>
+                        \[VR(n,r) = n^r\]
+                        <p style="margin-top: 15px;">También se denota como \(VR_n^r\)</p>
+                    </div>
+                    <p style="margin-top: 20px;"><strong>Características:</strong></p>
+                    <ul>
+                        <li>El orden SÍ importa</li>
+                        <li>SÍ se permiten repeticiones</li>
+                        <li>Cada posición tiene \(n\) opciones disponibles</li>
+                        <li>\(r\) puede ser mayor que \(n\)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 22: Variaciones con Repetición - Ejemplos 1 y 2 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Variaciones con Repetición</h2>
+                <p class="slide-subtitle">Ejemplos 1 y 2</p>
+            </div>
+            <div class="slide-content">
+                <!-- Ejemplo 1 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 1: Código de Colores</div>
+                    <p>Una alarma tiene 5 colores diferentes (rojo, azul, verde, amarillo, blanco) y debe configurarse un código de 3 colores donde los colores pueden repetirse. ¿Cuántos códigos diferentes se pueden crear?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(25)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-25">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Tenemos 5 colores y elegimos 3 posiciones con repetición:</strong></p>
+                        <div class="formula-box">
+                            \[VR(5,3) = 5^3\]
+                        </div>
+                        <p><strong>Calculamos:</strong></p>
+                        <ul>
+                            <li>Cada una de las 3 posiciones tiene 5 opciones</li>
+                            <li>\(5^3 = 5 \times 5 \times 5 = 125\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[VR(5,3) = 125\]
+                        </div>
+                        <p><strong>Respuesta:</strong> Se pueden crear <strong>125 códigos diferentes</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- Ejemplo 2 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 2: Combinación de Candado</div>
+                    <p>Un candado tiene 4 ruedas con los dígitos 0, 1, 2 y 3. ¿Cuántas combinaciones diferentes se pueden formar si los dígitos pueden repetirse?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(26)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-26">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Tenemos 4 dígitos diferentes y 6 posiciones con repetición permitida:</strong></p>
+                        <div class="formula-box">
+                            \[VR(4,6) = 4^6\]
+                        </div>
+                        <p><strong>Calculamos paso a paso:</strong></p>
+                        <ul>
+                            <li>\(4^2 = 16\)</li>
+                            <li>\(4^3 = 64\)</li>
+                            <li>\(4^4 = 256\)</li>
+                            <li>\(4^5 = 1,024\)</li>
+                            <li>\(4^6 = 4,096\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[VR(4,6) = 4,096\]
+                        </div>
+                        <p><strong>Respuesta:</strong> Se pueden formar <strong>4,096 combinaciones diferentes</strong>.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 23: Variaciones con Repetición - Ejemplos 3 y 4 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Variaciones con Repetición</h2>
+                <p class="slide-subtitle">Ejemplos 3 y 4</p>
+            </div>
+            <div class="slide-content">
+                <!-- Ejemplo 3 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 3: Lanzamiento de Dados</div>
+                    <p>Si se lanza un dado de 10 caras (numerado del 0 al 9) dos veces, ¿cuántos resultados diferentes se pueden obtener si consideramos el orden?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(27)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-27">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Tenemos 10 posibles resultados por lanzamiento, 2 lanzamientos:</strong></p>
+                        <div class="formula-box">
+                            \[VR(10,2) = 10^2\]
+                        </div>
+                        <p><strong>Calculamos:</strong></p>
+                        <ul>
+                            <li>Cada lanzamiento tiene 10 opciones</li>
+                            <li>Los resultados pueden repetirse</li>
+                            <li>\(10^2 = 10 \times 10 = 100\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[VR(10,2) = 100\]
+                        </div>
+                        <p><strong>Respuesta:</strong> Se pueden obtener <strong>100 resultados diferentes</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- Ejemplo 4 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 4: Menú de Helados</div>
+                    <p>Una heladería ofrece 3 sabores de helado (chocolate, vainilla, fresa). Un cliente puede ordenar un cono de 5 bolas, pudiendo repetir sabores. ¿Cuántas combinaciones ordenadas puede elegir?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(28)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-28">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Tenemos 3 sabores y 5 posiciones, con repetición permitida:</strong></p>
+                        <div class="formula-box">
+                            \[VR(3,5) = 3^5\]
+                        </div>
+                        <p><strong>Calculamos paso a paso:</strong></p>
+                        <ul>
+                            <li>Cada bola puede ser de cualquiera de los 3 sabores</li>
+                            <li>\(3^1 = 3\)</li>
+                            <li>\(3^2 = 9\)</li>
+                            <li>\(3^3 = 27\)</li>
+                            <li>\(3^4 = 81\)</li>
+                            <li>\(3^5 = 243\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[VR(3,5) = 243\]
+                        </div>
+                        <p><strong>Respuesta:</strong> El cliente puede elegir <strong>243 combinaciones ordenadas diferentes</strong>.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 24: Combinaciones - Definición -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Combinaciones</h2>
+                <p class="slide-subtitle">Concepto y Fórmula</p>
+            </div>
+            <div class="slide-content">
+                <div class="definition-box">
+                    <div class="definition-title">Definición</div>
+                    <p>Las <strong>combinaciones</strong> son selecciones de \(r\) elementos tomados de un conjunto de \(n\) elementos distintos, donde <strong>el orden NO importa</strong> y <strong>no se permiten repeticiones</strong>.</p>
+                    <div class="formula-box">
+                        <p><strong>Fórmula:</strong></p>
+                        \[C(n,r) = \binom{n}{r} = \frac{n!}{r!(n-r)!}\]
+                        <p style="margin-top: 15px;">También se denota como \(C_n^r\) o \(_nC_r\)</p>
+                    </div>
+                    <p style="margin-top: 20px;"><strong>Diferencia clave con variaciones:</strong></p>
+                    <p>En combinaciones, ABC = BAC = CAB (el orden no importa)</p>
+                    <p style="margin-top: 15px;"><strong>Características:</strong></p>
+                    <ul>
+                        <li>El orden NO importa</li>
+                        <li>NO se permiten repeticiones</li>
+                        <li>\(C(n,r) = C(n, n-r)\) (propiedad de simetría)</li>
+                        <li>Siempre: \(C(n,r) < V(n,r)\) cuando \(r > 1\)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 25: Combinaciones - Ejemplos 1 y 2 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Combinaciones</h2>
+                <p class="slide-subtitle">Ejemplos 1 y 2</p>
+            </div>
+            <div class="slide-content">
+                <!-- Ejemplo 1 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 1: Selección de Pizzas</div>
+                    <p>Una pizzería ofrece 12 ingredientes diferentes. Si deseas elegir exactamente 4 ingredientes para tu pizza (sin importar el orden), ¿cuántas pizzas diferentes puedes crear?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(29)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-29">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Se eligen 4 ingredientes de 12, el orden NO importa:</strong></p>
+                        <div class="formula-box">
+                            \[C(12,4) = \frac{12!}{4!(12-4)!} = \frac{12!}{4! \cdot 8!}\]
+                        </div>
+                        <p><strong>Simplificamos:</strong></p>
+                        <div class="formula-box">
+                            \[= \frac{12 \times 11 \times 10 \times 9}{4!} = \frac{12 \times 11 \times 10 \times 9}{24}\]
+                        </div>
+                        <p><strong>Calculamos:</strong></p>
+                        <ul>
+                            <li>\(12 \times 11 = 132\)</li>
+                            <li>\(132 \times 10 = 1,320\)</li>
+                            <li>\(1,320 \times 9 = 11,880\)</li>
+                            <li>\(4! = 24\)</li>
+                            <li>\(\displaystyle\frac{11,880}{24} = 495\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[C(12,4) = 495\]
+                        </div>
+                        <p><strong>Respuesta:</strong> Puedes crear <strong>495 pizzas diferentes</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- Ejemplo 2 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 2: Comité Escolar</div>
+                    <p>De un grupo de 9 estudiantes se debe formar un comité de 6 personas. ¿De cuántas formas se puede seleccionar este comité?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(30)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-30">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Podemos usar la propiedad de simetría \(C(n,r) = C(n,n-r)\):</strong></p>
+                        <div class="formula-box">
+                            \[C(9,6) = C(9, 9-6) = C(9,3)\]
+                        </div>
+                        <p><strong>Ahora calculamos \(C(9,3)\):</strong></p>
+                        <div class="formula-box">
+                            \[C(9,3) = \frac{9!}{3! \cdot 6!} = \frac{9 \times 8 \times 7}{3!} = \frac{9 \times 8 \times 7}{6}\]
+                        </div>
+                        <p><strong>Calculamos:</strong></p>
+                        <ul>
+                            <li>\(9 \times 8 = 72\)</li>
+                            <li>\(72 \times 7 = 504\)</li>
+                            <li>\(3! = 6\)</li>
+                            <li>\(\displaystyle\frac{504}{6} = 84\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[C(9,6) = 84\]
+                        </div>
+                        <p><strong>Respuesta:</strong> El comité se puede seleccionar de <strong>84 formas diferentes</strong>.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 26: Combinaciones - Ejemplos 3 y 4 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Combinaciones</h2>
+                <p class="slide-subtitle">Ejemplos 3 y 4</p>
+            </div>
+            <div class="slide-content">
+                <!-- Ejemplo 3 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 3: Equipo de Fútbol</div>
+                    <p>Un entrenador debe seleccionar 2 jugadores de un grupo de 7 para que tomen un examen médico. ¿De cuántas formas puede hacer esta selección?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(31)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-31">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Se eligen 2 jugadores de 7, el orden NO importa:</strong></p>
+                        <div class="formula-box">
+                            \[C(7,2) = \frac{7!}{2!(7-2)!} = \frac{7!}{2! \cdot 5!}\]
+                        </div>
+                        <p><strong>Simplificamos:</strong></p>
+                        <div class="formula-box">
+                            \[= \frac{7 \times 6}{2!} = \frac{7 \times 6}{2}\]
+                        </div>
+                        <p><strong>Calculamos:</strong></p>
+                        <ul>
+                            <li>\(7 \times 6 = 42\)</li>
+                            <li>\(2! = 2\)</li>
+                            <li>\(\displaystyle\frac{42}{2} = 21\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[C(7,2) = 21\]
+                        </div>
+                        <p><strong>Respuesta:</strong> El entrenador puede hacer la selección de <strong>21 formas diferentes</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- Ejemplo 4 -->
+                <div class="example-box">
+                    <div class="example-title">Ejemplo 4: Lotería</div>
+                    <p>En una lotería, se extraen 5 bolas de una urna con 13 bolas numeradas del 1 al 13. ¿Cuántas combinaciones diferentes de 5 números se pueden obtener?</p>
+                    
+                    <button class="btn-show-solution" onclick="toggleSolution(32)">Mostrar Solución</button>
+                    
+                    <div class="solution-box" id="solution-32">
+                        <div class="solution-title">Solución</div>
+                        <p><strong>Se eligen 5 bolas de 13, sin importar el orden:</strong></p>
+                        <div class="formula-box">
+                            \[C(13,5) = \frac{13!}{5! \cdot 8!} = \frac{13 \times 12 \times 11 \times 10 \times 9}{5!}\]
+                        </div>
+                        <p><strong>Calculamos:</strong></p>
+                        <ul>
+                            <li>\(5! = 120\)</li>
+                            <li>\(13 \times 12 = 156\)</li>
+                            <li>\(156 \times 11 = 1,716\)</li>
+                            <li>\(1,716 \times 10 = 17,160\)</li>
+                            <li>\(17,160 \times 9 = 154,440\)</li>
+                            <li>\(\displaystyle\frac{154,440}{120} = 1,287\)</li>
+                        </ul>
+                        <div class="formula-box">
+                            \[C(13,5) = 1,287\]
+                        </div>
+                        <p><strong>Respuesta:</strong> Se pueden obtener <strong>1,287 combinaciones diferentes</strong>.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide 27: Conclusión Final -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Resumen Final</h2>
+                <p class="slide-subtitle">Todas las Técnicas de Conteo</p>
+            </div>
+            <div class="slide-content">
+                <div class="definition-box">
+                    <div class="definition-title">Técnicas de Conteo Completas</div>
+                    <p><strong>1. Principio Multiplicativo:</strong> \(n_1 \times n_2 \times \cdots \times n_k\)</p>
+                    <p><strong>2. Factorial:</strong> \(n! = n \times (n-1) \times \cdots \times 1\)</p>
+                    <p><strong>3. Número Combinatorio:</strong> \(\displaystyle\binom{n}{k} = \frac{n!}{k!(n-k)!}\)</p>
+                    <p style="margin-top: 20px;"><strong>4. Permutaciones Simples:</strong> \(P(n) = n!\)</p>
+                    <p><strong>5. Permutaciones con Repetición:</strong> \(\displaystyle PR^{n}_{(n_1, n_2, \ldots, n_k)} = \frac{n!}{n_1! \cdot n_2! \cdot \ldots}\)</p>
+                    <p style="margin-top: 20px;"><strong>6. Variaciones sin Repetición:</strong> \(\displaystyle V(n,r) = \frac{n!}{(n-r)!}\)</p>
+                    <p><strong>7. Variaciones con Repetición:</strong> \(VR(n,r) = n^r\)</p>
+                    <p style="margin-top: 20px;"><strong>8. Combinaciones:</strong> \(\displaystyle C(n,r) = \frac{n!}{r!(n-r)!}\)</p>
+                </div>
+                <p style="text-align: center; font-size: 2rem; margin-top: 30px; color: var(--azulchile); font-weight: 700;">
+                    ¡Fin de la Presentación!
+                </p>
+                <p style="text-align: center; font-size: 1.6rem; margin-top: 15px; color: var(--rojochile);">
+                    ¿Preguntas?
+                </p>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegación -->
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">←</button>
+        <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">27</span></span>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">→</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('totalSlides').textContent = totalSlides;
+        
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if (i === index) {
+                    slide.classList.add('active');
+                }
+            });
+            
+            currentSlideIndex = index;
+            document.getElementById('currentSlide').textContent = index + 1;
+            
+            // Actualizar botones de navegación
+            document.getElementById('prevBtn').disabled = (index === 0);
+            document.getElementById('nextBtn').disabled = (index === totalSlides - 1);
+        }
+        
+        function changeSlide(direction) {
+            let newIndex = currentSlideIndex + direction;
+            if (newIndex >= 0 && newIndex < totalSlides) {
+                showSlide(newIndex);
+            }
+        }
+        
+        function toggleSolution(solutionId) {
+            const solution = document.getElementById('solution-' + solutionId);
+            const button = event.target;
+            
+            if (solution.classList.contains('show')) {
+                solution.classList.remove('show');
+                button.textContent = 'Mostrar Solución';
+                button.style.background = 'var(--verdechile)';
+            } else {
+                solution.classList.add('show');
+                button.textContent = 'Ocultar Solución';
+                button.style.background = 'var(--rojochile)';
+            }
+        }
+        
+        // Navegación con teclado
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight') {
+                changeSlide(1);
+            } else if (event.key === 'ArrowLeft') {
+                changeSlide(-1);
+            }
+        });
+        
+        // Inicializar
+        showSlide(0);
+    </script>
+</body>
+</html>

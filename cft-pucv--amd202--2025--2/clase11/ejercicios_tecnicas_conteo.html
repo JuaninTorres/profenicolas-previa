@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicios de Técnicas de Conteo. Variación y Combinación</title>
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- MathJax -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                packages: {'[+]': ['ams', 'base']},
+                macros: {
+                    binom: ['\\left(\\begin{array}{c}#1\\\\#2\\end{array}\\right)', 2]
+                }
+            },
+            svg: {
+                fontCache: 'global',
+                scale: 1.2
+            },
+            options: {
+                enableMenu: false
+            },
+            startup: {
+                ready() {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <style>
+        :root {
+            --azulchile: #0033A0;
+            --rojochile: #D52B1E;
+            --verdechile: #2E7D32;
+            --warmorange: #FF6F00;
+            --blancochile: #FFFFFF;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--azulchile) 0%, #1565C0 100%);
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+            font-size: 18px;
+        }
+        
+        .presentation-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .slide {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 50px 60px;
+            max-width: 1300px;
+            width: 100%;
+            min-height: 600px;
+            max-height: 92vh;
+            overflow-y: auto;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        /* Scrollbar personalizada */
+        .slide::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        .slide::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .slide::-webkit-scrollbar-thumb {
+            background: var(--azulchile);
+            border-radius: 10px;
+        }
+        
+        .slide::-webkit-scrollbar-thumb:hover {
+            background: var(--rojochile);
+        }
+        
+        .slide.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        h1 {
+            color: var(--azulchile);
+            font-size: 3.2em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            color: var(--rojochile);
+            font-size: 2.3em;
+            font-weight: bold;
+            margin-bottom: 25px;
+            border-bottom: 3px solid var(--rojochile);
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: var(--verdechile);
+            font-size: 1.7em;
+            font-weight: bold;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: var(--verdechile);
+            font-size: 1.8em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .exercise-header {
+            background: linear-gradient(135deg, var(--azulchile), #1976D2);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .exercise-content {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid var(--warmorange);
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            line-height: 1.8;
+        }
+        
+        .solution-box {
+            background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+            border: 2px solid var(--verdechile);
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 15px;
+            display: none;
+            font-size: 1.2em;
+        }
+        
+        .solution-box p {
+            margin-bottom: 12px;
+        }
+        
+        .solution-box ul, .solution-box ol {
+            margin-bottom: 15px;
+        }
+        
+        .solution-box.show {
+            display: block;
+            animation: slideDown 0.4s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .btn-toggle-solution {
+            background: linear-gradient(135deg, var(--verdechile), #43A047);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-top: 18px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 320px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .btn-toggle-solution:hover {
+            background: linear-gradient(135deg, #1B5E20, var(--verdechile));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.6);
+        }
+        
+        .btn-toggle-solution:active {
+            transform: translateY(0px);
+        }
+        
+        .btn-toggle-solution.showing {
+            background: linear-gradient(135deg, var(--rojochile), #C62828);
+            box-shadow: 0 4px 15px rgba(213, 43, 30, 0.4);
+        }
+        
+        .btn-toggle-solution.showing:hover {
+            background: linear-gradient(135deg, #B71C1C, var(--rojochile));
+            box-shadow: 0 6px 20px rgba(213, 43, 30, 0.6);
+        }
+        
+        .solution-header {
+            color: var(--verdechile);
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .solution-header::before {
+            content: "✓";
+            background: var(--verdechile);
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .formula-box {
+            background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+            border: 2px solid var(--warmorange);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 15px 0;
+            font-size: 1.2em;
+        }
+        
+        .formula-title {
+            color: var(--warmorange);
+            font-weight: bold;
+            font-size: 1.4em;
+            margin-bottom: 12px;
+        }
+        
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+        
+        .nav-btn {
+            background: var(--rojochile);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.3em;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(213, 43, 30, 0.4);
+        }
+        
+        .nav-btn:hover {
+            background: #B71C1C;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(213, 43, 30, 0.6);
+        }
+        
+        .slide-counter {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            background: var(--rojochile);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.3em;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, var(--azulchile), #1565C0);
+            color: white;
+            text-align: center;
+            padding: 18px;
+            margin-top: 40px;
+            border-radius: 10px;
+            font-size: 1.1em;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, #FFEB3B, #FFC107);
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 1.05em;
+        }
+        
+        .math-display {
+            font-size: 1.4em;
+            margin: 18px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        
+        /* Estilos específicos para MathJax */
+        mjx-container {
+            display: inline-block;
+            margin: 0.5em 0;
+        }
+        
+        mjx-container[display="true"] {
+            display: block;
+            margin: 1em 0;
+        }
+        
+        /* Asegurar que las fórmulas matemáticas sean visibles */
+        .MathJax {
+            font-size: 1.2em !important;
+        }
+        
+        ul, ol {
+            line-height: 1.9;
+            font-size: 1.2em;
+        }
+        
+        .badge-formula {
+            background: var(--azulchile);
+            color: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 1.05em;
+            font-weight: bold;
+            display: inline-block;
+            margin: 5px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 25px 20px;
+                min-height: auto;
+                max-height: 95vh;
+            }
+            h1 {
+                font-size: 2.3em;
+            }
+            h2 {
+                font-size: 1.8em;
+            }
+            h3 {
+                font-size: 1.4em;
+            }
+            .exercise-content {
+                font-size: 1.15em;
+            }
+            .solution-box {
+                font-size: 1.1em;
+            }
+            .exercise-header {
+                font-size: 1.3em;
+            }
+            .nav-btn {
+                font-size: 1.1em;
+                padding: 12px 22px;
+            }
+            .math-display {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-counter" id="slideCounter">1 / 10</div>
+    
+    <div class="presentation-container">
+        <!-- Slide 1: Portada -->
+        <div class="slide active">
+            <h1>📊 Ejercicios de Técnicas de Conteo<br><span style="font-size: 0.85em;">Variación y Combinación</span> 📊</h1>
+            <div class="subtitle">Práctica Mixta: Identifica y Resuelve</div>
+            
+            <div style="text-align: center; margin: 60px 0;">
+                <div style="background: linear-gradient(135deg, var(--azulchile), var(--rojochile)); color: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                    <h3 style="color: white; margin-bottom: 30px;">En esta presentación encontrarás:</h3>
+                    <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; margin-top: 30px;">
+                        <div style="flex: 1; min-width: 200px;">
+                            <div style="font-size: 3em; margin-bottom: 10px;">4️⃣</div>
+                            <div style="font-size: 1.2em;">Variaciones con Repetición</div>
+                        </div>
+                        <div style="flex: 1; min-width: 200px;">
+                            <div style="font-size: 3em; margin-bottom: 10px;">4️⃣</div>
+                            <div style="font-size: 1.2em;">Variaciones sin Repetición</div>
+                        </div>
+                        <div style="flex: 1; min-width: 200px;">
+                            <div style="font-size: 3em; margin-bottom: 10px;">6️⃣</div>
+                            <div style="font-size: 1.2em;">Combinaciones</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 50px; padding: 25px; background: #FFF3E0; border-radius: 15px; border: 3px solid var(--warmorange);">
+                <p style="font-size: 1.3em; color: var(--rojochile); font-weight: bold; margin: 0;">
+                    ⚡ Los ejercicios están mezclados: ¡Identifica qué técnica usar! ⚡
+                </p>
+                <p style="font-size: 1.1em; color: var(--azulchile); font-weight: bold; margin-top: 15px;">
+                    🎓 Contextos cercanos a tu vida: redes sociales, videojuegos, música, deportes y más
+                </p>
+            </div>
+            
+            <div class="footer">
+                Profesor Nicolás González | Material Educativo 2025
+            </div>
+        </div>
+        
+        <!-- Slide 2: Recordatorio de Fórmulas -->
+        <div class="slide">
+            <h2>📐 Recordatorio: Fórmulas de Técnicas de Conteo</h2>
+            
+            <div class="formula-box">
+                <div class="formula-title">🔄 Variaciones con Repetición (VR)</div>
+                <p><strong>Situación:</strong> Se permite repetir elementos y el orden importa.</p>
+                <div class="math-display">
+                    $$VR(n,r) = n^r$$
+                </div>
+                <p><strong>Ejemplo:</strong> Contraseñas, códigos PIN, placas de autos.</p>
+            </div>
+            
+            <div class="formula-box">
+                <div class="formula-title">🎯 Variaciones sin Repetición (V)</div>
+                <p><strong>Situación:</strong> NO se permite repetir elementos y el orden importa.</p>
+                <div class="math-display">
+                    $$V(n,r) = \frac{n!}{(n-r)!}$$
+                </div>
+                <p><strong>Ejemplo:</strong> Podios, cargos directivos, carreras de caballos.</p>
+            </div>
+            
+            <div class="formula-box">
+                <div class="formula-title">🎲 Combinaciones (C)</div>
+                <p><strong>Situación:</strong> NO se permite repetir elementos y el orden NO importa.</p>
+                <div class="math-display">
+                    $$C(n,r) = \binom{n}{r} = \frac{n!}{r!(n-r)!}$$
+                </div>
+                <p><strong>Ejemplo:</strong> Comités, equipos, grupos, selección de elementos.</p>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #E3F2FD, #BBDEFB); padding: 20px; border-radius: 10px; margin-top: 25px; border: 2px solid var(--azulchile);">
+                <h3 style="color: var(--azulchile); margin-top: 0;">💡 Preguntas clave para identificar:</h3>
+                <ol style="font-size: 1.1em;">
+                    <li><strong>¿Se pueden repetir?</strong> → Si SÍ: VR | Si NO: V o C</li>
+                    <li><strong>¿El orden importa?</strong> → Si SÍ: VR o V | Si NO: C</li>
+                </ol>
+            </div>
+        </div>
+        
+        <!-- Slide 3: Ejercicios 1 y 2 -->
+        <div class="slide">
+            <!-- Ejercicio 1 -->
+            <div class="exercise-header">
+                📝 Ejercicio 1
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>En tu curso hay 20 estudiantes y deben formar un equipo de 5 personas para participar en una competencia de robótica. ¿De cuántas maneras diferentes se puede formar este equipo?</strong></p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">Solución</div>
+                
+                <p><strong>Paso 1: Identificar el tipo de problema</strong></p>
+                <ul>
+                    <li>¿Se pueden repetir estudiantes? <span class="highlight">NO</span> (cada persona solo puede estar una vez en el equipo)</li>
+                    <li>¿El orden importa? <span class="highlight">NO</span> (solo importa quiénes forman el equipo, no tienen roles específicos)</li>
+                    <li><strong>Conclusión:</strong> Es una <span class="badge-formula">COMBINACIÓN</span></li>
+                </ul>
+                
+                <p><strong>Paso 2: Aplicar la fórmula</strong></p>
+                <div class="math-display">
+                    $$C(20,5) = \binom{20}{5} = \frac{20!}{5!(20-5)!} = \frac{20!}{5! \cdot 15!}$$
+                </div>
+                
+                <p><strong>Paso 3: Calcular</strong></p>
+                <div class="math-display">
+                    $$C(20,5) = \frac{20 \times 19 \times 18 \times 17 \times 16}{5 \times 4 \times 3 \times 2 \times 1} = \frac{1,860,480}{120} = 15,504$$
+                </div>
+                
+                <p><strong>Respuesta:</strong> Se puede formar el equipo de <span class="highlight">15,504 maneras diferentes</span>.</p>
+            </div>
+
+            <hr style="margin: 40px 0; border: 2px solid var(--azulchile); opacity: 0.3;">
+
+            <!-- Ejercicio 2 -->
+            <div class="exercise-header">
+                📝 Ejercicio 2
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>Estás creando una contraseña para tu cuenta de Instagram usando exactamente 4 dígitos (0-9). Si puedes repetir dígitos, ¿cuántas contraseñas diferentes puedes crear?</strong></p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">Solución</div>
+                
+                <p><strong>Paso 1: Identificar el tipo de problema</strong></p>
+                <ul>
+                    <li>¿Se pueden repetir dígitos? <span class="highlight">SÍ</span> (puedes usar el mismo número varias veces, como 2222)</li>
+                    <li>¿El orden importa? <span class="highlight">SÍ</span> (1234 es diferente a 4321)</li>
+                    <li><strong>Conclusión:</strong> Es una <span class="badge-formula">VARIACIÓN CON REPETICIÓN</span></li>
+                </ul>
+                
+                <p><strong>Paso 2: Identificar valores</strong></p>
+                <ul>
+                    <li>$n = 10$ (dígitos disponibles: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9)</li>
+                    <li>$r = 4$ (longitud de la contraseña)</li>
+                </ul>
+                
+                <p><strong>Paso 3: Aplicar la fórmula</strong></p>
+                <div class="math-display">
+                    $$VR(10,4) = 10^4 = 10,000$$
+                </div>
+                
+                <p><strong>Respuesta:</strong> Puedes crear <span class="highlight">10,000 contraseñas diferentes</span>.</p>
+            </div>
+        </div>
+        
+        <!-- Slide 4: Ejercicios 3 y 4 -->
+        <div class="slide">
+            <!-- Ejercicio 3 -->
+            <div class="exercise-header">
+                📝 Ejercicio 3
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>En una competencia de baile de tu colegio participan 12 parejas. Se deben premiar al primer, segundo y tercer lugar. ¿De cuántas maneras diferentes se pueden asignar estos tres lugares?</strong></p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">Solución</div>
+                
+                <p><strong>Paso 1: Identificar el tipo de problema</strong></p>
+                <ul>
+                    <li>¿Se pueden repetir parejas? <span class="highlight">NO</span> (una pareja no puede ganar dos lugares)</li>
+                    <li>¿El orden importa? <span class="highlight">SÍ</span> (1° lugar ≠ 2° lugar ≠ 3° lugar)</li>
+                    <li><strong>Conclusión:</strong> Es una <span class="badge-formula">VARIACIÓN SIN REPETICIÓN</span></li>
+                </ul>
+                
+                <p><strong>Paso 2: Identificar valores</strong></p>
+                <ul>
+                    <li>$n = 12$ (parejas participantes)</li>
+                    <li>$r = 3$ (lugares a premiar)</li>
+                </ul>
+                
+                <p><strong>Paso 3: Aplicar la fórmula</strong></p>
+                <div class="math-display">
+                    $$V(12,3) = \frac{12!}{(12-3)!} = \frac{12!}{9!} = 12 \times 11 \times 10$$
+                </div>
+                
+                <p><strong>Paso 4: Calcular</strong></p>
+                <div class="math-display">
+                    $$V(12,3) = 12 \times 11 \times 10 = 1,320$$
+                </div>
+                
+                <p><strong>Respuesta:</strong> Se pueden asignar los lugares de <span class="highlight">1,320 maneras diferentes</span>.</p>
+            </div>
+
+            <hr style="margin: 40px 0; border: 2px solid var(--azulchile); opacity: 0.3;">
+
+            <!-- Ejercicio 4 -->
+            <div class="exercise-header">
+                📝 Ejercicio 4
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>Tienes 15 amigos en tu lista de contactos y quieres seleccionar a 4 de ellos para formar un grupo de WhatsApp para organizar una fiesta sorpresa. ¿De cuántas formas puedes elegir a estas 4 personas?</strong></p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">Solución</div>
+                
+                <p><strong>Paso 1: Identificar el tipo de problema</strong></p>
+                <ul>
+                    <li>¿Se pueden repetir amigos? <span class="highlight">NO</span></li>
+                    <li>¿El orden importa? <span class="highlight">NO</span> (solo importa quiénes están en el grupo)</li>
+                    <li><strong>Conclusión:</strong> Es una <span class="badge-formula">COMBINACIÓN</span></li>
+                </ul>
+                
+                <p><strong>Paso 2: Aplicar la fórmula</strong></p>
+                <div class="math-display">
+                    $$C(15,4) = \binom{15}{4} = \frac{15!}{4!(15-4)!} = \frac{15!}{4! \cdot 11!}$$
+                </div>
+                
+                <p><strong>Paso 3: Calcular</strong></p>
+                <div class="math-display">
+                    $$C(15,4) = \frac{15 \times 14 \times 13 \times 12}{4 \times 3 \times 2 \times 1} = \frac{32,760}{24} = 1,365$$
+                </div>
+                
+                <p><strong>Respuesta:</strong> Puedes formar el grupo de <span class="highlight">1,365 formas diferentes</span>.</p>
+            </div>
+        </div>
+        
+        <!-- Slide 5: Ejercicios 5 y 6 -->
+        <div class="slide">
+            <!-- Ejercicio 5 -->
+            <div class="exercise-header">
+                📝 Ejercicio 5
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>En un juego de rol online, tu personaje puede elegir 5 habilidades especiales. Cada habilidad puede ser de uno de 4 tipos: Ataque, Defensa, Velocidad o Magia. Si puedes repetir tipos de habilidades (por ejemplo, tener 3 de Ataque), ¿cuántas combinaciones diferentes de habilidades puedes crear?</strong></p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">Solución</div>
+                
+                <p><strong>Paso 1: Identificar el tipo de problema</strong></p>
+                <ul>
+                    <li>¿Se pueden repetir tipos? <span class="highlight">SÍ</span> (puedes elegir el mismo tipo varias veces)</li>
+                    <li>¿El orden importa? <span class="highlight">SÍ</span> (la posición de cada habilidad es importante: habilidad 1, 2, 3, 4, 5)</li>
+                    <li><strong>Conclusión:</strong> Es una <span class="badge-formula">VARIACIÓN CON REPETICIÓN</span></li>
+                </ul>
+                
+                <p><strong>Paso 2: Identificar valores</strong></p>
+                <ul>
+                    <li>$n = 4$ (tipos de habilidades disponibles)</li>
+                    <li>$r = 5$ (número de habilidades a elegir)</li>
+                </ul>
+                
+                <p><strong>Paso 3: Aplicar la fórmula</strong></p>
+                <div class="math-display">
+                    $$VR(4,5) = 4^5 = 1,024$$
+                </div>
+                
+                <p><strong>Respuesta:</strong> Puedes crear <span class="highlight">1,024 combinaciones diferentes</span> de habilidades.</p>
+            </div>
+
+            <hr style="margin: 40px 0; border: 2px solid var(--azulchile); opacity: 0.3;">
+
+            <!-- Ejercicio 6 -->
+            <div class="exercise-header">
+                📝 Ejercicio 6
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>Tu profesor de música organizó un concierto donde 10 estudiantes tocarán instrumentos. Debe decidir el orden de presentación para los primeros 4 estudiantes que abrirán el show. ¿De cuántas maneras puede ordenar a estos 4 estudiantes?</strong></p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">Solución</div>
+                
+                <p><strong>Paso 1: Identificar el tipo de problema</strong></p>
+                <ul>
+                    <li>¿Se pueden repetir estudiantes? <span class="highlight">NO</span> (cada estudiante toca solo una vez)</li>
+                    <li>¿El orden importa? <span class="highlight">SÍ</span> (tocar primero es diferente a tocar cuarto)</li>
+                    <li><strong>Conclusión:</strong> Es una <span class="badge-formula">VARIACIÓN SIN REPETICIÓN</span></li>
+                </ul>
+                
+                <p><strong>Paso 2: Identificar valores</strong></p>
+                <ul>
+                    <li>$n = 10$ (estudiantes disponibles)</li>
+                    <li>$r = 4$ (posiciones a asignar)</li>
+                </ul>
+                
+                <p><strong>Paso 3: Aplicar la fórmula</strong></p>
+                <div class="math-display">
+                    $$V(10,4) = \frac{10!}{(10-4)!} = \frac{10!}{6!} = 10 \times 9 \times 8 \times 7$$
+                </div>
+                
+                <p><strong>Paso 4: Calcular</strong></p>
+                <div class="math-display">
+                    $$V(10,4) = 10 \times 9 \times 8 \times 7 = 5,040$$
+                </div>
+                
+                <p><strong>Respuesta:</strong> Puede ordenar a los estudiantes de <span class="highlight">5,040 maneras diferentes</span>.</p>
+            </div>
+        </div>
+        
+        <!-- Slide 6: Ejercicios 7 y 8 -->
+        <div class="slide">
+            <!-- Ejercicio 7 -->
+            <div class="exercise-header">
+                📝 Ejercicio 7
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>En Netflix hay una lista de 18 películas que quieres ver. Tienes tiempo este fin de semana para ver exactamente 6 de ellas. ¿De cuántas formas puedes elegir las 6 películas que verás?</strong></p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">Solución</div>
+                
+                <p><strong>Paso 1: Identificar el tipo de problema</strong></p>
+                <ul>
+                    <li>¿Se pueden repetir películas? <span class="highlight">NO</span> (cada película se ve una sola vez)</li>
+                    <li>¿El orden importa? <span class="highlight">NO</span> (solo importa qué películas verás, no en qué orden)</li>
+                    <li><strong>Conclusión:</strong> Es una <span class="badge-formula">COMBINACIÓN</span></li>
+                </ul>
+                
+                <p><strong>Paso 2: Aplicar la fórmula</strong></p>
+                <div class="math-display">
+                    $$C(18,6) = \binom{18}{6} = \frac{18!}{6!(18-6)!} = \frac{18!}{6! \cdot 12!}$$
+                </div>
+                
+                <p><strong>Paso 3: Calcular</strong></p>
+                <div class="math-display">
+                    $$C(18,6) = \frac{18 \times 17 \times 16 \times 15 \times 14 \times 13}{6 \times 5 \times 4 \times 3 \times 2 \times 1}$$
+                </div>
+                <div class="math-display">
+                    $$C(18,6) = \frac{13,366,080}{720} = 18,564$$
+                </div>
+                
+                <p><strong>Respuesta:</strong> Puedes elegir las películas de <span class="highlight">18,564 formas diferentes</span>.</p>
+            </div>
+
+            <hr style="margin: 40px 0; border: 2px solid var(--azulchile); opacity: 0.3;">
+
+            <!-- Ejercicio 8 -->
+            <div class="exercise-header">
+                📝 Ejercicio 8
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>Vas a crear un avatar personalizado para un videojuego. Debes elegir 6 características (color de pelo, tipo de ojos, nariz, boca, ropa, accesorios) y cada característica tiene 5 opciones diferentes. ¿Cuántos avatares únicos diferentes puedes crear?</strong></p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">Solución</div>
+                
+                <p><strong>Paso 1: Identificar el tipo de problema</strong></p>
+                <ul>
+                    <li>¿Se pueden "repetir" opciones entre características? <span class="highlight">SÍ</span> (cada característica elige independientemente de las demás)</li>
+                    <li>¿El orden/posición importa? <span class="highlight">SÍ</span> (cada característica es diferente: pelo ≠ ojos ≠ boca, etc.)</li>
+                    <li><strong>Conclusión:</strong> Es una <span class="badge-formula">VARIACIÓN CON REPETICIÓN</span></li>
+                </ul>
+                
+                <p><strong>Paso 2: Identificar valores</strong></p>
+                <ul>
+                    <li>$n = 5$ (opciones por característica)</li>
+                    <li>$r = 6$ (características totales)</li>
+                </ul>
+                
+                <p><strong>Paso 3: Aplicar la fórmula</strong></p>
+                <div class="math-display">
+                    $$VR(5,6) = 5^6 = 15,625$$
+                </div>
+                
+                <p><strong>Respuesta:</strong> Puedes crear <span class="highlight">15,625 avatares únicos</span> diferentes.</p>
+            </div>
+        </div>
+        
+        <!-- Slide 7: Ejercicios 9 y 10 -->
+        <div class="slide">
+            <!-- Ejercicio 9 -->
+            <div class="exercise-header">
+                📝 Ejercicio 9
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>En tu playlist de Spotify tienes 25 canciones favoritas. Quieres crear una playlist más corta seleccionando exactamente 7 canciones para tu entrenamiento en el gimnasio. ¿De cuántas formas puedes seleccionar estas 7 canciones?</strong></p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">Solución</div>
+                
+                <p><strong>Paso 1: Identificar el tipo de problema</strong></p>
+                <ul>
+                    <li>¿Se pueden repetir canciones? <span class="highlight">NO</span> (cada canción aparece una sola vez)</li>
+                    <li>¿El orden importa? <span class="highlight">NO</span> (solo importa qué canciones seleccionas para la playlist)</li>
+                    <li><strong>Conclusión:</strong> Es una <span class="badge-formula">COMBINACIÓN</span></li>
+                </ul>
+                
+                <p><strong>Paso 2: Aplicar la fórmula</strong></p>
+                <div class="math-display">
+                    $$C(25,7) = \binom{25}{7} = \frac{25!}{7!(25-7)!} = \frac{25!}{7! \cdot 18!}$$
+                </div>
+                
+                <p><strong>Paso 3: Calcular</strong></p>
+                <div class="math-display">
+                    $$C(25,7) = \frac{25 \times 24 \times 23 \times 22 \times 21 \times 20 \times 19}{7 \times 6 \times 5 \times 4 \times 3 \times 2 \times 1}$$
+                </div>
+                <div class="math-display">
+                    $$C(25,7) = \frac{2,422,728,000}{5,040} = 480,700$$
+                </div>
+                
+                <p><strong>Respuesta:</strong> Puedes seleccionar las canciones de <span class="highlight">480,700 formas diferentes</span>.</p>
+            </div>
+
+            <hr style="margin: 40px 0; border: 2px solid var(--azulchile); opacity: 0.3;">
+
+            <!-- Ejercicio 10 -->
+            <div class="exercise-header">
+                📝 Ejercicio 10
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>En el consejo estudiantil de tu colegio hay 14 miembros. Deben elegir a 3 personas para ocupar los cargos de Presidente, Vicepresidente y Secretario (en ese orden). ¿De cuántas formas se pueden asignar estos tres cargos?</strong></p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">Solución</div>
+                
+                <p><strong>Paso 1: Identificar el tipo de problema</strong></p>
+                <ul>
+                    <li>¿Se pueden repetir personas? <span class="highlight">NO</span> (una persona no puede ocupar dos cargos)</li>
+                    <li>¿El orden importa? <span class="highlight">SÍ</span> (Presidente ≠ Vicepresidente ≠ Secretario)</li>
+                    <li><strong>Conclusión:</strong> Es una <span class="badge-formula">VARIACIÓN SIN REPETICIÓN</span></li>
+                </ul>
+                
+                <p><strong>Paso 2: Identificar valores</strong></p>
+                <ul>
+                    <li>$n = 14$ (miembros del consejo)</li>
+                    <li>$r = 3$ (cargos a asignar)</li>
+                </ul>
+                
+                <p><strong>Paso 3: Aplicar la fórmula</strong></p>
+                <div class="math-display">
+                    $$V(14,3) = \frac{14!}{(14-3)!} = \frac{14!}{11!} = 14 \times 13 \times 12$$
+                </div>
+                
+                <p><strong>Paso 4: Calcular</strong></p>
+                <div class="math-display">
+                    $$V(14,3) = 14 \times 13 \times 12 = 2,184$$
+                </div>
+                
+                <p><strong>Respuesta:</strong> Se pueden asignar los cargos de <span class="highlight">2,184 formas diferentes</span>.</p>
+            </div>
+        </div>
+        
+        <!-- Slide 8: Ejercicios 11 y 12 -->
+        <div class="slide">
+            <!-- Ejercicio 11 -->
+            <div class="exercise-header">
+                📝 Ejercicio 11
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>Estás diseñando tu outfit (conjunto de ropa) para cada día de la semana escolar (5 días). Tienes 3 combinaciones básicas que puedes usar: deportiva, casual y formal. Si puedes repetir el mismo estilo en diferentes días, ¿cuántas formas diferentes tienes de planificar tu vestuario semanal?</strong></p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">Solución</div>
+                
+                <p><strong>Paso 1: Identificar el tipo de problema</strong></p>
+                <ul>
+                    <li>¿Se pueden repetir estilos? <span class="highlight">SÍ</span> (puedes usar "casual" varios días)</li>
+                    <li>¿El orden importa? <span class="highlight">SÍ</span> (cada día es diferente: lunes ≠ martes ≠ miércoles, etc.)</li>
+                    <li><strong>Conclusión:</strong> Es una <span class="badge-formula">VARIACIÓN CON REPETICIÓN</span></li>
+                </ul>
+                
+                <p><strong>Paso 2: Identificar valores</strong></p>
+                <ul>
+                    <li>$n = 3$ (estilos disponibles)</li>
+                    <li>$r = 5$ (días de la semana escolar)</li>
+                </ul>
+                
+                <p><strong>Paso 3: Aplicar la fórmula</strong></p>
+                <div class="math-display">
+                    $$VR(3,5) = 3^5 = 243$$
+                </div>
+                
+                <p><strong>Respuesta:</strong> Tienes <span class="highlight">243 formas diferentes</span> de planificar tu vestuario semanal.</p>
+            </div>
+
+            <hr style="margin: 40px 0; border: 2px solid var(--azulchile); opacity: 0.3;">
+
+            <!-- Ejercicio 12 -->
+            <div class="exercise-header">
+                📝 Ejercicio 12
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>Una heladería tiene 12 sabores diferentes. Quieres pedir un helado con exactamente 4 sabores (en la misma copa, sin importar el orden). ¿De cuántas formas puedes elegir los 4 sabores?</strong></p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">Solución</div>
+                
+                <p><strong>Paso 1: Identificar el tipo de problema</strong></p>
+                <ul>
+                    <li>¿Se pueden repetir sabores? <span class="highlight">NO</span> (cada sabor aparece solo una vez)</li>
+                    <li>¿El orden importa? <span class="highlight">NO</span> (fresa-chocolate-vainilla-limón es lo mismo que chocolate-fresa-limón-vainilla)</li>
+                    <li><strong>Conclusión:</strong> Es una <span class="badge-formula">COMBINACIÓN</span></li>
+                </ul>
+                
+                <p><strong>Paso 2: Aplicar la fórmula</strong></p>
+                <div class="math-display">
+                    $$C(12,4) = \binom{12}{4} = \frac{12!}{4!(12-4)!} = \frac{12!}{4! \cdot 8!}$$
+                </div>
+                
+                <p><strong>Paso 3: Calcular</strong></p>
+                <div class="math-display">
+                    $$C(12,4) = \frac{12 \times 11 \times 10 \times 9}{4 \times 3 \times 2 \times 1} = \frac{11,880}{24} = 495$$
+                </div>
+                
+                <p><strong>Respuesta:</strong> Puedes elegir los sabores de <span class="highlight">495 formas diferentes</span>.</p>
+            </div>
+        </div>
+        
+        <!-- Slide 9: Ejercicios 13 y 14 -->
+        <div class="slide">
+            <!-- Ejercicio 13 -->
+            <div class="exercise-header">
+                📝 Ejercicio 13
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>Tu profesor de arte organizó una exposición donde 9 estudiantes presentarán sus trabajos. Debe definir el orden de presentación para los primeros 5 estudiantes que expondrán. ¿De cuántas maneras puede organizar este orden?</strong></p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">Solución</div>
+                
+                <p><strong>Paso 1: Identificar el tipo de problema</strong></p>
+                <ul>
+                    <li>¿Se pueden repetir estudiantes? <span class="highlight">NO</span> (cada estudiante presenta solo una vez)</li>
+                    <li>¿El orden importa? <span class="highlight">SÍ</span> (presentar primero es diferente a presentar quinto)</li>
+                    <li><strong>Conclusión:</strong> Es una <span class="badge-formula">VARIACIÓN SIN REPETICIÓN</span></li>
+                </ul>
+                
+                <p><strong>Paso 2: Identificar valores</strong></p>
+                <ul>
+                    <li>$n = 9$ (estudiantes que expondrán)</li>
+                    <li>$r = 5$ (posiciones a ordenar)</li>
+                </ul>
+                
+                <p><strong>Paso 3: Aplicar la fórmula</strong></p>
+                <div class="math-display">
+                    $$V(9,5) = \frac{9!}{(9-5)!} = \frac{9!}{4!} = 9 \times 8 \times 7 \times 6 \times 5$$
+                </div>
+                
+                <p><strong>Paso 4: Calcular</strong></p>
+                <div class="math-display">
+                    $$V(9,5) = 9 \times 8 \times 7 \times 6 \times 5 = 15,120$$
+                </div>
+                
+                <p><strong>Respuesta:</strong> Puede organizar el orden de <span class="highlight">15,120 maneras diferentes</span>.</p>
+            </div>
+
+            <hr style="margin: 40px 0; border: 2px solid var(--azulchile); opacity: 0.3;">
+
+            <!-- Ejercicio 14 -->
+            <div class="exercise-header">
+                📝 Ejercicio 14
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>En tu colegio, el equipo de fútbol tiene 16 jugadores inscritos. El entrenador debe seleccionar 11 jugadores para formar el equipo titular del próximo partido. ¿De cuántas formas puede seleccionar a estos 11 jugadores?</strong></p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">Solución</div>
+                
+                <p><strong>Paso 1: Identificar el tipo de problema</strong></p>
+                <ul>
+                    <li>¿Se pueden repetir jugadores? <span class="highlight">NO</span> (cada jugador puede estar solo una vez en el campo)</li>
+                    <li>¿El orden importa? <span class="highlight">NO</span> (solo importa quiénes forman el equipo titular, no sus posiciones específicas en este problema)</li>
+                    <li><strong>Conclusión:</strong> Es una <span class="badge-formula">COMBINACIÓN</span></li>
+                </ul>
+                
+                <p><strong>Paso 2: Aplicar la fórmula</strong></p>
+                <div class="math-display">
+                    $$C(16,11) = \binom{16}{11} = \frac{16!}{11!(16-11)!} = \frac{16!}{11! \cdot 5!}$$
+                </div>
+                
+                <p><strong>Paso 3: Calcular (Propiedad: $C(n,r) = C(n, n-r)$)</strong></p>
+                <p>Podemos usar: $C(16,11) = C(16,5)$ para simplificar:</p>
+                <div class="math-display">
+                    $$C(16,5) = \frac{16 \times 15 \times 14 \times 13 \times 12}{5 \times 4 \times 3 \times 2 \times 1} = \frac{524,160}{120} = 4,368$$
+                </div>
+                
+                <p><strong>Respuesta:</strong> El entrenador puede seleccionar el equipo titular de <span class="highlight">4,368 formas diferentes</span>.</p>
+            </div>
+        </div>
+        
+        <!-- Slide 10: Resumen Final -->
+        <div class="slide">
+            <h2>🎯 ¡Excelente Trabajo!</h2>
+            
+            <div style="background: linear-gradient(135deg, #E8F5E9, #C8E6C9); padding: 30px; border-radius: 15px; border: 3px solid var(--verdechile); margin-bottom: 30px;">
+                <h3 style="color: var(--verdechile); text-align: center; margin-top: 0;">📊 Resumen de Ejercicios Completados</h3>
+                <div style="display: flex; justify-content: space-around; margin-top: 25px; flex-wrap: wrap; gap: 20px;">
+                    <div style="text-align: center; flex: 1; min-width: 200px;">
+                        <div style="font-size: 3em; color: var(--azulchile);">✓</div>
+                        <div style="font-size: 1.3em; font-weight: bold; color: var(--azulchile);">4</div>
+                        <div>Variaciones con Repetición</div>
+                    </div>
+                    <div style="text-align: center; flex: 1; min-width: 200px;">
+                        <div style="font-size: 3em; color: var(--rojochile);">✓</div>
+                        <div style="font-size: 1.3em; font-weight: bold; color: var(--rojochile);">4</div>
+                        <div>Variaciones sin Repetición</div>
+                    </div>
+                    <div style="text-align: center; flex: 1; min-width: 200px;">
+                        <div style="font-size: 3em; color: var(--verdechile);">✓</div>
+                        <div style="font-size: 1.3em; font-weight: bold; color: var(--verdechile);">6</div>
+                        <div>Combinaciones</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #FFF3E0, #FFE0B2); padding: 25px; border-radius: 15px; border: 3px solid var(--warmorange); margin-bottom: 30px;">
+                <h3 style="color: var(--warmorange); margin-top: 0;">💡 Consejos para el Éxito</h3>
+                <ol style="font-size: 1.15em; line-height: 2;">
+                    <li><strong>Lee cuidadosamente</strong> el enunciado para identificar las palabras clave.</li>
+                    <li><strong>Pregúntate:</strong> ¿Se puede repetir? ¿El orden importa?</li>
+                    <li><strong>Identifica</strong> qué técnica aplicar antes de calcular.</li>
+                    <li><strong>Verifica</strong> tus cálculos y que la respuesta tenga sentido.</li>
+                    <li><strong>Practica</strong> con diferentes tipos de problemas regularmente.</li>
+                </ol>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, var(--azulchile), #1976D2); color: white; padding: 30px; border-radius: 15px; text-align: center;">
+                <h3 style="color: white; margin-top: 0; font-size: 1.8em;">🌟 Fórmulas Rápidas 🌟</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px;">
+                        <div style="font-weight: bold; margin-bottom: 10px;">Con Repetición + Orden</div>
+                        <div style="font-size: 1.3em;">$VR(n,r) = n^r$</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px;">
+                        <div style="font-weight: bold; margin-bottom: 10px;">Sin Repetición + Orden</div>
+                        <div style="font-size: 1.3em;">$V(n,r) = \frac{n!}{(n-r)!}$</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px;">
+                        <div style="font-weight: bold; margin-bottom: 10px;">Sin Repetición + Sin Orden</div>
+                        <div style="font-size: 1.3em;">$C(n,r) = \frac{n!}{r!(n-r)!}$</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer" style="margin-top: 40px;">
+                <strong>📚 Profesor Nicolás González | Material Educativo 2025</strong><br>
+                Presentación creada con fines pedagógicos | Técnicas de Conteo
+            </div>
+        </div>
+    </div>
+    
+    <div class="navigation">
+        <button class="nav-btn" onclick="changeSlide(-1)">◀ Anterior</button>
+        <button class="nav-btn" onclick="changeSlide(1)">Siguiente ▶</button>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            updateCounter();
+            
+            // Re-render MathJax on slide change
+            if (typeof MathJax !== 'undefined') {
+                MathJax.typesetPromise();
+            }
+        }
+        
+        function changeSlide(direction) {
+            showSlide(currentSlide + direction);
+        }
+        
+        function updateCounter() {
+            document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (event.key === 'ArrowRight') {
+                changeSlide(1);
+            }
+        });
+        
+        // Toggle solution visibility
+        function toggleSolution(button) {
+            const solutionBox = button.nextElementSibling;
+            const icon = button.querySelector('.icon');
+            const text = button.querySelector('.text');
+            
+            if (solutionBox.classList.contains('show')) {
+                // Hide solution
+                solutionBox.classList.remove('show');
+                button.classList.remove('showing');
+                icon.textContent = '👁️';
+                text.textContent = 'Ver Solución';
+            } else {
+                // Show solution
+                solutionBox.classList.add('show');
+                button.classList.add('showing');
+                icon.textContent = '✖️';
+                text.textContent = 'Ocultar Solución';
+                
+                // Re-render MathJax for the newly shown solution
+                if (typeof MathJax !== 'undefined') {
+                    MathJax.typesetPromise([solutionBox]);
+                }
+            }
+        }
+        
+        // Hide all solutions when changing slides
+        function hideAllSolutions() {
+            const buttons = document.querySelectorAll('.btn-toggle-solution');
+            buttons.forEach(button => {
+                const solutionBox = button.nextElementSibling;
+                const icon = button.querySelector('.icon');
+                const text = button.querySelector('.text');
+                
+                if (solutionBox.classList.contains('show')) {
+                    solutionBox.classList.remove('show');
+                    button.classList.remove('showing');
+                    icon.textContent = '👁️';
+                    text.textContent = 'Ver Solución';
+                }
+            });
+        }
+        
+        // Modify showSlide to hide solutions when changing slides
+        const originalShowSlide = showSlide;
+        showSlide = function(n) {
+            hideAllSolutions();
+            originalShowSlide(n);
+        };
+        
+        // Initialize
+        updateCounter();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distribución Binomial - Matemáticas</title>
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- MathJax -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                packages: {'[+]': ['ams', 'base']},
+                macros: {
+                    binom: ['\\left(\\begin{array}{c}#1\\\\#2\\end{array}\\right)', 2]
+                }
+            },
+            svg: {
+                fontCache: 'global',
+                scale: 1.2
+            },
+            options: {
+                enableMenu: false
+            },
+            startup: {
+                ready() {
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --azulchile: #0033A0;
+            --rojochile: #D52B1E;
+            --verdechile: #2E7D32;
+            --warmorange: #FF6F00;
+            --blancochile: #FFFFFF;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--azulchile) 0%, #1565C0 100%);
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+            font-size: 18px;
+        }
+        
+        .presentation-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .slide {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 50px 60px;
+            max-width: 1300px;
+            width: 100%;
+            min-height: 600px;
+            max-height: 92vh;
+            overflow-y: auto;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .slide.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        h1 {
+            color: var(--azulchile);
+            font-size: 3.2em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            font-family: 'Roboto Slab', serif;
+        }
+        
+        h2 {
+            color: var(--rojochile);
+            font-size: 2.4em;
+            font-weight: 700;
+            margin-bottom: 25px;
+            border-bottom: 4px solid var(--rojochile);
+            padding-bottom: 12px;
+            font-family: 'Roboto Slab', serif;
+        }
+        
+        h3 {
+            color: var(--verdechile);
+            font-size: 1.8em;
+            font-weight: 600;
+            margin-top: 25px;
+            margin-bottom: 18px;
+        }
+        
+        p {
+            font-size: 1.25em;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: justify;
+        }
+        
+        .definition-box {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border-left: 6px solid var(--azulchile);
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .definition-box p {
+            margin-bottom: 10px;
+        }
+        
+        .formula-box {
+            background: linear-gradient(135deg, #FFF9C4 0%, #FFF59D 100%);
+            border: 3px solid var(--warmorange);
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+        
+        .formula-box .math-display {
+            font-size: 1.6em;
+            margin: 20px 0;
+        }
+        
+        .conditions-list {
+            background: #F1F8E9;
+            border-left: 6px solid var(--verdechile);
+            padding: 20px 25px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .conditions-list ul {
+            margin: 0;
+            padding-left: 25px;
+        }
+        
+        .conditions-list li {
+            font-size: 1.2em;
+            line-height: 1.9;
+            margin-bottom: 12px;
+            color: #2C3E50;
+        }
+        
+        .exercise-header {
+            background: linear-gradient(135deg, var(--rojochile), #C62828);
+            color: white;
+            padding: 18px 30px;
+            border-radius: 10px;
+            font-size: 1.6em;
+            font-weight: bold;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        
+        .exercise-content {
+            background: #F5F5F5;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            line-height: 1.8;
+            border: 2px solid #E0E0E0;
+        }
+        
+        .exercise-content p {
+            margin-bottom: 15px;
+        }
+        
+        .btn-toggle-solution {
+            background: linear-gradient(135deg, var(--verdechile), #388E3C);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.3em;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 25px auto;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-toggle-solution:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #388E3C, #2E7D32);
+        }
+        
+        .btn-toggle-solution.showing {
+            background: linear-gradient(135deg, var(--rojochile), #C62828);
+        }
+        
+        .btn-toggle-solution.showing:hover {
+            background: linear-gradient(135deg, #C62828, #B71C1C);
+        }
+        
+        .btn-toggle-solution .icon {
+            font-size: 1.4em;
+        }
+        
+        .solution-box {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            border-left: 6px solid var(--verdechile);
+            border-radius: 10px;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .solution-box.show {
+            max-height: 2000px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid var(--verdechile);
+        }
+        
+        .solution-header {
+            color: var(--verdechile);
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-bottom: 3px solid var(--verdechile);
+            padding-bottom: 10px;
+        }
+        
+        .solution-box p {
+            font-size: 1.2em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .solution-box ul {
+            margin-left: 25px;
+            font-size: 1.2em;
+            line-height: 1.9;
+        }
+        
+        .solution-box li {
+            margin-bottom: 12px;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, #FFEB3B, #FFC107);
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 1.05em;
+        }
+        
+        .math-display {
+            font-size: 1.4em;
+            margin: 18px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        
+        .badge-formula {
+            background: var(--azulchile);
+            color: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 1.05em;
+            font-weight: bold;
+            display: inline-block;
+            margin: 5px;
+        }
+        
+        .nav-btn {
+            position: fixed;
+            bottom: 30px;
+            background: var(--azulchile);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.8em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+        
+        .nav-btn:hover {
+            transform: scale(1.1);
+            background: #001f6d;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .nav-btn.prev {
+            left: 30px;
+        }
+        
+        .nav-btn.next {
+            right: 30px;
+        }
+        
+        .slide-counter {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            background: var(--rojochile);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.3em;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, var(--azulchile), #1565C0);
+            color: white;
+            text-align: center;
+            padding: 18px;
+            margin-top: 40px;
+            border-radius: 10px;
+            font-size: 1.1em;
+        }
+        
+        /* Estilos específicos para MathJax */
+        mjx-container {
+            display: inline-block;
+            margin: 0.5em 0;
+        }
+        
+        mjx-container[display="true"] {
+            display: block;
+            margin: 1em 0;
+        }
+        
+        .MathJax {
+            font-size: 1.2em !important;
+        }
+        
+        ul, ol {
+            line-height: 1.9;
+            font-size: 1.2em;
+        }
+        
+        /* Scrollbar personalizado */
+        .slide::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        .slide::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .slide::-webkit-scrollbar-thumb {
+            background: var(--azulchile);
+            border-radius: 10px;
+        }
+        
+        .slide::-webkit-scrollbar-thumb:hover {
+            background: #001f6d;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 25px 20px;
+                min-height: auto;
+                max-height: 95vh;
+            }
+            h1 {
+                font-size: 2.3em;
+            }
+            h2 {
+                font-size: 1.8em;
+            }
+            h3 {
+                font-size: 1.4em;
+            }
+            .exercise-content {
+                font-size: 1.15em;
+            }
+            .solution-box {
+                font-size: 1.1em;
+            }
+            .exercise-header {
+                font-size: 1.3em;
+            }
+            .nav-btn {
+                font-size: 1.4em;
+                padding: 12px 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Slide 1: Portada -->
+        <div class="slide active">
+            <h1 style="margin-top: 80px;">📊 Distribución Binomial</h1>
+            <p style="text-align: center; font-size: 1.6em; color: var(--azulchile); margin-top: 50px;">
+                Probabilidad y Estadística
+            </p>
+            <p style="text-align: center; font-size: 1.3em; color: #555; margin-top: 30px;">
+                Una variable aleatoria discreta fundamental
+            </p>
+            
+            <div class="footer">
+                <strong>Profesor Nicolás González</strong> | Material Educativo
+            </div>
+        </div>
+        
+        <!-- Slide 2: Definición -->
+        <div class="slide">
+            <h2>🎯 Definición de Distribución Binomial</h2>
+            
+            <div class="definition-box">
+                <p><strong>Una distribución binomial</strong> es un modelo de probabilidad que describe el número de <span class="highlight">éxitos</span> en una secuencia de <span class="highlight">n ensayos independientes</span>, donde cada ensayo tiene solo dos resultados posibles: <strong>éxito</strong> o <strong>fracaso</strong>.</p>
+            </div>
+            
+            <h3>📋 Condiciones para aplicar la distribución binomial:</h3>
+            
+            <div class="conditions-list">
+                <ul>
+                    <li><strong>Número fijo de ensayos:</strong> Se realizan exactamente $n$ ensayos o repeticiones del experimento.</li>
+                    
+                    <li><strong>Dos resultados posibles:</strong> Cada ensayo tiene solo dos resultados mutuamente excluyentes: "éxito" o "fracaso".</li>
+                    
+                    <li><strong>Independencia:</strong> Los ensayos son independientes entre sí. El resultado de un ensayo no afecta el resultado de otro.</li>
+                    
+                    <li><strong>Probabilidad constante:</strong> La probabilidad de éxito $p$ es la misma en cada ensayo.</li>
+                </ul>
+            </div>
+            
+            <p style="margin-top: 30px; font-size: 1.3em; text-align: center; color: var(--azulchile);">
+                <strong>Notación:</strong> Si una variable aleatoria $X$ sigue una distribución binomial, escribimos: 
+                <span class="badge-formula">$X \sim B(n, p)$</span>
+            </p>
+            
+            <p style="text-align: center; font-size: 1.15em; color: #555; margin-top: 15px;">
+                donde $n$ = número de ensayos y $p$ = probabilidad de éxito en cada ensayo
+            </p>
+            
+            <div class="footer">
+                <strong>Profesor Nicolás González</strong> | Material Educativo
+            </div>
+        </div>
+        
+        <!-- Slide 3: Fórmula -->
+        <div class="slide">
+            <h2>📐 Fórmula de la Distribución Binomial</h2>
+            
+            <p style="font-size: 1.3em; text-align: center; margin-top: 30px;">
+                La probabilidad de obtener <strong>exactamente $k$ éxitos</strong> en $n$ ensayos se calcula mediante:
+            </p>
+            
+            <div class="formula-box">
+                <div class="math-display">
+                    $$P(X = k) = \binom{n}{k} \cdot p^k \cdot (1-p)^{n-k}$$
+                </div>
+            </div>
+            
+            <h3>🔍 Componentes de la fórmula:</h3>
+            
+            <div style="background: #F5F5F5; padding: 25px; border-radius: 10px; margin: 25px 0;">
+                <ul style="font-size: 1.25em;">
+                    <li style="margin-bottom: 20px;">
+                        <strong>$\displaystyle\binom{n}{k} = \frac{n!}{k!(n-k)!}$</strong> : Coeficiente binomial que cuenta las formas de elegir $k$ éxitos entre $n$ ensayos.
+                    </li>
+                    
+                    <li style="margin-bottom: 20px;">
+                        <strong>$p^k$</strong> : Probabilidad de obtener $k$ éxitos (donde $p$ es la probabilidad de éxito en un ensayo).
+                    </li>
+                    
+                    <li style="margin-bottom: 20px;">
+                        <strong>$(1-p)^{n-k}$</strong> : Probabilidad de obtener $n-k$ fracasos (donde $1-p$ es la probabilidad de fracaso en un ensayo).
+                    </li>
+                    
+                    <li style="margin-bottom: 20px;">
+                        <strong>$k$</strong> : Número de éxitos que queremos calcular (donde $k = 0, 1, 2, \ldots, n$).
+                    </li>
+                    
+                    <li>
+                        <strong>$n$</strong> : Número total de ensayos independientes.
+                    </li>
+                </ul>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #E1F5FE, #B3E5FC); padding: 20px; border-radius: 10px; border-left: 6px solid var(--azulchile); margin-top: 30px;">
+                <p style="font-size: 1.2em; margin-bottom: 5px;"><strong>📝 Nota importante:</strong></p>
+                <p style="font-size: 1.15em; margin: 0;">Esta fórmula nos permite calcular la probabilidad de obtener exactamente $k$ éxitos. Para calcular probabilidades acumuladas (como "al menos" o "a lo sumo"), debemos sumar las probabilidades correspondientes.</p>
+            </div>
+            
+            <div class="footer">
+                <strong>Profesor Nicolás González</strong> | Material Educativo
+            </div>
+        </div>
+        
+        <!-- Slide 4: Ejemplo 1 -->
+        <div class="slide">
+            <div class="exercise-header">
+                📝 Ejemplo 1: Lanzamiento de Moneda
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>Enunciado:</strong></p>
+                <p>Se lanza una moneda justa 5 veces. ¿Cuál es la probabilidad de obtener exactamente 3 caras?</p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">✅ Solución</div>
+                
+                <p><strong>Paso 1: Identificar los valores</strong></p>
+                <ul>
+                    <li>$n = 5$ (número de lanzamientos)</li>
+                    <li>$k = 3$ (número de éxitos deseados: obtener cara)</li>
+                    <li>$p = 0.5$ (probabilidad de obtener cara en un lanzamiento)</li>
+                    <li>$1 - p = 0.5$ (probabilidad de obtener sello)</li>
+                </ul>
+                
+                <p><strong>Paso 2: Verificar condiciones de la distribución binomial</strong></p>
+                <ul>
+                    <li>✓ Número fijo de ensayos: 5 lanzamientos</li>
+                    <li>✓ Dos resultados posibles: cara o sello</li>
+                    <li>✓ Ensayos independientes: cada lanzamiento no afecta a los demás</li>
+                    <li>✓ Probabilidad constante: $p = 0.5$ en cada lanzamiento</li>
+                </ul>
+                
+                <p><strong>Paso 3: Aplicar la fórmula de distribución binomial</strong></p>
+                <div class="math-display">
+                    $$P(X = 3) = \binom{5}{3} \cdot (0.5)^3 \cdot (0.5)^{5-3}$$
+                </div>
+                
+                <p><strong>Paso 4: Calcular el coeficiente binomial</strong></p>
+                <div class="math-display">
+                    $$\binom{5}{3} = \frac{5!}{3!(5-3)!} = \frac{5!}{3! \cdot 2!} = \frac{5 \times 4 \times 3!}{3! \times 2 \times 1} = \frac{20}{2} = 10$$
+                </div>
+                
+                <p><strong>Paso 5: Calcular las potencias</strong></p>
+                <div class="math-display">
+                    $$(0.5)^3 = 0.125$$
+                    $$(0.5)^2 = 0.25$$
+                </div>
+                
+                <p><strong>Paso 6: Calcular la probabilidad final</strong></p>
+                <div class="math-display">
+                    $$P(X = 3) = 10 \times 0.125 \times 0.25 = 10 \times 0.03125 = 0.3125$$
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #C8E6C9, #A5D6A7); padding: 20px; border-radius: 10px; margin-top: 25px; border: 3px solid var(--verdechile);">
+                    <p style="font-size: 1.3em; margin: 0; text-align: center;">
+                        <strong>Respuesta:</strong> La probabilidad de obtener exactamente 3 caras en 5 lanzamientos es <span class="highlight">0.3125 o 31.25%</span>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <strong>Profesor Nicolás González</strong> | Material Educativo
+            </div>
+        </div>
+        
+        <!-- Slide 5: Ejemplo 2 -->
+        <div class="slide">
+            <div class="exercise-header">
+                📝 Ejemplo 2: Control de Calidad
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>Enunciado:</strong></p>
+                <p>Una fábrica produce componentes electrónicos. Se sabe que el 10% de los componentes son defectuosos. Si se seleccionan al azar 8 componentes, ¿cuál es la probabilidad de encontrar exactamente 2 componentes defectuosos?</p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">✅ Solución</div>
+                
+                <p><strong>Paso 1: Identificar los valores</strong></p>
+                <ul>
+                    <li>$n = 8$ (número de componentes seleccionados)</li>
+                    <li>$k = 2$ (número de componentes defectuosos que buscamos)</li>
+                    <li>$p = 0.10$ (probabilidad de que un componente sea defectuoso)</li>
+                    <li>$1 - p = 0.90$ (probabilidad de que un componente NO sea defectuoso)</li>
+                </ul>
+                
+                <p><strong>Paso 2: Verificar condiciones de la distribución binomial</strong></p>
+                <ul>
+                    <li>✓ Número fijo de ensayos: 8 componentes</li>
+                    <li>✓ Dos resultados posibles: defectuoso o no defectuoso</li>
+                    <li>✓ Ensayos independientes: la selección de un componente no afecta a los demás</li>
+                    <li>✓ Probabilidad constante: $p = 0.10$ para cada componente</li>
+                </ul>
+                
+                <p><strong>Paso 3: Aplicar la fórmula de distribución binomial</strong></p>
+                <div class="math-display">
+                    $$P(X = 2) = \binom{8}{2} \cdot (0.10)^2 \cdot (0.90)^{8-2}$$
+                </div>
+                
+                <p><strong>Paso 4: Calcular el coeficiente binomial</strong></p>
+                <div class="math-display">
+                    $$\binom{8}{2} = \frac{8!}{2!(8-2)!} = \frac{8!}{2! \cdot 6!} = \frac{8 \times 7 \times 6!}{2 \times 1 \times 6!} = \frac{56}{2} = 28$$
+                </div>
+                
+                <p><strong>Paso 5: Calcular las potencias</strong></p>
+                <div class="math-display">
+                    $$(0.10)^2 = 0.01$$
+                    $$(0.90)^6 = 0.531441$$
+                </div>
+                
+                <p><strong>Paso 6: Calcular la probabilidad final</strong></p>
+                <div class="math-display">
+                    $$P(X = 2) = 28 \times 0.01 \times 0.531441 = 28 \times 0.00531441 = 0.14880$$
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #C8E6C9, #A5D6A7); padding: 20px; border-radius: 10px; margin-top: 25px; border: 3px solid var(--verdechile);">
+                    <p style="font-size: 1.3em; margin: 0; text-align: center;">
+                        <strong>Respuesta:</strong> La probabilidad de encontrar exactamente 2 componentes defectuosos en una muestra de 8 es <span class="highlight">0.1488 o 14.88%</span>
+                    </p>
+                </div>
+                
+                <div style="background: #E1F5FE; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 5px solid var(--azulchile);">
+                    <p style="font-size: 1.1em; margin: 0;"><strong>💡 Interpretación:</strong> Aproximadamente 1 de cada 7 muestras de 8 componentes contendrá exactamente 2 defectuosos.</p>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <strong>Profesor Nicolás González</strong> | Material Educativo
+            </div>
+        </div>
+        
+        <!-- Slide 6: Ejemplo 3 -->
+        <div class="slide">
+            <div class="exercise-header">
+                📝 Ejemplo 3: Examen de Opción Múltiple
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>Enunciado:</strong></p>
+                <p>Un estudiante responde al azar un examen de 10 preguntas de opción múltiple. Cada pregunta tiene 4 alternativas y solo una es correcta. ¿Cuál es la probabilidad de que el estudiante acierte exactamente 4 preguntas?</p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">✅ Solución</div>
+                
+                <p><strong>Paso 1: Identificar los valores</strong></p>
+                <ul>
+                    <li>$n = 10$ (número de preguntas en el examen)</li>
+                    <li>$k = 4$ (número de preguntas que se desea acertar)</li>
+                    <li>$p = \frac{1}{4} = 0.25$ (probabilidad de acertar una pregunta al azar)</li>
+                    <li>$1 - p = \frac{3}{4} = 0.75$ (probabilidad de fallar una pregunta)</li>
+                </ul>
+                
+                <p><strong>Paso 2: Verificar condiciones de la distribución binomial</strong></p>
+                <ul>
+                    <li>✓ Número fijo de ensayos: 10 preguntas</li>
+                    <li>✓ Dos resultados posibles: respuesta correcta o incorrecta</li>
+                    <li>✓ Ensayos independientes: responder una pregunta no afecta a las demás</li>
+                    <li>✓ Probabilidad constante: $p = 0.25$ para cada pregunta</li>
+                </ul>
+                
+                <p><strong>Paso 3: Aplicar la fórmula de distribución binomial</strong></p>
+                <div class="math-display">
+                    $$P(X = 4) = \binom{10}{4} \cdot (0.25)^4 \cdot (0.75)^{10-4}$$
+                </div>
+                
+                <p><strong>Paso 4: Calcular el coeficiente binomial</strong></p>
+                <div class="math-display">
+                    $$\binom{10}{4} = \frac{10!}{4!(10-4)!} = \frac{10!}{4! \cdot 6!} = \frac{10 \times 9 \times 8 \times 7 \times 6!}{4 \times 3 \times 2 \times 1 \times 6!} = \frac{5040}{24} = 210$$
+                </div>
+                
+                <p><strong>Paso 5: Calcular las potencias</strong></p>
+                <div class="math-display">
+                    $$(0.25)^4 = 0.00390625$$
+                    $$(0.75)^6 = 0.177978$$
+                </div>
+                
+                <p><strong>Paso 6: Calcular la probabilidad final</strong></p>
+                <div class="math-display">
+                    $$P(X = 4) = 210 \times 0.00390625 \times 0.177978 = 210 \times 0.000695229 = 0.14600$$
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #C8E6C9, #A5D6A7); padding: 20px; border-radius: 10px; margin-top: 25px; border: 3px solid var(--verdechile);">
+                    <p style="font-size: 1.3em; margin: 0; text-align: center;">
+                        <strong>Respuesta:</strong> La probabilidad de acertar exactamente 4 preguntas respondiendo al azar es <span class="highlight">0.1460 o 14.60%</span>
+                    </p>
+                </div>
+                
+                <div style="background: #FFEBEE; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 5px solid var(--rojochile);">
+                    <p style="font-size: 1.1em; margin: 0;"><strong>⚠️ Advertencia académica:</strong> ¡Esta baja probabilidad de éxito demuestra que estudiar es mucho más efectivo que adivinar! 📚</p>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <strong>Profesor Nicolás González</strong> | Material Educativo
+            </div>
+        </div>
+        
+        <!-- Slide 7: Ejemplo 4 -->
+        <div class="slide">
+            <div class="exercise-header">
+                📝 Ejemplo 4: Tiros Libres en Baloncesto
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>Enunciado:</strong></p>
+                <p>Un jugador de baloncesto tiene una efectividad del 75% en tiros libres. Si lanza 6 tiros libres en un partido, ¿cuál es la probabilidad de que anote exactamente 5 tiros?</p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">✅ Solución</div>
+                
+                <p><strong>Paso 1: Identificar los valores</strong></p>
+                <ul>
+                    <li>$n = 6$ (número de tiros libres lanzados)</li>
+                    <li>$k = 5$ (número de tiros anotados que buscamos)</li>
+                    <li>$p = 0.75$ (probabilidad de anotar un tiro libre)</li>
+                    <li>$1 - p = 0.25$ (probabilidad de fallar un tiro libre)</li>
+                </ul>
+                
+                <p><strong>Paso 2: Verificar condiciones de la distribución binomial</strong></p>
+                <ul>
+                    <li>✓ Número fijo de ensayos: 6 tiros libres</li>
+                    <li>✓ Dos resultados posibles: anotar o fallar</li>
+                    <li>✓ Ensayos independientes: el resultado de un tiro no afecta a los demás</li>
+                    <li>✓ Probabilidad constante: $p = 0.75$ para cada tiro</li>
+                </ul>
+                
+                <p><strong>Paso 3: Aplicar la fórmula de distribución binomial</strong></p>
+                <div class="math-display">
+                    $$P(X = 5) = \binom{6}{5} \cdot (0.75)^5 \cdot (0.25)^{6-5}$$
+                </div>
+                
+                <p><strong>Paso 4: Calcular el coeficiente binomial</strong></p>
+                <div class="math-display">
+                    $$\binom{6}{5} = \frac{6!}{5!(6-5)!} = \frac{6!}{5! \cdot 1!} = \frac{6 \times 5!}{5! \times 1} = 6$$
+                </div>
+                
+                <p><strong>Paso 5: Calcular las potencias</strong></p>
+                <div class="math-display">
+                    $$(0.75)^5 = 0.237305$$
+                    $$(0.25)^1 = 0.25$$
+                </div>
+                
+                <p><strong>Paso 6: Calcular la probabilidad final</strong></p>
+                <div class="math-display">
+                    $$P(X = 5) = 6 \times 0.237305 \times 0.25 = 6 \times 0.05932625 = 0.35596$$
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #C8E6C9, #A5D6A7); padding: 20px; border-radius: 10px; margin-top: 25px; border: 3px solid var(--verdechile);">
+                    <p style="font-size: 1.3em; margin: 0; text-align: center;">
+                        <strong>Respuesta:</strong> La probabilidad de anotar exactamente 5 de 6 tiros libres es <span class="highlight">0.3560 o 35.60%</span>
+                    </p>
+                </div>
+                
+                <div style="background: #E1F5FE; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 5px solid var(--azulchile);">
+                    <p style="font-size: 1.1em; margin: 0;"><strong>🏀 Dato interesante:</strong> Esta es una probabilidad relativamente alta, lo que indica que para un jugador con 75% de efectividad, anotar 5 de 6 tiros es un resultado bastante probable.</p>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <strong>Profesor Nicolás González</strong> | Material Educativo
+            </div>
+        </div>
+        
+        <!-- Slide 8: Ejemplo 5 -->
+        <div class="slide">
+            <div class="exercise-header">
+                📝 Ejemplo 5: Encuesta de Preferencias
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>Enunciado:</strong></p>
+                <p>En una ciudad, se sabe que el 60% de los habitantes prefieren el transporte público sobre el automóvil privado. Si se encuesta a 7 personas elegidas al azar, ¿cuál es la probabilidad de que exactamente 3 prefieran el transporte público?</p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">✅ Solución</div>
+                
+                <p><strong>Paso 1: Identificar los valores</strong></p>
+                <ul>
+                    <li>$n = 7$ (número de personas encuestadas)</li>
+                    <li>$k = 3$ (número de personas que prefieren transporte público)</li>
+                    <li>$p = 0.60$ (probabilidad de preferir transporte público)</li>
+                    <li>$1 - p = 0.40$ (probabilidad de preferir automóvil privado)</li>
+                </ul>
+                
+                <p><strong>Paso 2: Verificar condiciones de la distribución binomial</strong></p>
+                <ul>
+                    <li>✓ Número fijo de ensayos: 7 personas encuestadas</li>
+                    <li>✓ Dos resultados posibles: prefiere transporte público o automóvil privado</li>
+                    <li>✓ Ensayos independientes: la preferencia de una persona no afecta a las demás</li>
+                    <li>✓ Probabilidad constante: $p = 0.60$ para cada persona</li>
+                </ul>
+                
+                <p><strong>Paso 3: Aplicar la fórmula de distribución binomial</strong></p>
+                <div class="math-display">
+                    $$P(X = 3) = \binom{7}{3} \cdot (0.60)^3 \cdot (0.40)^{7-3}$$
+                </div>
+                
+                <p><strong>Paso 4: Calcular el coeficiente binomial</strong></p>
+                <div class="math-display">
+                    $$\binom{7}{3} = \frac{7!}{3!(7-3)!} = \frac{7!}{3! \cdot 4!} = \frac{7 \times 6 \times 5 \times 4!}{3 \times 2 \times 1 \times 4!} = \frac{210}{6} = 35$$
+                </div>
+                
+                <p><strong>Paso 5: Calcular las potencias</strong></p>
+                <div class="math-display">
+                    $$(0.60)^3 = 0.216$$
+                    $$(0.40)^4 = 0.0256$$
+                </div>
+                
+                <p><strong>Paso 6: Calcular la probabilidad final</strong></p>
+                <div class="math-display">
+                    $$P(X = 3) = 35 \times 0.216 \times 0.0256 = 35 \times 0.0055296 = 0.19354$$
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #C8E6C9, #A5D6A7); padding: 20px; border-radius: 10px; margin-top: 25px; border: 3px solid var(--verdechile);">
+                    <p style="font-size: 1.3em; margin: 0; text-align: center;">
+                        <strong>Respuesta:</strong> La probabilidad de que exactamente 3 de 7 personas encuestadas prefieran el transporte público es <span class="highlight">0.1935 o 19.35%</span>
+                    </p>
+                </div>
+                
+                <div style="background: #FFF3E0; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 5px solid var(--warmorange);">
+                    <p style="font-size: 1.1em; margin: 0;"><strong>📊 Análisis:</strong> Aunque el 60% de la población prefiere transporte público, la probabilidad de obtener exactamente 3 de 7 en una muestra es moderada, ya que el valor más probable sería 4 o 5 personas.</p>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <strong>Profesor Nicolás González</strong> | Material Educativo
+            </div>
+        </div>
+        
+        <!-- Slide 9: Ejemplo 6 -->
+        <div class="slide">
+            <div class="exercise-header">
+                📝 Ejemplo 6: Germinación de Semillas
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>Enunciado:</strong></p>
+                <p>Un agricultor utiliza semillas con una tasa de germinación del 85%. Si planta 9 semillas, ¿cuál es la probabilidad de que germinen exactamente 7 semillas?</p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">✅ Solución</div>
+                
+                <p><strong>Paso 1: Identificar los valores</strong></p>
+                <ul>
+                    <li>$n = 9$ (número de semillas plantadas)</li>
+                    <li>$k = 7$ (número de semillas que germinan)</li>
+                    <li>$p = 0.85$ (probabilidad de que una semilla germine)</li>
+                    <li>$1 - p = 0.15$ (probabilidad de que una semilla no germine)</li>
+                </ul>
+                
+                <p><strong>Paso 2: Verificar condiciones de la distribución binomial</strong></p>
+                <ul>
+                    <li>✓ Número fijo de ensayos: 9 semillas plantadas</li>
+                    <li>✓ Dos resultados posibles: germina o no germina</li>
+                    <li>✓ Ensayos independientes: la germinación de una semilla no afecta a las demás</li>
+                    <li>✓ Probabilidad constante: $p = 0.85$ para cada semilla</li>
+                </ul>
+                
+                <p><strong>Paso 3: Aplicar la fórmula de distribución binomial</strong></p>
+                <div class="math-display">
+                    $$P(X = 7) = \binom{9}{7} \cdot (0.85)^7 \cdot (0.15)^{9-7}$$
+                </div>
+                
+                <p><strong>Paso 4: Calcular el coeficiente binomial</strong></p>
+                <div class="math-display">
+                    $$\binom{9}{7} = \frac{9!}{7!(9-7)!} = \frac{9!}{7! \cdot 2!} = \frac{9 \times 8 \times 7!}{7! \times 2 \times 1} = \frac{72}{2} = 36$$
+                </div>
+                
+                <p><strong>Paso 5: Calcular las potencias</strong></p>
+                <div class="math-display">
+                    $$(0.85)^7 = 0.320577$$
+                    $$(0.15)^2 = 0.0225$$
+                </div>
+                
+                <p><strong>Paso 6: Calcular la probabilidad final</strong></p>
+                <div class="math-display">
+                    $$P(X = 7) = 36 \times 0.320577 \times 0.0225 = 36 \times 0.00721299 = 0.25967$$
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #C8E6C9, #A5D6A7); padding: 20px; border-radius: 10px; margin-top: 25px; border: 3px solid var(--verdechile);">
+                    <p style="font-size: 1.3em; margin: 0; text-align: center;">
+                        <strong>Respuesta:</strong> La probabilidad de que germinen exactamente 7 de 9 semillas es <span class="highlight">0.2597 o 25.97%</span>
+                    </p>
+                </div>
+                
+                <div style="background: #E8F5E9; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 5px solid var(--verdechile);">
+                    <p style="font-size: 1.1em; margin: 0;"><strong>🌱 Contexto agrícola:</strong> Con una tasa de germinación del 85%, es más probable que germinen 8 semillas que exactamente 7. Este cálculo ayuda al agricultor a planificar cuántas semillas debe plantar para obtener el número deseado de plantas.</p>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <strong>Profesor Nicolás González</strong> | Material Educativo
+            </div>
+        </div>
+        
+        <!-- Slide 10: Explicación de Probabilidades Acumuladas -->
+        <div class="slide">
+            <h2>📈 Probabilidades Acumuladas en Distribución Binomial</h2>
+            
+            <p style="font-size: 1.3em; margin-top: 25px;">
+                Hasta ahora hemos calculado la probabilidad de obtener <strong>exactamente k éxitos</strong>. Pero en muchos problemas prácticos necesitamos calcular probabilidades para <strong>rangos de valores</strong>.
+            </p>
+            
+            <h3 style="margin-top: 35px;">🔍 Tipos de Probabilidades Acumuladas:</h3>
+            
+            <div style="background: #F5F5F5; padding: 30px; border-radius: 12px; margin: 25px 0;">
+                
+                <div style="background: linear-gradient(135deg, #E3F2FD, #BBDEFB); padding: 20px; border-radius: 10px; margin-bottom: 20px; border-left: 6px solid var(--azulchile);">
+                    <p style="font-size: 1.25em; margin-bottom: 10px;"><strong>1️⃣ "Al menos k éxitos"</strong> $(X \geq k)$</p>
+                    <div class="math-display" style="background: white;">
+                        $$P(X \geq k) = P(X = k) + P(X = k+1) + \cdots + P(X = n)$$
+                    </div>
+                    <p style="font-size: 1.1em; margin: 10px 0 0 0;">Ejemplo: Al menos 3 éxitos significa 3, 4, 5, ..., hasta n éxitos.</p>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #F3E5F5, #E1BEE7); padding: 20px; border-radius: 10px; margin-bottom: 20px; border-left: 6px solid #9C27B0;">
+                    <p style="font-size: 1.25em; margin-bottom: 10px;"><strong>2️⃣ "A lo sumo k éxitos"</strong> $(X \leq k)$</p>
+                    <div class="math-display" style="background: white;">
+                        $$P(X \leq k) = P(X = 0) + P(X = 1) + \cdots + P(X = k)$$
+                    </div>
+                    <p style="font-size: 1.1em; margin: 10px 0 0 0;">Ejemplo: A lo sumo 2 éxitos significa 0, 1 o 2 éxitos.</p>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #FFF3E0, #FFE0B2); padding: 20px; border-radius: 10px; margin-bottom: 20px; border-left: 6px solid var(--warmorange);">
+                    <p style="font-size: 1.25em; margin-bottom: 10px;"><strong>3️⃣ "Más de k éxitos"</strong> $(X > k)$</p>
+                    <div class="math-display" style="background: white;">
+                        $$P(X > k) = P(X = k+1) + P(X = k+2) + \cdots + P(X = n)$$
+                    </div>
+                    <p style="font-size: 1.1em; margin: 10px 0 0 0;">Equivalente a: $P(X > k) = P(X \geq k+1)$</p>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #E8F5E9, #C8E6C9); padding: 20px; border-radius: 10px; margin-bottom: 20px; border-left: 6px solid var(--verdechile);">
+                    <p style="font-size: 1.25em; margin-bottom: 10px;"><strong>4️⃣ "Menos de k éxitos"</strong> $(X < k)$</p>
+                    <div class="math-display" style="background: white;">
+                        $$P(X < k) = P(X = 0) + P(X = 1) + \cdots + P(X = k-1)$$
+                    </div>
+                    <p style="font-size: 1.1em; margin: 10px 0 0 0;">Equivalente a: $P(X < k) = P(X \leq k-1)$</p>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #FFEBEE, #FFCDD2); padding: 20px; border-radius: 10px; border-left: 6px solid var(--rojochile);">
+                    <p style="font-size: 1.25em; margin-bottom: 10px;"><strong>5️⃣ "Entre k₁ y k₂ éxitos"</strong> $(k_1 \leq X \leq k_2)$</p>
+                    <div class="math-display" style="background: white;">
+                        $$P(k_1 \leq X \leq k_2) = P(X = k_1) + P(X = k_1+1) + \cdots + P(X = k_2)$$
+                    </div>
+                    <p style="font-size: 1.1em; margin: 10px 0 0 0;">Ejemplo: Entre 2 y 5 éxitos significa 2, 3, 4 o 5 éxitos.</p>
+                </div>
+                
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #FFF9C4, #FFF59D); padding: 25px; border-radius: 12px; border: 3px solid var(--warmorange); margin-top: 30px;">
+                <h3 style="color: #F57C00; margin-bottom: 15px;">💡 Estrategia: Uso del Complemento</h3>
+                <p style="font-size: 1.2em; line-height: 1.8;">
+                    A veces es más fácil calcular el <strong>complemento</strong> que sumar muchas probabilidades:
+                </p>
+                <div class="math-display" style="background: white; font-size: 1.3em;">
+                    $$P(X \geq k) = 1 - P(X < k) = 1 - P(X \leq k-1)$$
+                </div>
+                <p style="font-size: 1.15em; margin-top: 15px; text-align: center; color: #D84315;">
+                    <strong>Ejemplo:</strong> Para calcular $P(X \geq 8)$ en 10 ensayos, es más fácil calcular $1 - P(X \leq 7)$ que sumar $P(X=8) + P(X=9) + P(X=10)$.
+                </p>
+            </div>
+            
+            <div class="footer">
+                <strong>Profesor Nicolás González</strong> | Material Educativo
+            </div>
+        </div>
+        
+        <!-- Slide 11: Ejemplo 7 - Probabilidad acumulada "al menos" -->
+        <div class="slide">
+            <div class="exercise-header">
+                📝 Ejemplo 7: Ventas de un Producto (Al menos)
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>Enunciado:</strong></p>
+                <p>Un vendedor tiene una probabilidad del 40% de cerrar una venta en cada visita a un cliente. Si realiza 5 visitas en un día, ¿cuál es la probabilidad de que cierre <strong>al menos 3 ventas</strong>?</p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">✅ Solución</div>
+                
+                <p><strong>Paso 1: Identificar los valores y el tipo de problema</strong></p>
+                <ul>
+                    <li>$n = 5$ (número de visitas)</li>
+                    <li>$p = 0.40$ (probabilidad de cerrar una venta)</li>
+                    <li>$1 - p = 0.60$ (probabilidad de no cerrar una venta)</li>
+                    <li><strong>"Al menos 3 ventas"</strong> significa $X \geq 3$, es decir: 3, 4 o 5 ventas</li>
+                </ul>
+                
+                <p><strong>Paso 2: Plantear la suma de probabilidades</strong></p>
+                <div class="math-display">
+                    $$P(X \geq 3) = P(X = 3) + P(X = 4) + P(X = 5)$$
+                </div>
+                
+                <p><strong>Paso 3: Calcular $P(X = 3)$</strong></p>
+                <div class="math-display">
+                    $$P(X = 3) = \binom{5}{3} \cdot (0.40)^3 \cdot (0.60)^2$$
+                    $$= 10 \cdot 0.064 \cdot 0.36 = 10 \cdot 0.02304 = 0.2304$$
+                </div>
+                
+                <p><strong>Paso 4: Calcular $P(X = 4)$</strong></p>
+                <div class="math-display">
+                    $$P(X = 4) = \binom{5}{4} \cdot (0.40)^4 \cdot (0.60)^1$$
+                    $$= 5 \cdot 0.0256 \cdot 0.60 = 5 \cdot 0.01536 = 0.0768$$
+                </div>
+                
+                <p><strong>Paso 5: Calcular $P(X = 5)$</strong></p>
+                <div class="math-display">
+                    $$P(X = 5) = \binom{5}{5} \cdot (0.40)^5 \cdot (0.60)^0$$
+                    $$= 1 \cdot 0.01024 \cdot 1 = 0.01024$$
+                </div>
+                
+                <p><strong>Paso 6: Sumar todas las probabilidades</strong></p>
+                <div class="math-display">
+                    $$P(X \geq 3) = 0.2304 + 0.0768 + 0.01024 = 0.31744$$
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #C8E6C9, #A5D6A7); padding: 20px; border-radius: 10px; margin-top: 25px; border: 3px solid var(--verdechile);">
+                    <p style="font-size: 1.3em; margin: 0; text-align: center;">
+                        <strong>Respuesta:</strong> La probabilidad de cerrar al menos 3 ventas en 5 visitas es <span class="highlight">0.3174 o 31.74%</span>
+                    </p>
+                </div>
+                
+                <div style="background: #E1F5FE; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 5px solid var(--azulchile);">
+                    <p style="font-size: 1.1em; margin: 0;"><strong>💼 Interpretación:</strong> Aproximadamente 1 de cada 3 días el vendedor logrará cerrar 3 o más ventas. Para "al menos k" siempre debemos sumar desde k hasta n.</p>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <strong>Profesor Nicolás González</strong> | Material Educativo
+            </div>
+        </div>
+        
+        <!-- Slide 11: Ejemplo 8 - Probabilidad acumulada "a lo sumo" -->
+        <div class="slide">
+            <div class="exercise-header">
+                📝 Ejemplo 8: Errores en Producción (A lo sumo)
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>Enunciado:</strong></p>
+                <p>En una línea de producción, la probabilidad de que una pieza tenga un defecto es del 15%. Si se inspeccionan 6 piezas, ¿cuál es la probabilidad de encontrar <strong>a lo sumo 2 piezas defectuosas</strong>?</p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">✅ Solución</div>
+                
+                <p><strong>Paso 1: Identificar los valores y el tipo de problema</strong></p>
+                <ul>
+                    <li>$n = 6$ (número de piezas inspeccionadas)</li>
+                    <li>$p = 0.15$ (probabilidad de que una pieza sea defectuosa)</li>
+                    <li>$1 - p = 0.85$ (probabilidad de que una pieza NO sea defectuosa)</li>
+                    <li><strong>"A lo sumo 2 defectuosas"</strong> significa $X \leq 2$, es decir: 0, 1 o 2 defectuosas</li>
+                </ul>
+                
+                <p><strong>Paso 2: Plantear la suma de probabilidades</strong></p>
+                <div class="math-display">
+                    $$P(X \leq 2) = P(X = 0) + P(X = 1) + P(X = 2)$$
+                </div>
+                
+                <p><strong>Paso 3: Calcular $P(X = 0)$</strong></p>
+                <div class="math-display">
+                    $$P(X = 0) = \binom{6}{0} \cdot (0.15)^0 \cdot (0.85)^6$$
+                    $$= 1 \cdot 1 \cdot 0.377149 = 0.377149$$
+                </div>
+                
+                <p><strong>Paso 4: Calcular $P(X = 1)$</strong></p>
+                <div class="math-display">
+                    $$P(X = 1) = \binom{6}{1} \cdot (0.15)^1 \cdot (0.85)^5$$
+                    $$= 6 \cdot 0.15 \cdot 0.443705 = 6 \cdot 0.0665558 = 0.399335$$
+                </div>
+                
+                <p><strong>Paso 5: Calcular $P(X = 2)$</strong></p>
+                <div class="math-display">
+                    $$P(X = 2) = \binom{6}{2} \cdot (0.15)^2 \cdot (0.85)^4$$
+                    $$= 15 \cdot 0.0225 \cdot 0.522006 = 15 \cdot 0.0117452 = 0.176178$$
+                </div>
+                
+                <p><strong>Paso 6: Sumar todas las probabilidades</strong></p>
+                <div class="math-display">
+                    $$P(X \leq 2) = 0.377149 + 0.399335 + 0.176178 = 0.952662$$
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #C8E6C9, #A5D6A7); padding: 20px; border-radius: 10px; margin-top: 25px; border: 3px solid var(--verdechile);">
+                    <p style="font-size: 1.3em; margin: 0; text-align: center;">
+                        <strong>Respuesta:</strong> La probabilidad de encontrar a lo sumo 2 piezas defectuosas en 6 inspeccionadas es <span class="highlight">0.9527 o 95.27%</span>
+                    </p>
+                </div>
+                
+                <div style="background: #FFF3E0; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 5px solid var(--warmorange);">
+                    <p style="font-size: 1.1em; margin: 0;"><strong>🏭 Interpretación:</strong> Es muy probable (95.27%) que en una muestra de 6 piezas haya 2 o menos defectuosas. Para "a lo sumo k" siempre sumamos desde 0 hasta k.</p>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <strong>Profesor Nicolás González</strong> | Material Educativo
+            </div>
+        </div>
+        
+        <!-- Slide 12: Ejemplo 9 - Probabilidad "más de" -->
+        <div class="slide">
+            <div class="exercise-header">
+                📝 Ejemplo 9: Aciertos en Dardos (Más de)
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>Enunciado:</strong></p>
+                <p>Un jugador de dardos tiene una probabilidad del 30% de acertar en el centro del tablero. Si lanza 8 dardos, ¿cuál es la probabilidad de que acierte <strong>más de 2 veces</strong> en el centro?</p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">✅ Solución</div>
+                
+                <p><strong>Paso 1: Identificar los valores y el tipo de problema</strong></p>
+                <ul>
+                    <li>$n = 8$ (número de lanzamientos)</li>
+                    <li>$p = 0.30$ (probabilidad de acertar en el centro)</li>
+                    <li>$1 - p = 0.70$ (probabilidad de no acertar en el centro)</li>
+                    <li><strong>"Más de 2"</strong> significa $X > 2$, equivalente a $X \geq 3$</li>
+                </ul>
+                
+                <p><strong>Paso 2: Usar el complemento para simplificar</strong></p>
+                <div class="math-display">
+                    $$P(X > 2) = 1 - P(X \leq 2) = 1 - [P(X = 0) + P(X = 1) + P(X = 2)]$$
+                </div>
+                
+                <p><strong>Paso 3: Calcular $P(X = 0)$</strong></p>
+                <div class="math-display">
+                    $$P(X = 0) = \binom{8}{0} \cdot (0.30)^0 \cdot (0.70)^8$$
+                    $$= 1 \cdot 1 \cdot 0.057648 = 0.057648$$
+                </div>
+                
+                <p><strong>Paso 4: Calcular $P(X = 1)$</strong></p>
+                <div class="math-display">
+                    $$P(X = 1) = \binom{8}{1} \cdot (0.30)^1 \cdot (0.70)^7$$
+                    $$= 8 \cdot 0.30 \cdot 0.082354 = 8 \cdot 0.0247062 = 0.197650$$
+                </div>
+                
+                <p><strong>Paso 5: Calcular $P(X = 2)$</strong></p>
+                <div class="math-display">
+                    $$P(X = 2) = \binom{8}{2} \cdot (0.30)^2 \cdot (0.70)^6$$
+                    $$= 28 \cdot 0.09 \cdot 0.117649 = 28 \cdot 0.0105884 = 0.296475$$
+                </div>
+                
+                <p><strong>Paso 6: Calcular $P(X \leq 2)$ y luego el complemento</strong></p>
+                <div class="math-display">
+                    $$P(X \leq 2) = 0.057648 + 0.197650 + 0.296475 = 0.551773$$
+                </div>
+                <div class="math-display">
+                    $$P(X > 2) = 1 - 0.551773 = 0.448227$$
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #C8E6C9, #A5D6A7); padding: 20px; border-radius: 10px; margin-top: 25px; border: 3px solid var(--verdechile);">
+                    <p style="font-size: 1.3em; margin: 0; text-align: center;">
+                        <strong>Respuesta:</strong> La probabilidad de acertar más de 2 veces en 8 lanzamientos es <span class="highlight">0.4482 o 44.82%</span>
+                    </p>
+                </div>
+                
+                <div style="background: #E1F5FE; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 5px solid var(--azulchile);">
+                    <p style="font-size: 1.1em; margin: 0;"><strong>🎯 Método alternativo:</strong> Usar el complemento ($1 - P(X \leq 2)$) es más eficiente que sumar $P(X=3) + P(X=4) + ... + P(X=8)$.</p>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <strong>Profesor Nicolás González</strong> | Material Educativo
+            </div>
+        </div>
+        
+        <!-- Slide 13: Ejemplo 10 - Probabilidad "menos de" -->
+        <div class="slide">
+            <div class="exercise-header">
+                📝 Ejemplo 10: Llamadas de Soporte (Menos de)
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>Enunciado:</strong></p>
+                <p>En un centro de llamadas, el 20% de las llamadas son quejas. Si un operador atiende 10 llamadas en una hora, ¿cuál es la probabilidad de que reciba <strong>menos de 3 quejas</strong>?</p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">✅ Solución</div>
+                
+                <p><strong>Paso 1: Identificar los valores y el tipo de problema</strong></p>
+                <ul>
+                    <li>$n = 10$ (número de llamadas atendidas)</li>
+                    <li>$p = 0.20$ (probabilidad de que una llamada sea queja)</li>
+                    <li>$1 - p = 0.80$ (probabilidad de que una llamada NO sea queja)</li>
+                    <li><strong>"Menos de 3"</strong> significa $X < 3$, equivalente a $X \leq 2$</li>
+                </ul>
+                
+                <p><strong>Paso 2: Plantear la suma de probabilidades</strong></p>
+                <div class="math-display">
+                    $$P(X < 3) = P(X \leq 2) = P(X = 0) + P(X = 1) + P(X = 2)$$
+                </div>
+                
+                <p><strong>Paso 3: Calcular $P(X = 0)$</strong></p>
+                <div class="math-display">
+                    $$P(X = 0) = \binom{10}{0} \cdot (0.20)^0 \cdot (0.80)^{10}$$
+                    $$= 1 \cdot 1 \cdot 0.107374 = 0.107374$$
+                </div>
+                
+                <p><strong>Paso 4: Calcular $P(X = 1)$</strong></p>
+                <div class="math-display">
+                    $$P(X = 1) = \binom{10}{1} \cdot (0.20)^1 \cdot (0.80)^9$$
+                    $$= 10 \cdot 0.20 \cdot 0.134218 = 10 \cdot 0.0268436 = 0.268436$$
+                </div>
+                
+                <p><strong>Paso 5: Calcular $P(X = 2)$</strong></p>
+                <div class="math-display">
+                    $$P(X = 2) = \binom{10}{2} \cdot (0.20)^2 \cdot (0.80)^8$$
+                    $$= 45 \cdot 0.04 \cdot 0.167772 = 45 \cdot 0.00671089 = 0.301990$$
+                </div>
+                
+                <p><strong>Paso 6: Sumar todas las probabilidades</strong></p>
+                <div class="math-display">
+                    $$P(X < 3) = 0.107374 + 0.268436 + 0.301990 = 0.677800$$
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #C8E6C9, #A5D6A7); padding: 20px; border-radius: 10px; margin-top: 25px; border: 3px solid var(--verdechile);">
+                    <p style="font-size: 1.3em; margin: 0; text-align: center;">
+                        <strong>Respuesta:</strong> La probabilidad de recibir menos de 3 quejas en 10 llamadas es <span class="highlight">0.6778 o 67.78%</span>
+                    </p>
+                </div>
+                
+                <div style="background: #FFF3E0; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 5px solid var(--warmorange);">
+                    <p style="font-size: 1.1em; margin: 0;"><strong>📞 Nota importante:</strong> "Menos de k" ($X < k$) es equivalente a "a lo sumo k-1" ($X \leq k-1$). En este caso, menos de 3 = a lo sumo 2.</p>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <strong>Profesor Nicolás González</strong> | Material Educativo
+            </div>
+        </div>
+        
+        <!-- Slide 14: Ejemplo 11 - Probabilidad en un rango -->
+        <div class="slide">
+            <div class="exercise-header">
+                📝 Ejemplo 11: Estudiantes Aprobados (Entre)
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>Enunciado:</strong></p>
+                <p>En un curso, la probabilidad de que un estudiante apruebe un examen difícil es del 55%. Si 7 estudiantes presentan el examen, ¿cuál es la probabilidad de que <strong>entre 3 y 5 estudiantes</strong> (inclusive) aprueben?</p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">✅ Solución</div>
+                
+                <p><strong>Paso 1: Identificar los valores y el tipo de problema</strong></p>
+                <ul>
+                    <li>$n = 7$ (número de estudiantes)</li>
+                    <li>$p = 0.55$ (probabilidad de aprobar)</li>
+                    <li>$1 - p = 0.45$ (probabilidad de reprobar)</li>
+                    <li><strong>"Entre 3 y 5"</strong> significa $3 \leq X \leq 5$, es decir: 3, 4 o 5 estudiantes</li>
+                </ul>
+                
+                <p><strong>Paso 2: Plantear la suma de probabilidades</strong></p>
+                <div class="math-display">
+                    $$P(3 \leq X \leq 5) = P(X = 3) + P(X = 4) + P(X = 5)$$
+                </div>
+                
+                <p><strong>Paso 3: Calcular $P(X = 3)$</strong></p>
+                <div class="math-display">
+                    $$P(X = 3) = \binom{7}{3} \cdot (0.55)^3 \cdot (0.45)^4$$
+                    $$= 35 \cdot 0.166375 \cdot 0.041006 = 35 \cdot 0.00682112 = 0.238739$$
+                </div>
+                
+                <p><strong>Paso 4: Calcular $P(X = 4)$</strong></p>
+                <div class="math-display">
+                    $$P(X = 4) = \binom{7}{4} \cdot (0.55)^4 \cdot (0.45)^3$$
+                    $$= 35 \cdot 0.091506 \cdot 0.091125 = 35 \cdot 0.00834098 = 0.291934$$
+                </div>
+                
+                <p><strong>Paso 5: Calcular $P(X = 5)$</strong></p>
+                <div class="math-display">
+                    $$P(X = 5) = \binom{7}{5} \cdot (0.55)^5 \cdot (0.45)^2$$
+                    $$= 21 \cdot 0.050328 \cdot 0.2025 = 21 \cdot 0.0101915 = 0.214021$$
+                </div>
+                
+                <p><strong>Paso 6: Sumar todas las probabilidades</strong></p>
+                <div class="math-display">
+                    $$P(3 \leq X \leq 5) = 0.238739 + 0.291934 + 0.214021 = 0.744694$$
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #C8E6C9, #A5D6A7); padding: 20px; border-radius: 10px; margin-top: 25px; border: 3px solid var(--verdechile);">
+                    <p style="font-size: 1.3em; margin: 0; text-align: center;">
+                        <strong>Respuesta:</strong> La probabilidad de que entre 3 y 5 estudiantes aprueben es <span class="highlight">0.7447 o 74.47%</span>
+                    </p>
+                </div>
+                
+                <div style="background: #E1F5FE; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 5px solid var(--azulchile);">
+                    <p style="font-size: 1.1em; margin: 0;"><strong>📚 Interpretación educativa:</strong> Hay una alta probabilidad (74.47%) de que entre 3 y 5 estudiantes aprueben. Esto es el rango más probable dado que la probabilidad individual es 55%.</p>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <strong>Profesor Nicolás González</strong> | Material Educativo
+            </div>
+        </div>
+        
+        <!-- Slide 15: Ejemplo 12 - Combinación compleja -->
+        <div class="slide">
+            <div class="exercise-header">
+                📝 Ejemplo 12: Control de Calidad Avanzado (Al menos - A lo sumo)
+            </div>
+            
+            <div class="exercise-content">
+                <p><strong>Enunciado:</strong></p>
+                <p>Una empresa produce chips electrónicos con una tasa de defectos del 8%. Si se seleccionan 12 chips al azar, ¿cuál es la probabilidad de encontrar <strong>al menos 1 pero a lo sumo 3 chips defectuosos</strong>?</p>
+            </div>
+            
+            <button class="btn-toggle-solution" onclick="toggleSolution(this)">
+                <span class="icon">👁️</span>
+                <span class="text">Ver Solución</span>
+            </button>
+            
+            <div class="solution-box">
+                <div class="solution-header">✅ Solución</div>
+                
+                <p><strong>Paso 1: Identificar los valores y el tipo de problema</strong></p>
+                <ul>
+                    <li>$n = 12$ (número de chips seleccionados)</li>
+                    <li>$p = 0.08$ (probabilidad de que un chip sea defectuoso)</li>
+                    <li>$1 - p = 0.92$ (probabilidad de que un chip NO sea defectuoso)</li>
+                    <li><strong>"Al menos 1 pero a lo sumo 3"</strong> significa $1 \leq X \leq 3$</li>
+                </ul>
+                
+                <p><strong>Paso 2: Plantear la suma de probabilidades</strong></p>
+                <div class="math-display">
+                    $$P(1 \leq X \leq 3) = P(X = 1) + P(X = 2) + P(X = 3)$$
+                </div>
+                
+                <p><strong>Método alternativo con complemento:</strong></p>
+                <div class="math-display">
+                    $$P(1 \leq X \leq 3) = P(X \leq 3) - P(X = 0)$$
+                </div>
+                
+                <p><strong>Paso 3: Calcular $P(X = 0)$</strong></p>
+                <div class="math-display">
+                    $$P(X = 0) = \binom{12}{0} \cdot (0.08)^0 \cdot (0.92)^{12}$$
+                    $$= 1 \cdot 1 \cdot 0.367847 = 0.367847$$
+                </div>
+                
+                <p><strong>Paso 4: Calcular $P(X = 1)$</strong></p>
+                <div class="math-display">
+                    $$P(X = 1) = \binom{12}{1} \cdot (0.08)^1 \cdot (0.92)^{11}$$
+                    $$= 12 \cdot 0.08 \cdot 0.399834 = 12 \cdot 0.0319867 = 0.383841$$
+                </div>
+                
+                <p><strong>Paso 5: Calcular $P(X = 2)$</strong></p>
+                <div class="math-display">
+                    $$P(X = 2) = \binom{12}{2} \cdot (0.08)^2 \cdot (0.92)^{10}$$
+                    $$= 66 \cdot 0.0064 \cdot 0.434598 = 66 \cdot 0.00278143 = 0.183574$$
+                </div>
+                
+                <p><strong>Paso 6: Calcular $P(X = 3)$</strong></p>
+                <div class="math-display">
+                    $$P(X = 3) = \binom{12}{3} \cdot (0.08)^3 \cdot (0.92)^9$$
+                    $$= 220 \cdot 0.000512 \cdot 0.472241 = 220 \cdot 0.000241867 = 0.053211$$
+                </div>
+                
+                <p><strong>Paso 7: Sumar las probabilidades</strong></p>
+                <div class="math-display">
+                    $$P(1 \leq X \leq 3) = 0.383841 + 0.183574 + 0.053211 = 0.620626$$
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #C8E6C9, #A5D6A7); padding: 20px; border-radius: 10px; margin-top: 25px; border: 3px solid var(--verdechile);">
+                    <p style="font-size: 1.3em; margin: 0; text-align: center;">
+                        <strong>Respuesta:</strong> La probabilidad de encontrar entre 1 y 3 chips defectuosos (inclusive) es <span class="highlight">0.6206 o 62.06%</span>
+                    </p>
+                </div>
+                
+                <div style="background: #FFEBEE; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 5px solid var(--rojochile);">
+                    <p style="font-size: 1.1em; margin: 0;"><strong>🔧 Control de calidad:</strong> Esta probabilidad indica que en la mayoría de las muestras (62.06%) se encontrará al menos un defecto, pero no más de 3. Es importante para establecer estándares de aceptación.</p>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <strong>Profesor Nicolás González</strong> | Material Educativo
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- Navegación -->
+    <button class="nav-btn prev" onclick="changeSlide(-1)">‹</button>
+    <button class="nav-btn next" onclick="changeSlide(1)">›</button>
+    <div class="slide-counter" id="slideCounter">1 / 16</div>
+    
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            updateCounter();
+            hideAllSolutions();
+            
+            // Re-render MathJax on slide change
+            if (typeof MathJax !== 'undefined') {
+                MathJax.typesetPromise();
+            }
+        }
+        
+        function changeSlide(direction) {
+            showSlide(currentSlide + direction);
+        }
+        
+        function updateCounter() {
+            document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (event.key === 'ArrowRight') {
+                changeSlide(1);
+            }
+        });
+        
+        // Toggle solution visibility
+        function toggleSolution(button) {
+            const solutionBox = button.nextElementSibling;
+            const icon = button.querySelector('.icon');
+            const text = button.querySelector('.text');
+            
+            if (solutionBox.classList.contains('show')) {
+                // Hide solution
+                solutionBox.classList.remove('show');
+                button.classList.remove('showing');
+                icon.textContent = '👁️';
+                text.textContent = 'Ver Solución';
+            } else {
+                // Show solution
+                solutionBox.classList.add('show');
+                button.classList.add('showing');
+                icon.textContent = '🙈';
+                text.textContent = 'Ocultar Solución';
+                
+                // Re-render MathJax for the newly shown solution
+                if (typeof MathJax !== 'undefined') {
+                    MathJax.typesetPromise([solutionBox]);
+                }
+            }
+        }
+        
+        // Hide all solutions when changing slides
+        function hideAllSolutions() {
+            const buttons = document.querySelectorAll('.btn-toggle-solution');
+            buttons.forEach(button => {
+                const solutionBox = button.nextElementSibling;
+                const icon = button.querySelector('.icon');
+                const text = button.querySelector('.text');
+                
+                if (solutionBox.classList.contains('show')) {
+                    solutionBox.classList.remove('show');
+                    button.classList.remove('showing');
+                    icon.textContent = '👁️';
+                    text.textContent = 'Ver Solución';
+                }
+            });
+        }
+        
+        // Initialize
+        updateCounter();
+    </script>
+</body>
+</html>

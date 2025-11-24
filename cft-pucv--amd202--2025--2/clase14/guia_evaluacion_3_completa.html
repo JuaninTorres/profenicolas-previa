@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Ejercitación Evaluación 3 - Matemáticas</title>
+    
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- MathJax -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global',
+                scale: 1.3
+            },
+            chtml: {
+                scale: 1.3
+            }
+        };
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --azulchile: #0033A0;
+            --rojochile: #D52B1E;
+            --verdechile: #2C5234;
+            --warmorange: #FF8C42;
+            --bg-light: #F8F9FA;
+            --text-dark: #212529;
+            --purplechile: #6A1B9A;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--bg-light) 0%, #E9ECEF 100%);
+            overflow: hidden;
+        }
+        
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .slide {
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 60px 80px;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow-y: auto;
+        }
+        
+        .slide.active {
+            display: flex;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .slide-header {
+            border-bottom: 4px solid var(--azulchile);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .slide-title {
+            font-family: 'Roboto Slab', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--azulchile);
+            margin-bottom: 10px;
+        }
+        
+        .slide-subtitle {
+            font-size: 1.6rem;
+            color: var(--rojochile);
+            font-weight: 400;
+        }
+        
+        .slide-content {
+            flex: 1;
+            font-size: 1.4rem;
+            line-height: 1.8;
+            color: var(--text-dark);
+        }
+        
+        .portada {
+            background: linear-gradient(135deg, var(--azulchile) 0%, #002B85 100%);
+            color: white;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .portada .slide-title {
+            color: white;
+            font-size: 4.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .portada .slide-subtitle {
+            color: var(--warmorange);
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+        }
+        
+        .portada-icon {
+            font-size: 8rem;
+            margin-bottom: 30px;
+        }
+        
+        .exercise-box {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border-left: 6px solid var(--warmorange);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .exercise-title {
+            font-weight: 700;
+            font-size: 1.6rem;
+            color: var(--warmorange);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .exercise-title::before {
+            content: "📝";
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .definition-box {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border-left: 6px solid var(--azulchile);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .definition-title {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--azulchile);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .definition-title::before {
+            content: "📘";
+            margin-right: 10px;
+            font-size: 1.6rem;
+        }
+        
+        .formula-box {
+            background: white;
+            border: 2px solid var(--azulchile);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+        
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        
+        .nav-btn {
+            background: var(--azulchile);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        .nav-btn:hover:not(:disabled) {
+            background: #002B85;
+            transform: scale(1.1);
+        }
+        
+        .nav-btn:disabled {
+            background: #CCC;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        
+        .slide-counter {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--azulchile);
+            min-width: 100px;
+            text-align: center;
+        }
+        
+        .footer {
+            border-top: 3px solid var(--rojochile);
+            padding-top: 15px;
+            margin-top: 30px;
+            font-size: 1.1rem;
+            color: #666;
+            text-align: center;
+        }
+        
+        .footer-credits {
+            margin: 0;
+        }
+        
+        ul {
+            margin-left: 30px;
+            margin-top: 15px;
+        }
+        
+        ul li {
+            margin-bottom: 10px;
+            line-height: 1.8;
+        }
+        
+        .section-divider {
+            background: linear-gradient(135deg, var(--rojochile) 0%, #B82419 100%);
+            color: white;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .section-divider .slide-title {
+            color: white;
+            font-size: 4rem;
+        }
+        
+        .section-divider .slide-subtitle {
+            color: var(--warmorange);
+            font-size: 2rem;
+        }
+        
+        .section-icon {
+            font-size: 6rem;
+            margin-bottom: 30px;
+        }
+        
+        .multiple-choice-box {
+            background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%);
+            border-left: 6px solid var(--purplechile);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .multiple-choice-title {
+            font-weight: 700;
+            font-size: 1.6rem;
+            color: var(--purplechile);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .multiple-choice-title::before {
+            content: "🎯";
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .options {
+            margin-top: 15px;
+            padding-left: 20px;
+        }
+        
+        .option-item {
+            margin-bottom: 8px;
+            font-size: 1.3rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Slide 1: Portada -->
+        <div class="slide active portada">
+            <div>
+                <div class="portada-icon">📊</div>
+                <h1 class="slide-title">Guía de Ejercitación Evaluación 3</h1>
+                <p class="slide-subtitle">Técnicas de Conteo, Probabilidades y Distribución Binomial</p>
+                <p style="font-size: 1.8rem; margin-top: 40px;">Matemáticas - Nivel Superior</p>
+                <p style="font-size: 1.4rem; margin-top: 20px; opacity: 0.9;">Presiona → para comenzar</p>
+            </div>
+        </div>
+
+        <!-- ========== PARTE 1: TÉCNICAS DE CONTEO ========== -->
+        
+        <!-- Slide 2: Portada Parte 1 -->
+        <div class="slide section-divider">
+            <div>
+                <div class="section-icon">🔢</div>
+                <h2 class="slide-title">Parte 1</h2>
+                <p class="slide-subtitle">Técnicas de Conteo</p>
+                <p style="font-size: 1.6rem; margin-top: 30px; opacity: 0.9;">50 Ejercicios de Permutaciones, Combinaciones y Arreglos</p>
+            </div>
+        </div>
+
+        <!-- Slides 3-12: Ejercicios 1-10 de Técnicas de Conteo -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Técnicas de Conteo</h2>
+                <p class="slide-subtitle">Ejercicios 1 - 5</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 1</div>
+                    <p>¿De cuántas maneras diferentes se pueden formar en fila 6 personas para una fotografía?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 2</div>
+                    <p>¿De cuántas formas distintas se pueden organizar 5 canciones en una lista de reproducción?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 3</div>
+                    <p>De un menú con 10 platos diferentes, un comensal debe elegir 4 platos para su cena. ¿De cuántas maneras diferentes puede hacer su selección?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 4</div>
+                    <p>En una florería hay 15 tipos de flores distintas. ¿De cuántas formas se puede elegir un ramo con 6 tipos de flores diferentes?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 5</div>
+                    <p>En un concurso de pintura con 12 participantes, se otorgarán premios para el primer y segundo lugar. ¿De cuántas formas diferentes se pueden asignar estos dos premios?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Técnicas de Conteo</h2>
+                <p class="slide-subtitle">Ejercicios 6 - 10</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 6</div>
+                    <p>Una empresa debe elegir entre 9 candidatos para ocupar los cargos de presidente, vicepresidente y secretario. ¿De cuántas maneras distintas se pueden asignar estos tres cargos?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 7</div>
+                    <p>¿Cuántos números de 3 cifras diferentes se pueden formar con los dígitos del 0 al 9, si el primer dígito no puede ser 0?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 8</div>
+                    <p>¿Cuántos números de 5 cifras diferentes se pueden formar con los dígitos 2, 3, 4, 5, 6, 7 y 8?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 9</div>
+                    <p>¿Cuántas palabras diferentes (con o sin sentido) se pueden formar con todas las letras de la palabra "PAPAYA"?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 10</div>
+                    <p>¿Cuántas palabras diferentes (con o sin sentido) se pueden formar con todas las letras de la palabra "FERROCARRIL"?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Técnicas de Conteo</h2>
+                <p class="slide-subtitle">Ejercicios 11 - 15</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 11</div>
+                    <p>En un torneo de ajedrez con 12 participantes, se otorgarán medallas de oro, plata y bronce a los tres primeros lugares. ¿De cuántas maneras diferentes se pueden asignar estas tres medallas?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 12</div>
+                    <p>Una editorial debe seleccionar entre 18 libros finalistas para otorgar el primer, segundo y tercer premio de un concurso literario. ¿De cuántas formas distintas se pueden asignar estos premios?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 13</div>
+                    <p>Una profesora tiene 14 proyectos de investigación y debe seleccionar 7 para presentar en un congreso. ¿De cuántas maneras diferentes puede hacer su selección?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 14</div>
+                    <p>Un director de cine debe elegir 9 actores de un grupo de 16 candidatos para participar en una película. ¿Cuántos grupos diferentes de actores puede formar?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 15</div>
+                    <p>En un festival de música hay 6 bandas que se presentarán. ¿De cuántas formas diferentes se puede organizar el orden de presentación?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Técnicas de Conteo</h2>
+                <p class="slide-subtitle">Ejercicios 16 - 20</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 16</div>
+                    <p>En una exposición de arte se deben ordenar 5 cuadros en una pared de izquierda a derecha. ¿De cuántas maneras distintas se pueden colocar estos cuadros?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 17</div>
+                    <p>¿De cuántas formas se pueden ordenar las letras de la palabra "ARREBOL"?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 18</div>
+                    <p>¿De cuántas formas se pueden ordenar las letras de la palabra "PARAGUAS"?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 19</div>
+                    <p>En un concurso de talentos con 10 finalistas, ¿de cuántas maneras diferentes pueden asignarse los primeros 3 premios?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 20</div>
+                    <p>En una competencia de natación participan 15 deportistas. ¿De cuántas formas distintas pueden quedar los primeros 5 lugares?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Técnicas de Conteo</h2>
+                <p class="slide-subtitle">Ejercicios 21 - 25</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 21</div>
+                    <p>De un club deportivo con 16 socios, se deben seleccionar 4 para formar una delegación que asistirá a una conferencia. ¿Cuántos grupos diferentes se pueden formar?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 22</div>
+                    <p>Una biblioteca tiene 25 libros nuevos y debe elegir 5 para exhibir en su vitrina principal. ¿De cuántas maneras puede hacer esta selección?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 23</div>
+                    <p>¿De cuántas maneras se pueden otorgar 4 becas diferentes entre 15 estudiantes, si cada estudiante puede recibir como máximo una beca?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 24</div>
+                    <p>En una ceremonia se entregarán 5 trofeos distintos (mejor actor, mejor actriz, mejor director, mejor guión, mejor película) entre 18 nominados, donde cada persona puede ganar solo un trofeo. ¿De cuántas formas se pueden asignar estos premios?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 25</div>
+                    <p>¿De cuántas formas distintas se pueden organizar 7 personas en una fila para una fotografía?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Técnicas de Conteo</h2>
+                <p class="slide-subtitle">Ejercicios 26 - 30</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 26</div>
+                    <p>Un DJ debe organizar 9 canciones en una lista de reproducción. ¿De cuántas maneras diferentes puede ordenarlas?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 27</div>
+                    <p>¿Cuántos números diferentes de 8 cifras se pueden formar con los dígitos: 1, 1, 2, 2, 2, 3, 4, 5?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 28</div>
+                    <p>¿Cuántos números diferentes de 10 cifras se pueden formar con los dígitos: 0, 1, 1, 2, 2, 2, 3, 3, 4, 5?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 29</div>
+                    <p>En un torneo de tenis hay 12 jugadores. ¿De cuántas maneras diferentes pueden quedar los primeros 4 lugares?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 30</div>
+                    <p>En un concurso de fotografía participan 16 fotógrafos. ¿De cuántas formas distintas pueden asignarse los primeros 6 puestos?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Técnicas de Conteo</h2>
+                <p class="slide-subtitle">Ejercicios 31 - 35</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 31</div>
+                    <p>¿De cuántas maneras se pueden seleccionar 5 números diferentes de un conjunto de 40 números (sorteo de lotería)?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 32</div>
+                    <p>¿De cuántas formas se pueden elegir 6 números diferentes de un conjunto de 45 números (boleto de lotería)?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 33</div>
+                    <p>En una exposición de fotografía se deben organizar 7 imágenes en una pared en línea recta. ¿De cuántas formas diferentes se pueden colocar estas fotografías?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 34</div>
+                    <p>Una empresa tiene 10 empleados del mes del año y debe colocar sus fotos en orden en un panel. ¿De cuántas maneras diferentes puede organizarlas?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 35</div>
+                    <p>En un campeonato de tenis participan 12 jugadores. ¿Cuántos partidos individuales diferentes se disputarán si cada jugador debe enfrentarse exactamente una vez con cada uno de los demás?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Técnicas de Conteo</h2>
+                <p class="slide-subtitle">Ejercicios 36 - 40</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 36</div>
+                    <p>En una liga de voleibol hay 20 equipos. ¿Cuántos encuentros diferentes se realizarán en la primera vuelta si cada equipo juega una vez contra todos los demás?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 37</div>
+                    <p>Se tienen 8 cartas para formar una secuencia: 3 ases, 3 reyes y 2 reinas. ¿De cuántas maneras diferentes se pueden ordenar todas las cartas?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 38</div>
+                    <p>Para decorar una guirnalda se tienen 10 esferas: 4 doradas, 3 plateadas y 3 rojas. ¿De cuántas formas distintas se pueden ordenar todas las esferas?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 39</div>
+                    <p>De un grupo de 12 ingenieros y 10 arquitectos, se debe formar un comité de 7 personas que incluya exactamente 5 ingenieros y 2 arquitectos. ¿De cuántas formas se puede hacer esta selección?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 40</div>
+                    <p>En un club hay 15 socios adultos y 9 socios jóvenes. Se debe formar una delegación de 8 personas con exactamente 6 adultos y 2 jóvenes. ¿De cuántas maneras se puede conformar esta delegación?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Técnicas de Conteo</h2>
+                <p class="slide-subtitle">Ejercicios 41 - 45</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 41</div>
+                    <p>¿De cuántas formas se pueden ordenar 9 esferas idénticas en apariencia, pero de diferentes colores: 4 azules, 3 verdes y 2 naranjas?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 42</div>
+                    <p>¿De cuántas maneras distintas se pueden organizar 11 fichas: 4 rojas, 4 azules, 2 verdes y 1 amarilla?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 43</div>
+                    <p>Un coordinador debe organizar el orden de intervención de 8 ponentes en una conferencia. ¿De cuántas maneras diferentes puede establecer el orden completo?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 44</div>
+                    <p>Para un desfile se debe definir el orden de participación de 11 carrozas. ¿De cuántas formas distintas se pueden organizar?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 45</div>
+                    <p>Una heladería ofrece 15 sabores diferentes. ¿De cuántas formas puede un cliente elegir un helado con exactamente 4 sabores?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Técnicas de Conteo</h2>
+                <p class="slide-subtitle">Ejercicios 46 - 50</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 46</div>
+                    <p>Un buffet ofrece 20 guarniciones diferentes. ¿De cuántas maneras puede un comensal seleccionar exactamente 6 guarniciones para acompañar su plato?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 47</div>
+                    <p>¿Cuántos anagramas diferentes se pueden formar con la palabra "ESTADISTICA"?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 48</div>
+                    <p>¿Cuántos anagramas diferentes se pueden formar con la palabra "PROBABILIDAD"?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 49</div>
+                    <p>¿De cuántas formas distintas se pueden ordenar 9 atletas para una competencia de relevos?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 50</div>
+                    <p>¿De cuántas maneras diferentes se pueden organizar 11 libros en un estante?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- ========== PARTE 2: PROBABILIDADES ========== -->
+        
+        <!-- Slide 13: Portada Parte 2 -->
+        <div class="slide section-divider">
+            <div>
+                <div class="section-icon">🎲</div>
+                <h2 class="slide-title">Parte 2</h2>
+                <p class="slide-subtitle">Probabilidades</p>
+                <p style="font-size: 1.6rem; margin-top: 30px; opacity: 0.9;">5 Secciones con 50 Ejercicios en Total</p>
+            </div>
+        </div>
+
+        <!-- PARTE 2.1: Regla de Laplace -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Regla de Laplace</h2>
+                <p class="slide-subtitle">Definición y Fórmula</p>
+            </div>
+            <div class="slide-content">
+                <div class="definition-box">
+                    <div class="definition-title">Regla de Laplace</div>
+                    <p>Cuando todos los resultados de un experimento son <strong>igualmente probables</strong>, la probabilidad de un evento \(A\) se calcula como:</p>
+                    <div class="formula-box">
+                        \[P(A) = \frac{\text{Casos favorables}}{\text{Casos posibles}} = \frac{n(A)}{n(\Omega)}\]
+                    </div>
+                    <p style="margin-top: 20px;"><strong>Donde:</strong></p>
+                    <ul>
+                        <li>\(P(A)\) = Probabilidad del evento \(A\)</li>
+                        <li>\(n(A)\) = Número de casos favorables al evento \(A\)</li>
+                        <li>\(n(\Omega)\) = Número total de casos posibles</li>
+                        <li>\(0 \leq P(A) \leq 1\)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Regla de Laplace</h2>
+                <p class="slide-subtitle">Ejercicios 1 - 5</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 1: PAES</div>
+                    <p>En un ensayo PSU/PAES de Matemática con 80 preguntas, Javiera sabe con seguridad 65 respuestas. Si responde al azar una de las 15 restantes que tiene dudas, ¿cuál es la probabilidad de acertar? (cada pregunta tiene 4 alternativas)</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 2: Metro de Santiago</div>
+                    <p>En la estación Baquedano del Metro, hay 8 salidas diferentes. Si un turista elige una salida al azar, ¿cuál es la probabilidad de que salga hacia Providencia? (2 salidas llevan a Providencia)</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 3: Playlist de música</div>
+                    <p>Matías tiene una playlist con 120 canciones: 35 de reggaetón, 28 de trap chileno, 32 de pop y 25 de rock. Si pone reproducción aleatoria, ¿cuál es la probabilidad de que suene trap chileno?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Regla de Laplace</h2>
+                <p class="slide-subtitle">Ejercicios 4 - 7</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 4: Sorteo en el liceo</div>
+                    <p>En un curso de 3° medio hay 42 estudiantes: 24 mujeres y 18 hombres. Si se sortea quién representa al curso en el Centro de Estudiantes, ¿cuál es la probabilidad de que sea mujer?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 5: Completos</div>
+                    <p>En un carrito de completos hay 50 panes: 20 normal, 18 italiano, 12 dinámico. Si un cliente pide "uno al azar", ¿cuál es la probabilidad de que le toque italiano?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 6: Universidad</div>
+                    <p>De 1,500 estudiantes que postularon a Ingeniería en la USACH, 180 quedaron seleccionados. ¿Cuál es la probabilidad de que un postulante al azar haya quedado?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 7: Apps de delivery</div>
+                    <p>Catalina tiene 36 cupones de descuento guardados: 12 de Pedidos Ya, 15 de Rappi, 9 de Uber Eats. Si usa uno al azar, ¿cuál es la probabilidad de que sea de Rappi?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Regla de Laplace</h2>
+                <p class="slide-subtitle">Ejercicios 8 - 10</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 8: Lollapalooza</div>
+                    <p>Para el festival se vendieron 70,000 entradas, de las cuales 8,400 son VIP. ¿Cuál es la probabilidad de que una entrada elegida al azar sea VIP?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 9: Polla del Mundial</div>
+                    <p>En una polla de la oficina con 85 participantes, Diego compró 5 números. ¿Cuál es la probabilidad de que Diego gane?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 10: Instagram</div>
+                    <p>Sofía tiene 240 seguidores: 95 son de su liceo, 78 son familia/amigos cercanos, y 67 son conocidos. Si Instagram le sugiere un seguidor al azar para destacar, ¿cuál es la probabilidad de que sea de su liceo?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- PARTE 2.2: Regla Aditiva de Probabilidades -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Regla Aditiva de Probabilidades</h2>
+                <p class="slide-subtitle">Definición y Fórmula</p>
+            </div>
+            <div class="slide-content">
+                <div class="definition-box">
+                    <div class="definition-title">Regla Aditiva General</div>
+                    <p>La probabilidad de que ocurra el evento \(A\) <strong>o</strong> el evento \(B\) (o ambos) se calcula como:</p>
+                    <div class="formula-box">
+                        \[P(A \cup B) = P(A) + P(B) - P(A \cap B)\]
+                    </div>
+                    <p style="margin-top: 20px;"><strong>Donde:</strong></p>
+                    <ul>
+                        <li>\(P(A \cup B)\) = Probabilidad de que ocurra \(A\) o \(B\)</li>
+                        <li>\(P(A)\) = Probabilidad del evento \(A\)</li>
+                        <li>\(P(B)\) = Probabilidad del evento \(B\)</li>
+                        <li>\(P(A \cap B)\) = Probabilidad de que ocurran ambos eventos</li>
+                    </ul>
+                    <p style="margin-top: 20px;"><strong>Nota:</strong> Si los eventos son mutuamente excluyentes, entonces \(P(A \cap B) = 0\)</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Regla Aditiva</h2>
+                <p class="slide-subtitle">Ejercicios 1 - 4</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 1: Streaming</div>
+                    <p>En un curso, el 68% tiene Spotify Premium, el 52% tiene YouTube Premium, y el 35% tiene ambos. ¿Cuál es la probabilidad de que un estudiante tenga al menos una de estas suscripciones?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 2: Electivos 3° y 4° medio</div>
+                    <p>El 55% de los estudiantes escogió el electivo de Ciencias, el 48% escogió Artes, y el 20% escogió ambos (en bloques diferentes). ¿Cuál es la probabilidad de que un estudiante haya escogido al menos uno de estos electivos?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 3: Transporte RED</div>
+                    <p>El 45% de los estudiantes usa Metro para ir al liceo, el 38% usa micro, y el 18% usa ambos (combinación). ¿Cuál es la probabilidad de que un estudiante use Metro o micro?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 4: Redes sociales</div>
+                    <p>El 82% de los jóvenes usa Instagram, el 74% usa TikTok, y el 63% usa ambas. ¿Cuál es la probabilidad de que un joven use al menos una de estas redes?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Regla Aditiva</h2>
+                <p class="slide-subtitle">Ejercicios 5 - 8</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 5: Trabajos part-time</div>
+                    <p>En una universidad, el 42% de los estudiantes trabaja los fines de semana, el 28% hace clases particulares, y el 15% hace ambas cosas. ¿Cuál es la probabilidad de que un estudiante tenga al menos uno de estos trabajos?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 6: Comida rápida</div>
+                    <p>El 65% de los estudiantes compra en el Doggis, el 58% compra en el Juan Maestro, y el 40% compra en ambos lugares. ¿Cuál es la probabilidad de que un estudiante compre en al menos uno de estos locales?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 7: Deportes universitarios</div>
+                    <p>En la UC, el 32% de los estudiantes juega fútbol en torneos internos, el 25% juega baby fútbol, y el 12% participa en ambos. ¿Cuál es la probabilidad de que un estudiante participe en al menos uno?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 8: Previas universitarias</div>
+                    <p>El 70% de los estudiantes va a previas en Bellavista, el 55% va a previas en Suecia, y el 38% va a ambos sectores. ¿Cuál es la probabilidad de que un estudiante vaya a previas en al menos uno de estos lugares?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Regla Aditiva</h2>
+                <p class="slide-subtitle">Ejercicios 9 - 10</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 9: Apps de banco</div>
+                    <p>El 75% de los jóvenes usa la app de Banco Estado, el 48% usa Mercado Pago, y el 32% usa ambas. ¿Cuál es la probabilidad de que un joven use al menos una de estas apps?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 10: Preuniversitarios</div>
+                    <p>El 58% de los estudiantes está en el PreU del liceo, el 35% está en Puntaje Nacional o CPECH, y el 18% está en ambos. ¿Cuál es la probabilidad de que un estudiante esté en al menos un preuniversitario?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- PARTE 2.3: Regla Aditiva en Eventos Mutuamente Excluyentes -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Eventos Mutuamente Excluyentes</h2>
+                <p class="slide-subtitle">Definición y Fórmula</p>
+            </div>
+            <div class="slide-content">
+                <div class="definition-box">
+                    <div class="definition-title">Regla Aditiva Simplificada</div>
+                    <p>Cuando dos eventos \(A\) y \(B\) son <strong>mutuamente excluyentes</strong> (no pueden ocurrir al mismo tiempo), la fórmula se simplifica:</p>
+                    <div class="formula-box">
+                        \[P(A \cup B) = P(A) + P(B)\]
+                    </div>
+                    <p style="margin-top: 20px;"><strong>Nota importante:</strong></p>
+                    <ul>
+                        <li>Eventos mutuamente excluyentes: \(P(A \cap B) = 0\)</li>
+                        <li>No pueden ocurrir simultáneamente</li>
+                        <li>Ejemplo: Obtener cara o sello en un lanzamiento de moneda</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Eventos Mutuamente Excluyentes</h2>
+                <p class="slide-subtitle">Ejercicios 1 - 4</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 1: Carreras universitarias</div>
+                    <p>De los estudiantes de 4° medio: 32% quiere estudiar Ingeniería, 28% Salud, 22% Pedagogía, y 18% Artes/Humanidades. ¿Cuál es la probabilidad de que un estudiante quiera estudiar Ingeniería o Pedagogía?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 2: Comunas de Santiago</div>
+                    <p>En un curso, los estudiantes viven: 25% en Santiago Centro, 30% en Maipú, 20% en Puente Alto, 15% en La Florida, 10% en otras comunas. ¿Cuál es la probabilidad de que un estudiante viva en Maipú o La Florida?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 3: Horario de clases</div>
+                    <p>Las clases comienzan: 35% a las 8:00 AM, 40% a las 8:30 AM, 25% a las 9:00 AM. ¿Cuál es la probabilidad de que una clase comience a las 8:00 o a las 9:00?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 4: Almuerzo en el liceo</div>
+                    <p>Los estudiantes almuerzan: 42% trae colación de la casa, 35% compra en el casino, 18% compra en el kiosco, 5% no almuerza. ¿Cuál es la probabilidad de que un estudiante traiga colación o compre en el kiosco?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Eventos Mutuamente Excluyentes</h2>
+                <p class="slide-subtitle">Ejercicios 5 - 8</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 5: Videojuegos</div>
+                    <p>De los gamers chilenos: 28% juega principalmente Free Fire, 25% LOL, 22% Valorant, 15% FIFA, 10% otros. ¿Cuál es la probabilidad de que un gamer juegue Free Fire o Valorant?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 6: Medio de pago</div>
+                    <p>En una tienda juvenil: 30% paga con tarjeta de débito, 25% con transferencia, 20% con efectivo, 15% con Mercado Pago, 10% con tarjeta de crédito. ¿Cuál es la probabilidad de que un cliente pague en efectivo o con Mercado Pago?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 7: Regiones universitarias</div>
+                    <p>Los estudiantes postulan: 55% a universidades en la RM, 18% en Valparaíso, 15% en Concepción, 12% en otras regiones. ¿Cuál es la probabilidad de que un estudiante postule a la RM o Concepción?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 8: Equipos de fútbol</div>
+                    <p>En un curso son hinchas: 35% de la U, 32% del Colo Colo, 18% de la Católica, 15% de otros equipos. ¿Cuál es la probabilidad de que un estudiante sea hincha de la U o la Católica?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Eventos Mutuamente Excluyentes</h2>
+                <p class="slide-subtitle">Ejercicios 9 - 10</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 9: Notas finales</div>
+                    <p>En matemática, los estudiantes obtuvieron: 12% nota entre 6.0-7.0, 25% entre 5.0-5.9, 38% entre 4.0-4.9, 25% bajo 4.0. ¿Cuál es la probabilidad de que un estudiante tenga sobre 6.0 o bajo 4.0?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 10: Días de prueba</div>
+                    <p>Las pruebas se programan: 22% los lunes, 25% los martes, 20% los miércoles, 18% los jueves, 15% los viernes. ¿Cuál es la probabilidad de que una prueba caiga un lunes o un viernes?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- PARTE 2.4: Regla Multiplicativa para Eventos Independientes -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Regla Multiplicativa</h2>
+                <p class="slide-subtitle">Eventos Independientes</p>
+            </div>
+            <div class="slide-content">
+                <div class="definition-box">
+                    <div class="definition-title">Regla Multiplicativa para Eventos Independientes</div>
+                    <p>Cuando dos eventos \(A\) y \(B\) son <strong>independientes</strong> (la ocurrencia de uno no afecta la probabilidad del otro), la probabilidad de que ambos ocurran es:</p>
+                    <div class="formula-box">
+                        \[P(A \cap B) = P(A) \times P(B)\]
+                    </div>
+                    <p style="margin-top: 20px;"><strong>Características:</strong></p>
+                    <ul>
+                        <li>Los eventos no se influyen entre sí</li>
+                        <li>La ocurrencia de \(A\) no cambia \(P(B)\)</li>
+                        <li>Ejemplo: Lanzar dos monedas diferentes</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Regla Multiplicativa</h2>
+                <p class="slide-subtitle">Ejercicios 1 - 3</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 1: PAES doble</div>
+                    <p>Benjamín rinde la PAES de Matemática y Ciencias. Históricamente, el 35% de los estudiantes obtiene sobre 700 puntos en Matemática y el 28% sobre 700 en Ciencias. Si estos resultados son independientes, ¿cuál es la probabilidad de que Benjamín obtenga sobre 700 en ambas pruebas?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 2: Llegada al liceo</div>
+                    <p>La probabilidad de que Camila llegue atrasada al liceo es 0.15, y la probabilidad de que su mejor amiga Daniela llegue atrasada es 0.20. Si ambas llegan independientemente, ¿cuál es la probabilidad de que ambas lleguen atrasadas el mismo día?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 3: Sorteos Instagram</div>
+                    <p>Una tienda hace dos sorteos independientes en Instagram. La probabilidad de ganar el primer sorteo es 1/500 y del segundo es 1/800. Si Martín participa en ambos, ¿cuál es la probabilidad de que gane ambos sorteos?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Regla Multiplicativa</h2>
+                <p class="slide-subtitle">Ejercicios 4 - 7</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 4: Free Fire</div>
+                    <p>En una partida, la probabilidad de que Matías consiga un "booyah" (victoria) es 0.12. Si juega 2 partidas independientes, ¿cuál es la probabilidad de que gane ambas partidas?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 5: Control de matemática</div>
+                    <p>La probabilidad de que Francisca saque 7.0 en un control es 0.25. Si tiene dos controles independientes esta semana, ¿cuál es la probabilidad de que saque 7.0 en ambos?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 6: Metro y micro</div>
+                    <p>La probabilidad de que el Metro tenga retrasos es 0.08, y la probabilidad de que la micro llegue atrasada es 0.22. Si Joaquín usa ambos transportes en su trayecto (eventos independientes), ¿cuál es la probabilidad de que ambos lleguen atrasados?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 7: Pedidos Ya</div>
+                    <p>La probabilidad de que un pedido de Pedidos Ya llegue en menos de 30 minutos es 0.65, y la probabilidad de que el pedido llegue sin errores es 0.92. Si estos eventos son independientes, ¿cuál es la probabilidad de que un pedido llegue rápido Y sin errores?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Regla Multiplicativa</h2>
+                <p class="slide-subtitle">Ejercicios 8 - 10</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 8: Netflix y WiFi</div>
+                    <p>La probabilidad de que encuentres algo bueno para ver en Netflix es 0.70, y la probabilidad de que el WiFi funcione bien es 0.85. ¿Cuál es la probabilidad de que ambas cosas ocurran en una noche de viernes?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 9: Puntualidad universitaria</div>
+                    <p>En la universidad, la probabilidad de que el profesor llegue a la hora es 0.60, y la probabilidad de que los estudiantes lleguen a la hora es 0.45. ¿Cuál es la probabilidad de que tanto el profesor como los estudiantes lleguen puntuales a la clase?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 10: Aprobación de ramos</div>
+                    <p>Felipe tiene probabilidad 0.78 de aprobar Cálculo y 0.82 de aprobar Física. Si su desempeño en ambos ramos es independiente, ¿cuál es la probabilidad de que apruebe ambos ramos?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- PARTE 2.5: Probabilidad Condicionada -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Probabilidad Condicionada</h2>
+                <p class="slide-subtitle">Definición y Fórmula</p>
+            </div>
+            <div class="slide-content">
+                <div class="definition-box">
+                    <div class="definition-title">Probabilidad Condicionada</div>
+                    <p>La <strong>probabilidad condicionada</strong> de un evento \(A\) dado que ya ocurrió el evento \(B\) se denota como \(P(A|B)\) y se calcula:</p>
+                    <div class="formula-box">
+                        \[P(A|B) = \frac{P(A \cap B)}{P(B)}\]
+                    </div>
+                    <p style="margin-top: 20px;"><strong>Interpretación:</strong></p>
+                    <ul>
+                        <li>\(P(A|B)\) se lee: "Probabilidad de \(A\) dado \(B\)"</li>
+                        <li>Representa la probabilidad de \(A\) cuando sabemos que \(B\) ya ocurrió</li>
+                        <li>El evento \(B\) se convierte en el nuevo espacio muestral</li>
+                        <li>Condición: \(P(B) > 0\)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Probabilidad Condicionada</h2>
+                <p class="slide-subtitle">Ejercicios 1 - 3</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 1: Uso de redes sociales</div>
+                    <p>En un curso, el 85% usa Instagram. De los que usan Instagram, el 70% también tiene TikTok. ¿Cuál es la probabilidad de que un estudiante tenga TikTok dado que usa Instagram?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 2: Carreras y género</div>
+                    <p>En un preuniversitario, el 60% son mujeres. De las mujeres, el 45% quiere estudiar carreras del área de salud. Si se elige una mujer al azar, ¿cuál es la probabilidad de que quiera estudiar salud?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 3: Fumadores y deporte</div>
+                    <p>En una universidad chilena, el 25% de los estudiantes fuma. De los que fuman, solo el 30% practica deporte regularmente. ¿Cuál es la probabilidad de que un estudiante practique deporte dado que fuma?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Probabilidad Condicionada</h2>
+                <p class="slide-subtitle">Ejercicios 4 - 7</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 4: Becas universitarias</div>
+                    <p>El 40% de los estudiantes de una universidad tiene Gratuidad. De los que tienen Gratuidad, el 65% vive fuera de Santiago. ¿Cuál es la probabilidad de que un estudiante viva fuera de Santiago dado que tiene Gratuidad?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 5: Aprobación de matemática</div>
+                    <p>En un liceo, el 72% de los estudiantes aprueba matemática. De los que aprueban, el 55% obtiene nota sobre 5.5. ¿Cuál es la probabilidad de que un estudiante obtenga sobre 5.5 dado que aprobó matemática?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 6: Delivery y propina</div>
+                    <p>El 80% de los pedidos por delivery llegan a tiempo. De los pedidos que llegan a tiempo, el 90% recibe propina. ¿Cuál es la probabilidad de que un repartidor reciba propina dado que llegó a tiempo?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 7: Smartphones y apps</div>
+                    <p>El 95% de los jóvenes chilenos tiene smartphone. De los que tienen smartphone, el 88% usa WhatsApp. ¿Cuál es la probabilidad de que un joven use WhatsApp dado que tiene smartphone?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Probabilidad Condicionada</h2>
+                <p class="slide-subtitle">Ejercicios 8 - 10</p>
+            </div>
+            <div class="slide-content">
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 8: Trabajo y estudios</div>
+                    <p>En una universidad, el 48% de los estudiantes trabaja. De los que trabajan, el 35% trabaja jornada completa. ¿Cuál es la probabilidad de que un estudiante trabaje jornada completa dado que trabaja?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 9: Videojuegos online</div>
+                    <p>El 65% de los gamers chilenos juega juegos online. De los que juegan online, el 42% ha comprado skins o items virtuales. ¿Cuál es la probabilidad de que un gamer haya comprado items dado que juega online?</p>
+                </div>
+                
+                <div class="exercise-box">
+                    <div class="exercise-title">Ejercicio 10: Preuniversitario y puntaje</div>
+                    <p>El 58% de los estudiantes asiste a preuniversitario. De los que van al preU, el 68% obtiene sobre 600 puntos en la PAES. ¿Cuál es la probabilidad de que un estudiante obtenga sobre 600 puntos dado que asiste al preU?</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- ========== PARTE 3: DISTRIBUCIÓN BINOMIAL ========== -->
+        
+        <!-- Portada Parte 3 -->
+        <div class="slide section-divider">
+            <div>
+                <div class="section-icon">📈</div>
+                <h2 class="slide-title">Parte 3</h2>
+                <p class="slide-subtitle">Distribución Binomial</p>
+                <p style="font-size: 1.6rem; margin-top: 30px; opacity: 0.9;">30 Preguntas de Selección Múltiple</p>
+            </div>
+        </div>
+
+        <!-- Definición Distribución Binomial -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Distribución Binomial</h2>
+                <p class="slide-subtitle">Definición y Fórmula</p>
+            </div>
+            <div class="slide-content">
+                <div class="definition-box">
+                    <div class="definition-title">Distribución Binomial</div>
+                    <p>La <strong>distribución binomial</strong> modela experimentos donde:</p>
+                    <ul>
+                        <li>Se realizan \(n\) ensayos independientes</li>
+                        <li>Cada ensayo tiene solo dos resultados: éxito o fracaso</li>
+                        <li>La probabilidad de éxito \(p\) es constante</li>
+                        <li>Queremos calcular la probabilidad de obtener exactamente \(k\) éxitos</li>
+                    </ul>
+                    <div class="formula-box">
+                        \[P(X = k) = \binom{n}{k} \cdot p^k \cdot (1-p)^{n-k}\]
+                    </div>
+                    <p style="margin-top: 20px;"><strong>Donde:</strong></p>
+                    <ul>
+                        <li>\(n\) = número total de ensayos</li>
+                        <li>\(k\) = número de éxitos deseados</li>
+                        <li>\(p\) = probabilidad de éxito en cada ensayo</li>
+                        <li>\(\binom{n}{k} = \frac{n!}{k!(n-k)!}\) = coeficiente binomial</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Preguntas 1-3 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Distribución Binomial</h2>
+                <p class="slide-subtitle">Preguntas 1 - 3</p>
+            </div>
+            <div class="slide-content">
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 1</div>
+                    <p>Una moneda equilibrada se lanza 12 veces. ¿Cuál es la probabilidad de obtener exactamente 7 caras?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,125</div>
+                        <div class="option-item">b) 0,163</div>
+                        <div class="option-item">c) 0,193</div>
+                        <div class="option-item">d) 0,225</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 2</div>
+                    <p>Una moneda equilibrada se lanza 8 veces. ¿Cuál es la probabilidad de obtener exactamente 5 caras?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,164</div>
+                        <div class="option-item">b) 0,219</div>
+                        <div class="option-item">c) 0,273</div>
+                        <div class="option-item">d) 0,328</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 3</div>
+                    <p>Una moneda equilibrada se lanza 15 veces. ¿Cuál es la probabilidad de obtener exactamente 9 caras?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,092</div>
+                        <div class="option-item">b) 0,134</div>
+                        <div class="option-item">c) 0,153</div>
+                        <div class="option-item">d) 0,196</div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Preguntas 4-6 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Distribución Binomial</h2>
+                <p class="slide-subtitle">Preguntas 4 - 6</p>
+            </div>
+            <div class="slide-content">
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 4</div>
+                    <p>En una fábrica, el 15% de los productos tienen algún defecto. Si se seleccionan al azar 10 productos, ¿cuál es la probabilidad de que exactamente 2 sean defectuosos?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,216</div>
+                        <div class="option-item">b) 0,276</div>
+                        <div class="option-item">c) 0,336</div>
+                        <div class="option-item">d) 0,396</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 5</div>
+                    <p>En una fábrica, el 25% de los productos tienen algún defecto. Si se seleccionan al azar 14 productos, ¿cuál es la probabilidad de que exactamente 4 sean defectuosos?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,166</div>
+                        <div class="option-item">b) 0,206</div>
+                        <div class="option-item">c) 0,246</div>
+                        <div class="option-item">d) 0,286</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 6</div>
+                    <p>En una fábrica, el 18% de los productos tienen algún defecto. Si se seleccionan al azar 15 productos, ¿cuál es la probabilidad de que exactamente 3 sean defectuosos?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,196</div>
+                        <div class="option-item">b) 0,236</div>
+                        <div class="option-item">c) 0,276</div>
+                        <div class="option-item">d) 0,316</div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Preguntas 7-9 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Distribución Binomial</h2>
+                <p class="slide-subtitle">Preguntas 7 - 9</p>
+            </div>
+            <div class="slide-content">
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 7</div>
+                    <p>Un estudiante responde al azar un examen de 12 preguntas de verdadero o falso. ¿Cuál es la probabilidad de que acierte exactamente 8 preguntas?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,081</div>
+                        <div class="option-item">b) 0,121</div>
+                        <div class="option-item">c) 0,161</div>
+                        <div class="option-item">d) 0,201</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 8</div>
+                    <p>Un estudiante responde al azar un examen de 18 preguntas de verdadero o falso. ¿Cuál es la probabilidad de que acierte exactamente 11 preguntas?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,072</div>
+                        <div class="option-item">b) 0,112</div>
+                        <div class="option-item">c) 0,152</div>
+                        <div class="option-item">d) 0,192</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 9</div>
+                    <p>Un estudiante responde al azar un examen de 20 preguntas de verdadero o falso. ¿Cuál es la probabilidad de que acierte exactamente 12 preguntas?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,080</div>
+                        <div class="option-item">b) 0,120</div>
+                        <div class="option-item">c) 0,160</div>
+                        <div class="option-item">d) 0,200</div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Preguntas 10-12 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Distribución Binomial</h2>
+                <p class="slide-subtitle">Preguntas 10 - 12</p>
+            </div>
+            <div class="slide-content">
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 10</div>
+                    <p>La probabilidad de que un jugador de tenis gane un punto es 0,60. Si juega 10 puntos, ¿cuál es la probabilidad de que gane exactamente 6 puntos?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,171</div>
+                        <div class="option-item">b) 0,211</div>
+                        <div class="option-item">c) 0,251</div>
+                        <div class="option-item">d) 0,291</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 11</div>
+                    <p>La probabilidad de que un jugador de tenis gane un punto es 0,70. Si juega 9 puntos, ¿cuál es la probabilidad de que gane exactamente 6 puntos?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,187</div>
+                        <div class="option-item">b) 0,227</div>
+                        <div class="option-item">c) 0,267</div>
+                        <div class="option-item">d) 0,307</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 12</div>
+                    <p>La probabilidad de que un jugador de tenis gane un punto es 0,55. Si juega 12 puntos, ¿cuál es la probabilidad de que gane exactamente 7 puntos?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,148</div>
+                        <div class="option-item">b) 0,188</div>
+                        <div class="option-item">c) 0,228</div>
+                        <div class="option-item">d) 0,268</div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Preguntas 13-15 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Distribución Binomial</h2>
+                <p class="slide-subtitle">Preguntas 13 - 15</p>
+            </div>
+            <div class="slide-content">
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 13</div>
+                    <p>El 30% de los estudiantes de una escuela practican deportes. Si se seleccionan al azar 18 estudiantes, ¿cuál es la probabilidad de que exactamente 5 practiquen deportes?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,148</div>
+                        <div class="option-item">b) 0,188</div>
+                        <div class="option-item">c) 0,228</div>
+                        <div class="option-item">d) 0,268</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 14</div>
+                    <p>El 20% de los estudiantes de una escuela practican deportes. Si se seleccionan al azar 15 estudiantes, ¿cuál es la probabilidad de que exactamente 3 practiquen deportes?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,130</div>
+                        <div class="option-item">b) 0,170</div>
+                        <div class="option-item">c) 0,210</div>
+                        <div class="option-item">d) 0,250</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 15</div>
+                    <p>El 35% de los estudiantes de una escuela practican deportes. Si se seleccionan al azar 16 estudiantes, ¿cuál es la probabilidad de que exactamente 6 practiquen deportes?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,148</div>
+                        <div class="option-item">b) 0,188</div>
+                        <div class="option-item">c) 0,228</div>
+                        <div class="option-item">d) 0,268</div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Preguntas 16-18 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Distribución Binomial</h2>
+                <p class="slide-subtitle">Preguntas 16 - 18</p>
+            </div>
+            <div class="slide-content">
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 16</div>
+                    <p>Un dado equilibrado se lanza 15 veces. ¿Cuál es la probabilidad de obtener el número 3 exactamente 3 veces?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,146</div>
+                        <div class="option-item">b) 0,186</div>
+                        <div class="option-item">c) 0,226</div>
+                        <div class="option-item">d) 0,266</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 17</div>
+                    <p>Un dado equilibrado se lanza 20 veces. ¿Cuál es la probabilidad de obtener el número 6 exactamente 5 veces?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,092</div>
+                        <div class="option-item">b) 0,132</div>
+                        <div class="option-item">c) 0,172</div>
+                        <div class="option-item">d) 0,212</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 18</div>
+                    <p>Un dado equilibrado se lanza 12 veces. ¿Cuál es la probabilidad de obtener el número 2 exactamente 3 veces?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,157</div>
+                        <div class="option-item">b) 0,197</div>
+                        <div class="option-item">c) 0,237</div>
+                        <div class="option-item">d) 0,277</div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Preguntas 19-21 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Distribución Binomial</h2>
+                <p class="slide-subtitle">Preguntas 19 - 21</p>
+            </div>
+            <div class="slide-content">
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 19</div>
+                    <p>En un proceso de manufactura, el 8% de los componentes son defectuosos. Si se inspeccionan 20 componentes al azar, ¿cuál es la probabilidad de que exactamente 2 sean defectuosos?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,198</div>
+                        <div class="option-item">b) 0,238</div>
+                        <div class="option-item">c) 0,278</div>
+                        <div class="option-item">d) 0,318</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 20</div>
+                    <p>En un proceso de manufactura, el 12% de los componentes son defectuosos. Si se inspeccionan 18 componentes al azar, ¿cuál es la probabilidad de que exactamente 3 sean defectuosos?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,152</div>
+                        <div class="option-item">b) 0,192</div>
+                        <div class="option-item">c) 0,232</div>
+                        <div class="option-item">d) 0,272</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 21</div>
+                    <p>En un proceso de manufactura, el 15% de los componentes son defectuosos. Si se inspeccionan 12 componentes al azar, ¿cuál es la probabilidad de que exactamente 2 sean defectuosos?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,172</div>
+                        <div class="option-item">b) 0,212</div>
+                        <div class="option-item">c) 0,252</div>
+                        <div class="option-item">d) 0,292</div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Preguntas 22-24 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Distribución Binomial</h2>
+                <p class="slide-subtitle">Preguntas 22 - 24</p>
+            </div>
+            <div class="slide-content">
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 22</div>
+                    <p>Un arquero tiene una probabilidad de 0,70 de dar en el blanco. Si dispara 10 flechas, ¿cuál es la probabilidad de que acierte exactamente 7 veces?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,207</div>
+                        <div class="option-item">b) 0,247</div>
+                        <div class="option-item">c) 0,287</div>
+                        <div class="option-item">d) 0,327</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 23</div>
+                    <p>Un arquero tiene una probabilidad de 0,80 de dar en el blanco. Si dispara 15 flechas, ¿cuál es la probabilidad de que acierte exactamente 12 veces?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,170</div>
+                        <div class="option-item">b) 0,210</div>
+                        <div class="option-item">c) 0,250</div>
+                        <div class="option-item">d) 0,290</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 24</div>
+                    <p>Un arquero tiene una probabilidad de 0,65 de dar en el blanco. Si dispara 14 flechas, ¿cuál es la probabilidad de que acierte exactamente 9 veces?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,149</div>
+                        <div class="option-item">b) 0,189</div>
+                        <div class="option-item">c) 0,229</div>
+                        <div class="option-item">d) 0,269</div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Preguntas 25-27 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Distribución Binomial</h2>
+                <p class="slide-subtitle">Preguntas 25 - 27</p>
+            </div>
+            <div class="slide-content">
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 25</div>
+                    <p>La probabilidad de que un estudiante apruebe un examen es 0,65. Si 10 estudiantes presentan el examen, ¿cuál es la probabilidad de que más de 7 aprueben?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,212</div>
+                        <div class="option-item">b) 0,262</div>
+                        <div class="option-item">c) 0,312</div>
+                        <div class="option-item">d) 0,362</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 26</div>
+                    <p>La probabilidad de que un estudiante apruebe un examen es 0,75. Si 15 estudiantes presentan el examen, ¿cuál es la probabilidad de que más de 11 aprueben?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,312</div>
+                        <div class="option-item">b) 0,362</div>
+                        <div class="option-item">c) 0,412</div>
+                        <div class="option-item">d) 0,462</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 27</div>
+                    <p>La probabilidad de que un estudiante apruebe un examen es 0,60. Si 14 estudiantes presentan el examen, ¿cuál es la probabilidad de que más de 10 aprueben?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,125</div>
+                        <div class="option-item">b) 0,175</div>
+                        <div class="option-item">c) 0,225</div>
+                        <div class="option-item">d) 0,275</div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Preguntas 28-30 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">Distribución Binomial</h2>
+                <p class="slide-subtitle">Preguntas 28 - 30</p>
+            </div>
+            <div class="slide-content">
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 28</div>
+                    <p>En una encuesta, el 35% de las personas prefieren ver películas de comedia. Si se entrevistan 18 personas al azar, ¿cuál es la probabilidad de que entre 5 y 8 personas (inclusive) prefieran películas de comedia?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,540</div>
+                        <div class="option-item">b) 0,600</div>
+                        <div class="option-item">c) 0,660</div>
+                        <div class="option-item">d) 0,720</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 29</div>
+                    <p>En una encuesta, el 45% de las personas prefieren ver películas de ciencia ficción. Si se entrevistan 16 personas al azar, ¿cuál es la probabilidad de que entre 6 y 9 personas (inclusive) prefieran películas de ciencia ficción?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,534</div>
+                        <div class="option-item">b) 0,594</div>
+                        <div class="option-item">c) 0,654</div>
+                        <div class="option-item">d) 0,714</div>
+                    </div>
+                </div>
+                
+                <div class="multiple-choice-box">
+                    <div class="multiple-choice-title">Pregunta 30</div>
+                    <p>En una encuesta, el 50% de las personas prefieren ver películas de drama. Si se entrevistan 14 personas al azar, ¿cuál es la probabilidad de que entre 6 y 9 personas (inclusive) prefieran películas de drama?</p>
+                    <div class="options">
+                        <div class="option-item">a) 0,555</div>
+                        <div class="option-item">b) 0,615</div>
+                        <div class="option-item">c) 0,675</div>
+                        <div class="option-item">d) 0,735</div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <p class="footer-credits">Preparado por: Profesor Nicolás González | Presentación Educativa Interactiva</p>
+            </div>
+        </div>
+
+        <!-- Slide Final -->
+        <div class="slide portada">
+            <div>
+                <div class="portada-icon">✅</div>
+                <h1 class="slide-title">¡Fin de la Guía!</h1>
+                <p class="slide-subtitle">Guía de Ejercitación Evaluación 3 Completa</p>
+                <p style="font-size: 1.6rem; margin-top: 40px;">Total de Ejercicios: 130</p>
+                <ul style="font-size: 1.4rem; margin-top: 30px; list-style: none;">
+                    <li>✓ 50 Ejercicios de Técnicas de Conteo</li>
+                    <li>✓ 50 Ejercicios de Probabilidades (5 secciones)</li>
+                    <li>✓ 30 Preguntas de Distribución Binomial</li>
+                </ul>
+                <p style="font-size: 1.2rem; margin-top: 40px; opacity: 0.8;">¡Éxito en tu evaluación!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegación -->
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">←</button>
+        <span class="slide-counter" id="slideCounter">1 / 1</span>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">→</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            updateCounter();
+            updateButtons();
+        }
+
+        function changeSlide(direction) {
+            showSlide(currentSlide + direction);
+        }
+
+        function updateCounter() {
+            document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+        }
+
+        function updateButtons() {
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        // Navegación con teclado
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (event.key === 'ArrowRight') {
+                changeSlide(1);
+            }
+        });
+
+        // Inicialización
+        updateCounter();
+        updateButtons();
+    </script>
+</body>
+</html>
